@@ -1,0 +1,11 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    spruz (0.2.13)
+
+PLATFORMS
+  java
+  ruby
+
+DEPENDENCIES
+  spruz

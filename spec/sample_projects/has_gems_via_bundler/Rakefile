@@ -1,0 +1,14 @@
+task :load_path do
+  puts $LOAD_PATH.join("\n")
+end
+
+task :load_path_with_rubygems do
+  require "rubygems"
+  puts $LOAD_PATH.join("\n")
+end
+
+task :load_path_with_bundler do
+  require "rubygems"
+  require "bundler"
+  $LOAD_PATH.each{|path|puts "-- #{path}"}
+end

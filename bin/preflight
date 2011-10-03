@@ -1,0 +1,149 @@
+#!/usr/bin/ruby
+
+require "yaml"
+require "erb"
+require "fileutils"
+include FileUtils
+
+def halt(message)
+  $stderr.puts message
+  exit 1
+end
+
+def x!(cmd)
+  puts cmd if ENV['VERBOSE']
+  system(cmd) || halt("'#{cmd}' failed.")
+end
+
+
+halt("usage: preflight <project_path>") unless ARGV.length==1 && File.directory?(ARGV[0])
+
+@path_to_project = ARGV.shift
+@created = []
+
+config_file = File.join(@path_to_project, "config/preflight.yml")
+halt("#{config_file} not found") unless File.exists?(config_file)
+@preflight_config = YAML.load(ERB.new(File.read(config_file)).result)
+
+unless @preflight_config['jruby']
+  halt(%{Your config/preflight.yml must at least contain a pointer to the desired jruby-complete jar.
+Ex:
+
+jruby: http://jruby.org.s3.amazonaws.com/downloads/1.6.4/jruby-complete-1.6.4.jar
+jetty: http://dist.codehaus.org/jetty/jetty-hightide-7.4.5/jetty-hightide-7.4.5.v20110725.zip
+  }) 
+end
+
+script_start_time = Time.now
+
+@jruby_jar_file  = "vendor/jruby.jar"
+@preflight_dir   = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+
+@gem_home = File.expand_path(File.join(@preflight_config['app_root'], "/vendor/bundler_gem"))
+@gem_path = @gem_home + ":file:" + File.expand_path(File.join(@preflight_config['app_root'], @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
+
+def jruby!(cmd)
+  x! "cd #{@path_to_project} && java -client -jar #{@jruby_jar_file} #{cmd}"
+end
+
+def download(url, local_file)
+  x! "curl --silent --show-error -o #{local_file} #{url}"
+end
+
+def unzip(file, directory, pattern)
+  x! "unzip -qq #{file} #{pattern} -d #{directory}"
+end
+
+def install_bundler_gem
+  unless File.exists?("#{@path_to_project}/vendor/bundler_gem")
+    jruby! " -S gem install #{@preflight_dir}/gems/bundler-1.0.18.gem -i vendor/bundler_gem --no-rdoc --no-ri"
+  end
+  @created << "#{@path_to_project}/vendor/bundler_gem"
+end
+
+def bundle_install
+  install_bundler_gem
+  jruby! " -e 'require \"rubygems\"; require \"bundler\"; require \"bundler/cli\"; cli=Bundler::CLI.new; cli.options={:deployment=>true}; cli.install'"
+  @created << "#{@path_to_project}/vendor/bundle"
+end
+
+def write_script(script_path, contents)
+  File.open(script_path, "w+") { |f| f << contents }
+  chmod 0700, script_path
+  @created << script_path
+end
+
+def create_ruby_script(ruby_script_path)
+  write_script ruby_script_path, \
+%{#!/bin/bash
+
+cd $(dirname $0)/..
+GEM_HOME="#{@gem_home}" GEM_PATH="#{@gem_path}" java -client -jar #{@jruby_jar_file} $*  
+}
+end
+  
+def create_rake_script(ruby_script_path)
+  write_script ruby_script_path, \
+%{#!/bin/bash
+
+$(dirname $0)/ruby -S rake $* --trace
+}
+end
+
+def install_jetty(vendor_dir)
+  jetty_dir = File.join(vendor_dir, "jetty")
+  Dir["#{vendor_dir}/jett*"].to_a.each{|f|rm_rf(f)}
+  download @preflight_config['jetty'], File.join(vendor_dir, "jetty.zip")
+  unzip File.join(vendor_dir, "jetty.zip"), vendor_dir, '*/start.jar */lib/jetty*.jar */lib/servl*.jar'
+  rm File.join(vendor_dir, "jetty.zip")
+  mv Dir["#{vendor_dir}/jetty*"].to_a.first, jetty_dir
+  Dir[File.join(jetty_dir, "**/async-rest*")].each{|d|rm_rf(d)}
+  jetty_dir
+end
+
+def install_jruby_rack_jar(vendor_dir)
+  download @preflight_config['jruby-rack'], File.join(vendor_dir, "jruby-rack.jar")
+end
+
+def copy_jetty_xml(jetty_dir)
+  mkdir_p File.join(jetty_dir, "etc")
+  cp File.join(@preflight_dir, "web/jetty.xml"), File.join(jetty_dir, "etc")
+end
+
+def create_web_inf_subdirectory
+  mkdir_p File.join(@path_to_project, "WEB-INF")
+  web_xml_contents = ERB.new(File.read(File.join(@preflight_dir, "web/web.xml.erb"))).result(binding)
+  File.open(File.join(@path_to_project, "WEB-INF/web.xml"), "w+"){|f|f<<web_xml_contents}
+end
+
+def write_jetty_init_script(jetty_dir)
+  jetty_init_contents = ERB.new(File.read(File.join(@preflight_dir, "web/jetty-init.erb"))).result(binding)
+  write_script(File.join(jetty_dir, "jetty-init"), jetty_init_contents)
+end
+  
+ruby_script_path = File.join(@path_to_project, "bin/ruby")
+rake_script_path = File.join(@path_to_project, "bin/rake")
+bin_dir = File.join(@path_to_project, "bin")
+vendor_dir = File.join(@path_to_project, "vendor")
+
+mkdir_p File.join(@path_to_project, "bin")
+mkdir_p File.join(@path_to_project, "vendor")
+download @preflight_config['jruby'], File.join(@path_to_project, @jruby_jar_file)
+create_ruby_script ruby_script_path
+create_rake_script rake_script_path
+bundle_install if File.exists?(File.join(@path_to_project, "Gemfile.lock"))
+if @preflight_config['jetty']
+  jetty_dir = install_jetty(vendor_dir)
+  install_jruby_rack_jar vendor_dir #raise if jar not found
+  copy_jetty_xml jetty_dir
+  write_jetty_init_script jetty_dir #raise if app_user isn't specified in config
+  
+  create_web_inf_subdirectory  
+end
+
+elapsed_seconds = (Time.now - script_start_time).to_i
+
+puts %{Created:
+  #{@created.join("\n  ")}
+Time: #{elapsed_seconds} s
+}

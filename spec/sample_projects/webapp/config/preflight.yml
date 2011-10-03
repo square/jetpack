@@ -1,0 +1,5 @@
+jruby: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-complete-1.6.4.jar"
+jetty: "file://<%= File.expand_path('spec/local_mirror') %>/jetty-hightide-7.4.5.v20110725.zip"
+jruby-rack: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-rack-1.0.10.jar"
+app_user: finance
+app_root: <%= File.expand_path('spec/sample_projects/webapp') %>
