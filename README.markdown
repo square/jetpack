@@ -12,9 +12,9 @@ Example config/preflight.yml:
 
 2. Running:
 
-    <one day soon there will be a gem install>
+    [one day soon there will be a gem install]
 
-    preflight <your project directory>
+    preflight [your project directory]
   
 
 Of note, you'll now have:
@@ -22,4 +22,4 @@ Of note, you'll now have:
 * a bin directory, with scripts that run ruby and rake, using jruby and with the gems defined in your project.
 * a vendor/jetty directory, containing everything necessary to run your app using jetty.
   * You can try your app out by cd'ing into vendor/jetty and running RAILS_ENV=development java -jar start.jar
-  * vendor/jetty/jetty-init is an init script that starts your project. You should symlink /etc/init.d/<appuser>-jetty to this file, and then point monit at /etc/init.d/<appuser>-jetty
+  * vendor/jetty/jetty-init is an init script that starts your project. You should symlink /etc/init.d/[appuser]-jetty to this file, and then point monit at /etc/init.d/[appuser]-jetty
