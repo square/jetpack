@@ -12,6 +12,8 @@ Example config/preflight.yml:
 
 2. Running:
 
+Instructions:
+
     [one day soon there will be a gem install]
 
     preflight [your project directory]
