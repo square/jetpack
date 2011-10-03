@@ -1,6 +1,6 @@
 Preflight prepares your (j)ruby project for jvm deployment.
 
-1. Create config/preflight.yml in your project
+== 1. Create config/preflight.yml in your project ==
 
 Example config/preflight.yml:
 
@@ -10,15 +10,13 @@ Example config/preflight.yml:
     app_user: finance
     app_root: /usr/local/finance/finance
 
-2. Running:
+== 2. Running: ==
 
 Instructions:
 
     [one day soon there will be a gem install]
-
     preflight [your project directory]
   
-
 Of note, you'll now have:
 
 * a bin directory, with scripts that run ruby and rake, using jruby and with the gems defined in your project.
