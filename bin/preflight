@@ -23,7 +23,9 @@ halt("usage: preflight <project_path>") unless ARGV.length==1 && File.directory?
 
 config_file = File.join(@path_to_project, "config/preflight.yml")
 halt("#{config_file} not found") unless File.exists?(config_file)
-@preflight_config = YAML.load(ERB.new(File.read(config_file)).result)
+@preflightght_config = YAML.load(ERB.new(File.read(config_file)).result)
+
+@java_dash_jar = "java -Xmx1024m -client -jar"
 
 unless @preflight_config['jruby']
   halt(%{Your config/preflight.yml must at least contain a pointer to the desired jruby-complete jar.
@@ -43,7 +45,7 @@ script_start_time = Time.now
 @gem_path = @gem_home + ":file:" + File.expand_path(File.join(@preflight_config['app_root'], @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
 
 def jruby!(cmd)
-  x! "cd #{@path_to_project} && java -client -jar #{@jruby_jar_file} #{cmd}"
+  x! "cd #{@path_to_project} && #{@java_dash_jar} #{@jruby_jar_file} #{cmd}"
 end
 
 def download(url, local_file)
@@ -78,7 +80,7 @@ def create_ruby_script(ruby_script_path)
 %{#!/bin/bash
 
 cd $(dirname $0)/..
-GEM_HOME="#{@gem_home}" GEM_PATH="#{@gem_path}" java -client -jar #{@jruby_jar_file} $*  
+GEM_HOME="#{@gem_home}" GEM_PATH="#{@gem_path}" #{@java_dash_jar} #{@jruby_jar_file} $*  
 }
 end
   
