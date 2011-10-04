@@ -20,13 +20,15 @@ end
 halt("usage: preflight <project_path>") unless ARGV.length==1 && File.directory?(ARGV[0])
 
 @path_to_project = ARGV.shift
-@app_root = File.expand_path(@path_to_project)
-@app_user = Etc.getpwuid(File.stat(@app_root).uid).name
 @created = []
 
 config_file = File.join(@path_to_project, "config/preflight.yml")
 halt("#{config_file} not found") unless File.exists?(config_file)
 @preflight_config = YAML.load(ERB.new(File.read(config_file)).result)
+
+@app_root = @preflight_config['app_root'] || File.expand_path(@path_to_project)
+@app_user = @preflight_config['app_user'] || Etc.getpwuid(File.stat(@app_root).uid).name
+
 
 unless @preflight_config['jruby']
   halt(%{Your config/preflight.yml must at least contain a pointer to the desired jruby-complete jar.
