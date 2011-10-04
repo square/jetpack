@@ -3,6 +3,7 @@
 require "yaml"
 require "erb"
 require "fileutils"
+require "etc"
 include FileUtils
 
 def halt(message)
@@ -19,6 +20,8 @@ end
 halt("usage: preflight <project_path>") unless ARGV.length==1 && File.directory?(ARGV[0])
 
 @path_to_project = ARGV.shift
+@app_root = File.expand_path(@path_to_project)
+@app_user = Etc.getpwuid(File.stat(@app_root).uid).name
 @created = []
 
 config_file = File.join(@path_to_project, "config/preflight.yml")
@@ -39,8 +42,8 @@ script_start_time = Time.now
 @jruby_jar_file  = "vendor/jruby.jar"
 @preflight_dir   = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 
-@gem_home = File.expand_path(File.join(@preflight_config['app_root'], "/vendor/bundler_gem"))
-@gem_path = @gem_home + ":file:" + File.expand_path(File.join(@preflight_config['app_root'], @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
+@gem_home = "file:" + File.expand_path(File.join(@app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
+@gem_path = @gem_home + ":vendor/bundler_gem"
 
 @java_dash_jar = "GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" java -Xmx1024m -client -jar"
 

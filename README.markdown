@@ -1,5 +1,7 @@
 Preflight prepares your (j)ruby project for jvm deployment.
 
+Preflight, as much as possible, lets jruby be jruby, lets rails be rails, lets bundler be bundler, and lets jetty be jetty. Ruby/Rails square pegs are not forced into jvm/jetty round holes, and vice versa.
+
 == 1. Create config/preflight.yml in your project ==
 
 Example config/preflight.yml:
@@ -7,8 +9,6 @@ Example config/preflight.yml:
     jruby: "http://mirrors.squareup.com/distfiles/jruby-complete-1.6.4.jar"
     jetty: "http://mirrors.squareup.com/distfiles/jetty-hightide-7.4.5.v20110725.zip"
     jruby-rack: "http://mirrors.squareup.com/distfiles/jruby-rack-1.0.10.jar"
-    app_user: finance
-    app_root: /usr/local/finance/finance
 
 == 2. Running: ==
 

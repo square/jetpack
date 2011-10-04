@@ -5,17 +5,14 @@
 # processname: finance-jetty
 
 THIS_DIR=$(dirname $0)
-WEB_ROOT=$THIS_DIR/../../
+WEB_ROOT=<%=@app_root%>
 
 JETTY_HOME=$THIS_DIR
 JETTY_RUN=$WEB_ROOT/log
 JETTY_PORT=8080
 JETTY_LOGS=$WEB_ROOT/log
 # Avoid unnecessary su call if we're already the app user
-test `whoami` != <%=@preflight_config['app_user']%> && JETTY_USER=<%=@preflight_config['app_user']%>
-
-
-
+test `whoami` != <%=@app_user%> && JETTY_USER=<%=@app_user%>
 
 
 # Startup script for jetty under *nix systems (it works under NT/cygwin too).
