@@ -23,9 +23,7 @@ halt("usage: preflight <project_path>") unless ARGV.length==1 && File.directory?
 
 config_file = File.join(@path_to_project, "config/preflight.yml")
 halt("#{config_file} not found") unless File.exists?(config_file)
-@preflightght_config = YAML.load(ERB.new(File.read(config_file)).result)
-
-@java_dash_jar = "java -Xmx1024m -client -jar"
+@preflight_config = YAML.load(ERB.new(File.read(config_file)).result)
 
 unless @preflight_config['jruby']
   halt(%{Your config/preflight.yml must at least contain a pointer to the desired jruby-complete jar.
@@ -33,7 +31,7 @@ Ex:
 
 jruby: http://jruby.org.s3.amazonaws.com/downloads/1.6.4/jruby-complete-1.6.4.jar
 jetty: http://dist.codehaus.org/jetty/jetty-hightide-7.4.5/jetty-hightide-7.4.5.v20110725.zip
-  }) 
+  })
 end
 
 script_start_time = Time.now
@@ -43,6 +41,8 @@ script_start_time = Time.now
 
 @gem_home = File.expand_path(File.join(@preflight_config['app_root'], "/vendor/bundler_gem"))
 @gem_path = @gem_home + ":file:" + File.expand_path(File.join(@preflight_config['app_root'], @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
+
+@java_dash_jar = "GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" java -Xmx1024m -client -jar"
 
 def jruby!(cmd)
   x! "cd #{@path_to_project} && #{@java_dash_jar} #{@jruby_jar_file} #{cmd}"
@@ -80,10 +80,10 @@ def create_ruby_script(ruby_script_path)
 %{#!/bin/bash
 
 cd $(dirname $0)/..
-GEM_HOME="#{@gem_home}" GEM_PATH="#{@gem_path}" #{@java_dash_jar} #{@jruby_jar_file} $*  
+#{@java_dash_jar} #{@jruby_jar_file} $*
 }
 end
-  
+
 def create_rake_script(ruby_script_path)
   write_script ruby_script_path, \
 %{#!/bin/bash
@@ -122,7 +122,7 @@ def write_jetty_init_script(jetty_dir)
   jetty_init_contents = ERB.new(File.read(File.join(@preflight_dir, "web/jetty-init.erb"))).result(binding)
   write_script(File.join(jetty_dir, "jetty-init"), jetty_init_contents)
 end
-  
+
 ruby_script_path = File.join(@path_to_project, "bin/ruby")
 rake_script_path = File.join(@path_to_project, "bin/rake")
 bin_dir = File.join(@path_to_project, "bin")
@@ -139,8 +139,8 @@ if @preflight_config['jetty']
   install_jruby_rack_jar vendor_dir #raise if jar not found
   copy_jetty_xml jetty_dir
   write_jetty_init_script jetty_dir #raise if app_user isn't specified in config
-  
-  create_web_inf_subdirectory  
+
+  create_web_inf_subdirectory
 end
 
 elapsed_seconds = (Time.now - script_start_time).to_i
