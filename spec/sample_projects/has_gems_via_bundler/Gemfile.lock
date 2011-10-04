@@ -1,6 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    rake (0.8.7)
     spruz (0.2.13)
 
 PLATFORMS
@@ -8,4 +9,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  rake
   spruz

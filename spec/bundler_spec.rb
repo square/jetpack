@@ -27,7 +27,7 @@ describe "preflight - bundler and gems" do
       load_path_elements.length.should >= 3
       load_path_elements.each do |element|
         element = element.sub("-- ", "")
-        (element =~ /META-INF\/jruby\.home/ || element =~ /vendor\/bundler_gem/ || element =~ /^\.$/).should >= 0
+        (element =~ /META-INF\/jruby\.home/ || element =~ /vendor\/bundler_gem/ || element =~ /^\.$/ || element =~ /vendor\/bundle\//).should >= 0
       end
     end
 

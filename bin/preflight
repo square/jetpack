@@ -68,6 +68,7 @@ end
 
 def bundle_install
   install_bundler_gem
+  #Do the equivalent of 'bundle' in code so we know exactly which bundler we're using.
   jruby! " -e 'require \"rubygems\"; require \"bundler\"; require \"bundler/cli\"; cli=Bundler::CLI.new; cli.options={:deployment=>true}; cli.install'"
   @created << "#{@path_to_project}/vendor/bundle"
 end
@@ -89,9 +90,14 @@ end
 
 def create_rake_script(ruby_script_path)
   write_script ruby_script_path, \
-%{#!/bin/bash
+%{#!/usr/bin/ruby
 
-$(dirname $0)/ruby -S rake $* --trace
+require "fileutils"
+FileUtils.cd(File.join(File.dirname(__FILE__), ".."))
+argv_joined = ARGV.join(" ")
+
+#Do this in code so there's no doubt that we're getting the correct rake
+exec "echo 'require \\"rubygems\\"; require \\"bundler/setup\\" if File.exists?(\\"Gemfile\\"); require \\"rake\\"; Rake.application.options.trace = true; load \\"Rakefile\\"; %w(\#\{argv_joined\}).each\{|t|Rake::Task[t].invoke\}' | bin/ruby"
 }
 end
 
