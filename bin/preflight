@@ -28,7 +28,7 @@ halt("#{config_file} not found") unless File.exists?(config_file)
 
 @app_root = @preflight_config['app_root'] || File.expand_path(@path_to_project)
 @app_user = @preflight_config['app_user'] || Etc.getpwuid(File.stat(@app_root).uid).name
-
+@java_opts = @preflight_config['java_opts'] || "-Xmx2048m -client"
 
 unless @preflight_config['jruby']
   halt(%{Your config/preflight.yml must at least contain a pointer to the desired jruby-complete jar.
@@ -47,7 +47,7 @@ script_start_time = Time.now
 @gem_home = "file:" + File.expand_path(File.join(@app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
 @gem_path = @gem_home + ":vendor/bundler_gem"
 
-@java_dash_jar = "GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" java -Xmx1024m -client -jar"
+@java_dash_jar = "GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" java #{@java_opts} -jar"
 
 def jruby!(cmd)
   x! "cd #{@path_to_project} && #{@java_dash_jar} #{@jruby_jar_file} #{cmd}"
