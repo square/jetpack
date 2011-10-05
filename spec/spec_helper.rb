@@ -22,18 +22,9 @@ end
 unless File.directory?("spec/local_mirror")
   mkdir_p "spec/local_mirror"
   
-  file_to_url =
-    {"jruby-complete-1.6.4.jar" => "http://jruby.org.s3.amazonaws.com/downloads/1.6.4/jruby-complete-1.6.4.jar",
-     "jetty-hightide-7.4.5.v20110725.zip" => "http://dist.codehaus.org/jetty/jetty-hightide-7.4.5/jetty-hightide-7.4.5.v20110725.zip",
-     "jruby-rack-1.0.10.jar" => "http://repository.codehaus.org/org/jruby/rack/jruby-rack/1.0.10/jruby-rack-1.0.10.jar"}
-  file_to_url.each do |file, url|
-    system("curl --silent --show-error -o spec/local_mirror/#{file} #{url}") || exit(1)
+  %w(jetty-hightide-7.4.5.v20110725.zip jruby-complete-1.6.4.jar jruby-rack-1.0.10.jar).each do |file|
+    x! "curl --silent --show-error -o spec/local_mirror/#{file} http://mirrors.squareup.com/distfiles/#{file}"
   end
-  
-  #Re-enable once the ops ticket that puts these on the mirror is completed.
-  # %w(jetty-hightide-7.4.5.v20110725.zip jruby-complete-1.6.4.jar jruby-rack-1.0.10.jar).each do |file|
-  #   x! "curl --silent --show-error -o spec/local_mirror/#{file} http://mirrors.squareup.com/distfiles/#{file}"
-  # end
 end
 
 def reset
