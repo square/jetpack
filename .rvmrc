@@ -1,1 +1,1 @@
-rvm use ree-1.8.7@package --create
+rvm use ree-1.8.7@preflight --create
