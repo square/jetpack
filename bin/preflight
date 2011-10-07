@@ -123,6 +123,11 @@ def copy_jetty_xml(jetty_dir)
   cp File.join(@preflight_dir, "web/jetty.xml"), File.join(jetty_dir, "etc")
 end
 
+def copy_fake_keystore(jetty_dir)
+  mkdir_p File.join(jetty_dir, "etc")
+  cp File.join(@preflight_dir, "spec/keys/fake.p12"), File.join(jetty_dir, "etc")
+end
+
 def create_web_inf_subdirectory
   mkdir_p File.join(@path_to_project, "WEB-INF")
   web_xml_contents = ERB.new(File.read(File.join(@preflight_dir, "web/web.xml.erb"))).result(binding)
@@ -149,6 +154,7 @@ if @preflight_config['jetty']
   jetty_dir = install_jetty(vendor_dir)
   install_jruby_rack_jar vendor_dir #raise if jar not found
   copy_jetty_xml jetty_dir
+  copy_fake_keystore jetty_dir
   write_jetty_init_script jetty_dir #raise if app_user isn't specified in config
 
   create_web_inf_subdirectory

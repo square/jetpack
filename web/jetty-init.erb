@@ -13,7 +13,10 @@ JETTY_PORT=8080
 JETTY_LOGS=$WEB_ROOT/log
 # Avoid unnecessary su call if we're already the app user
 test `whoami` != <%=@app_user%> && JETTY_USER=<%=@app_user%>
-
+if [ -z "$RAILS_ENV" ]; then
+	echo "RAILS_ENV not set" 1>&2
+	exit 1
+fi
 
 # Startup script for jetty under *nix systems (it works under NT/cygwin too).
 
@@ -653,11 +656,13 @@ case "$ACTION" in
         echo "Checking arguments to Jetty: "
         echo "JETTY_HOME     =  $JETTY_HOME"
         echo "JETTY_CONF     =  $JETTY_CONF"
+        echo "JETTY_ARGS     =  $JETTY_ARGS"
         echo "JETTY_RUN      =  $JETTY_RUN"
         echo "JETTY_PID      =  $JETTY_PID"
         echo "JETTY_PORT     =  $JETTY_PORT"
         echo "JETTY_LOGS     =  $JETTY_LOGS"
         echo "CONFIGS        =  $CONFIGS"
+        echo "RAILS_ENV      =  $RAILS_ENV"
         echo "JAVA_OPTIONS   =  $JAVA_OPTIONS"
         echo "JAVA           =  $JAVA"
         echo "CLASSPATH      =  $CLASSPATH"
