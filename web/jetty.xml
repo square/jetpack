@@ -56,7 +56,7 @@
           </New>
       </Arg>
     </Call>
-    
+
     <!-- set the rails.env java system property based on the RAILS_ENV environment variable -->
     <!-- this is used by jruby-rack to set Rails.env -->
     <Call class="java.lang.System" name="setProperty">
@@ -67,7 +67,7 @@
         </Call>
       </Arg>
     </Call>
-    
+
     <Set name="handler">
       <New id="Handlers" class="org.eclipse.jetty.server.handler.HandlerCollection">
         <Set name="handlers">
@@ -79,20 +79,20 @@
              <New id="DefaultHandler" class="org.eclipse.jetty.server.handler.DefaultHandler"/>
            </Item>
            <Item>
-             
+
              <!-- Set up the webapp context for the rails root, which is ../../ from here -->
              <New class="org.eclipse.jetty.webapp.WebAppContext">
                <Arg><Ref id="Contexts"/></Arg>
                <Arg>../../</Arg> <!-- "resource base" -->
                <Arg>/</Arg>      <!-- webapp root -->
-               <Set name="extraClasspath">../jruby.jar;../jruby-rack.jar</Set> 
+               <Set name="extraClasspath">../jruby.jar;../jruby-rack.jar</Set>
                                  <!-- cp that makes ruby+rack work -->
              </New>
            </Item>
          </Array>
         </Set>
       </New>
-    </Set>    
+    </Set>
 
     <Set name="stopAtShutdown">true</Set>
     <Set name="sendServerVersion">true</Set>
