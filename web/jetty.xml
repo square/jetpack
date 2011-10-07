@@ -17,23 +17,6 @@
 
 
 <Configure id="Server" class="org.eclipse.jetty.server.Server">
-    <!--
-    <New id="ServerLog" class="java.io.PrintStream">
-      <Arg>
-        <New class="org.eclipse.jetty.util.RolloverFileOutputStream">
-          <Arg><Property name="jetty.logs" default="../../log"/>/yyyy_mm_dd.stderrout.log</Arg>
-          <Arg type="boolean">false</Arg>
-          <Arg type="int">90</Arg>
-          <Arg><Call class="java.util.TimeZone" name="getTimeZone"><Arg>GMT</Arg></Call></Arg>
-          <Get id="ServerLogName" name="datedFilename"/>
-        </New>
-      </Arg>
-    </New>
-
-    <Call class="org.eclipse.jetty.util.log.Log" name="info"><Arg>Redirecting stderr/stdout to <Ref id="ServerLogName"/></Arg></Call>
-    <Call class="java.lang.System" name="setErr"><Arg><Ref id="ServerLog"/></Arg></Call>
-    <Call class="java.lang.System" name="setOut"><Arg><Ref id="ServerLog"/></Arg></Call>
-    -->
 
     <Set name="ThreadPool">
       <New class="org.eclipse.jetty.util.thread.QueuedThreadPool">
@@ -45,18 +28,16 @@
 
     <Call name="addConnector">
       <Arg>
-          <New class="org.eclipse.jetty.server.nio.SelectChannelConnector">
-            <Set name="port"><Property name="jetty.port" default="8080"/></Set>
-            <Set name="maxIdleTime">300000</Set>
-            <Set name="Acceptors">2</Set>
-            <Set name="statsOn">false</Set>
-            <Set name="confidentialPort">8443</Set>
-	    <Set name="lowResourcesConnections">20000</Set>
-	    <Set name="lowResourcesMaxIdleTime">5000</Set>
-          </New>
+        <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
+          <Set name="port">4443</Set>
+          <Set name="maxIdleTime">30000</Set>
+          <Set name="password"><SystemProperty name="jetty.ssl.password" default="foobar" /></Set>
+          <Set name="keystore"><SystemProperty name="jetty.ssl.keystore" default="etc/fake.p12" /></Set>
+          <Set name="keystoreType">PKCS12</Set>
+        </New>
       </Arg>
     </Call>
-    
+
     <!-- set the rails.env java system property based on the RAILS_ENV environment variable -->
     <!-- this is used by jruby-rack to set Rails.env -->
     <Call class="java.lang.System" name="setProperty">
@@ -67,7 +48,7 @@
         </Call>
       </Arg>
     </Call>
-    
+
     <Set name="handler">
       <New id="Handlers" class="org.eclipse.jetty.server.handler.HandlerCollection">
         <Set name="handlers">
@@ -79,20 +60,20 @@
              <New id="DefaultHandler" class="org.eclipse.jetty.server.handler.DefaultHandler"/>
            </Item>
            <Item>
-             
+
              <!-- Set up the webapp context for the rails root, which is ../../ from here -->
              <New class="org.eclipse.jetty.webapp.WebAppContext">
                <Arg><Ref id="Contexts"/></Arg>
                <Arg>../../</Arg> <!-- "resource base" -->
                <Arg>/</Arg>      <!-- webapp root -->
-               <Set name="extraClasspath">../jruby.jar;../jruby-rack.jar</Set> 
+               <Set name="extraClasspath">../jruby.jar;../jruby-rack.jar</Set>
                                  <!-- cp that makes ruby+rack work -->
              </New>
            </Item>
          </Array>
         </Set>
       </New>
-    </Set>    
+    </Set>
 
     <Set name="stopAtShutdown">true</Set>
     <Set name="sendServerVersion">true</Set>
