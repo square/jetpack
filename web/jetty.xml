@@ -29,7 +29,7 @@
     <Call name="addConnector">
       <Arg>
         <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
-          <Set name="port">4443</Set>
+          <Set name="port"><SystemProperty name="jetty.port" default="4443" /></Set>
           <Set name="maxIdleTime">30000</Set>
           <Set name="password"><SystemProperty name="jetty.ssl.password" default="foobar" /></Set>
           <Set name="keystore"><SystemProperty name="jetty.ssl.keystore" default="etc/fake.p12" /></Set>
