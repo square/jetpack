@@ -16,9 +16,13 @@ Example config/preflight.yml:
 
 Instructions:
 
-    [one day soon there will be a gem install]
+    git clone git@git.squareup.com:square/preflight.git
+    cd preflight
+    gem build preflight.gemspec
+    gem install preflight*.gem
+
     preflight [your project directory]
-  
+
 Of note, you'll now have:
 
 * a bin directory, with scripts that run ruby and rake, using jruby and with the gems defined in your project.
