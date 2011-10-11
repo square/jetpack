@@ -28,7 +28,7 @@ halt("#{config_file} not found") unless File.exists?(config_file)
 
 @app_root = @preflight_config['app_root'] || File.expand_path(@path_to_project)
 @app_user = @preflight_config['app_user'] || Etc.getpwuid(File.stat(@app_root).uid).name
-@java_options = @preflight_config['java_opts'] || "-Xmx2048m -client"
+@java_options = @preflight_config['java_options'] || "-Xmx2048m -client"
 
 unless @preflight_config['jruby']
   halt(%{Your config/preflight.yml must at least contain a pointer to the desired jruby-complete jar.
