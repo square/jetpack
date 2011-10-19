@@ -1,6 +1,8 @@
 Preflight prepares your (j)ruby project for jvm deployment.
 
-Preflight, as much as possible, lets jruby be jruby, lets rails be rails, lets bundler be bundler, and lets jetty be jetty. Ruby/Rails square pegs are not forced into jvm/jetty round holes, and vice versa.
+Tracker project: [https://www.pivotaltracker.com/projects/395833](https://www.pivotaltracker.com/projects/395833)
+
+Preflight, as much as possible, uses standard ruby-world tools to prepare the app for deployment, and then presents the ruby app to jetty as a Java EE web application.
 
 == 1. Create config/preflight.yml in your project ==
 
