@@ -22,9 +22,9 @@ describe "preflight - basics" do
 
   describe "creates a ruby script that" do
     it "allows you to execute using the jruby jar." do
-      rake_result = x("spec/sample_projects/no_dependencies/bin/ruby -S rake project_info")
+      rake_result = x(%{spec/sample_projects/no_dependencies/bin/ruby --version})
       rake_result[:stderr].should     == ""
-      rake_result[:stdout].should include("Hi, I'm the no_dependencies project")
+      rake_result[:stdout].should include("ruby")
       rake_result[:exitstatus].should == 0
     end
   end
