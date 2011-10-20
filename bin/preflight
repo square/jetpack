@@ -29,6 +29,8 @@ halt("#{config_file} not found") unless File.exists?(config_file)
 @app_root = @preflight_config['app_root'] || File.expand_path(@path_to_project)
 @app_user = @preflight_config['app_user'] || Etc.getpwuid(File.stat(@app_root).uid).name
 @java_options = @preflight_config['java_options'] || "-Xmx2048m -client"
+@https_port = @preflight_config['https_port'] || "4443"
+@http_port = @preflight_config['http_port'] || "9080"
 
 unless @preflight_config['jruby']
   halt(%{Your config/preflight.yml must at least contain a pointer to the desired jruby-complete jar.
@@ -118,9 +120,11 @@ def install_jruby_rack_jar(vendor_dir)
   download @preflight_config['jruby-rack'], File.join(vendor_dir, "jruby-rack.jar")
 end
 
-def copy_jetty_xml(jetty_dir)
+def write_jetty_xml(jetty_dir)
+  jetty_xml_contents = ERB.new(File.read(File.join(@preflight_dir, "web/jetty.xml.erb"))).result(binding)
+  
   mkdir_p File.join(jetty_dir, "etc")
-  cp File.join(@preflight_dir, "web/jetty.xml"), File.join(jetty_dir, "etc")
+  write_script(File.join(jetty_dir, "etc/jetty.xml"), jetty_xml_contents)
 end
 
 def copy_fake_keystore(jetty_dir)
@@ -153,7 +157,7 @@ bundle_install if File.exists?(File.join(@path_to_project, "Gemfile.lock"))
 if @preflight_config['jetty']
   jetty_dir = install_jetty(vendor_dir)
   install_jruby_rack_jar vendor_dir #raise if jar not found
-  copy_jetty_xml jetty_dir
+  write_jetty_xml jetty_dir
   copy_fake_keystore jetty_dir
   write_jetty_init_script jetty_dir #raise if app_user isn't specified in config
 

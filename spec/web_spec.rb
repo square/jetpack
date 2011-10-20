@@ -29,10 +29,10 @@ describe "preflight - web start" do
     run_app
     
     #HTTP 4443 - intended to be proxied to from something listening on 443
-    x!("curl https://localhost:4443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
+    x!("curl https://localhost:10443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
     
     #HTTP 9080 - intended for internal health checking
-    x!("curl http://localhost:9080/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
+    x!("curl http://localhost:10080/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
   end
 
   def run_app
@@ -42,7 +42,7 @@ describe "preflight - web start" do
     start_time = Time.now
     loop do
       begin
-        TCPSocket.open("localhost", 4443)
+        TCPSocket.open("localhost", 10443)
         return
       rescue Errno::ECONNREFUSED
         raise "it's taking too long to start the server, something might be wrong" if Time.now - start_time > 60
