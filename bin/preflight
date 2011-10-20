@@ -86,20 +86,20 @@ def create_ruby_script(ruby_script_path)
 %{#!/bin/bash
 
 cd $(dirname $0)/..
-#{@java_dash_jar} #{@jruby_jar_file} $*
+#{@java_dash_jar} #{@jruby_jar_file} "$*"
 }
 end
 
 def create_rake_script(ruby_script_path)
   write_script ruby_script_path, \
-%{#!/usr/bin/ruby
+%{#!/bin/bash
 
-require "fileutils"
-FileUtils.cd(File.join(File.dirname(__FILE__), ".."))
-argv_joined = ARGV.join(" ")
+cd $(dirname $0)/..
+
+arguments="$*"
 
 #Do this in code so there's no doubt that we're getting the correct rake
-exec "echo 'require \\"rubygems\\"; require \\"bundler/setup\\" if File.exists?(\\"Gemfile\\"); require \\"rake\\"; Rake.application.options.trace = true; load \\"Rakefile\\"; %w(\#\{argv_joined\}).each\{|t|Rake::Task[t].invoke\}' | bin/ruby"
+bin/ruby -e "require 'rubygems'; require 'bundler/setup' if File.exists?('Gemfile'); require 'rake'; Rake.application.options.trace = true; load 'Rakefile'; %w($arguments).each{|t|Rake::Task[t].invoke}"
 }
 end
 
