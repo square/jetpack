@@ -49,7 +49,7 @@ script_start_time = Time.now
 @gem_home = "file:" + File.expand_path(File.join(@app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
 @gem_path = @gem_home + ":vendor/bundler_gem"
 
-@java_dash_jar = "GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" java #{@java_opts} -jar"
+@java_dash_jar = "GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" java #{@java_options} -jar"
 
 def jruby!(cmd)
   x! "cd #{@path_to_project} && #{@java_dash_jar} #{@jruby_jar_file} #{cmd}"
