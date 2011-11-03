@@ -112,6 +112,7 @@ def install_jetty(vendor_dir)
   unzip File.join(vendor_dir, "jetty.zip"), vendor_dir, '*/start.jar */lib/jetty*.jar */lib/servl*.jar'
   rm File.join(vendor_dir, "jetty.zip")
   mv Dir["#{vendor_dir}/jetty*"].to_a.first, jetty_dir
+  mkdir "#{jetty_dir}/run"
   Dir[File.join(jetty_dir, "**/async-rest*")].each{|d|rm_rf(d)}
   jetty_dir
 end
