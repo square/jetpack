@@ -1,2 +1,4 @@
 spec/local_mirror
 pkg
+.idea/*
+.DS_STORE
