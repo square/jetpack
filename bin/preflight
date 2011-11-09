@@ -49,7 +49,7 @@ script_start_time = Time.now
 @gem_home = "file:" + File.expand_path(File.join(@settings.app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
 @gem_path = @gem_home + ":vendor/bundler_gem"
 
-@java_dash_jar = "GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" java #{@settings.java_options} -jar"
+@java_dash_jar = "PATH=$PATH:$(dirname $0) GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" java #{@settings.java_options} -jar"
 
 def jruby!(cmd)
   x! "cd #{@path_to_project} && #{@java_dash_jar} #{@jruby_jar_file} #{cmd}"
@@ -88,7 +88,7 @@ def create_ruby_script(ruby_script_path)
 %{#!/bin/bash
 
 cd $(dirname $0)/..
-#{@java_dash_jar} #{@jruby_jar_file} "$*"
+#{@java_dash_jar} #{@jruby_jar_file} "$@"
 }
 end
 
@@ -98,10 +98,12 @@ def create_rake_script(ruby_script_path)
 
 cd $(dirname $0)/..
 
-arguments="$*"
-
-#Do this in code so there's no doubt that we're getting the correct rake
-bin/ruby -e "require 'rubygems'; require 'bundler/setup' if File.exists?('Gemfile'); require 'rake'; Rake.application.options.trace = true; load 'Rakefile'; %w($arguments).each{|t|Rake::Task[t].invoke}"
+if [ -e Gemfile ]
+then
+  bin/ruby -S bundle exec rake "$@"
+else
+  bin/ruby -S rake "$@"
+fi
 }
 end
 
@@ -145,6 +147,7 @@ def write_jetty_init_script(jetty_dir)
 end
 
 ruby_script_path = File.join(@path_to_project, "bin/ruby")
+jruby_script_path = File.join(@path_to_project, "bin/jruby")
 rake_script_path = File.join(@path_to_project, "bin/rake")
 bin_dir = File.join(@path_to_project, "bin")
 vendor_dir = File.join(@path_to_project, "vendor")
@@ -153,6 +156,7 @@ mkdir_p File.join(@path_to_project, "bin")
 mkdir_p File.join(@path_to_project, "vendor")
 download @settings.jruby, File.join(@path_to_project, @jruby_jar_file)
 create_ruby_script ruby_script_path
+ln_sf File.expand_path(ruby_script_path), jruby_script_path
 create_rake_script rake_script_path
 bundle_install if File.exists?(File.join(@path_to_project, "Gemfile.lock"))
 if @settings.jetty?
