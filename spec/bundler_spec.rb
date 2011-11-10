@@ -32,7 +32,7 @@ describe "preflight - bundler and gems" do
     end
 
     it "can be used from a script fed to jruby." do
-      rake_result = x(%{echo 'require \\"rubygems\\"; require \\"bundler\\"; puts Bundler::VERSION' | spec/sample_projects/has_gems_via_bundler/bin/ruby})
+      rake_result = x(%{spec/sample_projects/has_gems_via_bundler/bin/ruby -e 'require \\"rubygems\\"; require \\"bundler\\"; puts Bundler::VERSION'})
       rake_result[:stderr].should     == ""
       rake_result[:stdout].should include("1.0.18")
       rake_result[:exitstatus].should == 0
@@ -49,7 +49,7 @@ describe "preflight - bundler and gems" do
 
     it "installed gems are available via normal require" do
       rake_result = x("cd spec/sample_projects/has_gems_via_bundler && " +
-                      %{echo 'require \\"rubygems\\"; require \\"bundler/setup\\"; require \\"spruz/bijection\\"; puts Spruz::Bijection.name' | bin/ruby})
+                      %{bin/ruby -e 'require \\"rubygems\\"; require \\"bundler/setup\\"; require \\"spruz/bijection\\"; puts Spruz::Bijection.name'})
       rake_result[:stderr].should     == ""
       rake_result[:stdout].should     == "Spruz::Bijection\n"
       rake_result[:exitstatus].should == 0
@@ -57,7 +57,7 @@ describe "preflight - bundler and gems" do
 
     it "installed gems are available via Bundler.require" do
       rake_result = x("cd spec/sample_projects/has_gems_via_bundler && " +
-                      %{echo 'require \\"rubygems\\"; require \\"bundler\\"; Bundler.require; puts Spruz::Bijection.name' | bin/ruby})
+                      %{bin/ruby -e 'require \\"rubygems\\"; require \\"bundler\\"; Bundler.require; puts Spruz::Bijection.name'})
       rake_result[:stderr].should     == ""
       rake_result[:stdout].should     == "Spruz::Bijection\n"
       rake_result[:exitstatus].should == 0

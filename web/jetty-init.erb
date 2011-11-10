@@ -5,15 +5,15 @@
 # processname: finance-jetty
 
 THIS_DIR=$(dirname $0)
-WEB_ROOT=<%=@app_root%>
+WEB_ROOT=<%=@settings.app_root%>
 
-JAVA_OPTIONS="<%=@java_options%>"
-JETTY_HOME=<%=@app_root%>/vendor/jetty
-JETTY_RUN=<%=@app_root%>/vendor/jetty/run
+JAVA_OPTIONS="<%=@settings.java_options%>"
+JETTY_HOME=<%=@settings.app_root%>/vendor/jetty
+JETTY_RUN=<%=@settings.app_root%>/vendor/jetty/run
 JETTY_PORT=4443
 JETTY_LOGS=$WEB_ROOT/log
 # Avoid unnecessary su call if we're already the app user
-test `whoami` != <%=@app_user%> && JETTY_USER=<%=@app_user%>
+test `whoami` != <%=@settings.app_user%> && JETTY_USER=<%=@settings.app_user%>
 
 # Startup script for jetty under *nix systems (it works under NT/cygwin too).
 

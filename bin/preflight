@@ -4,6 +4,9 @@ require "yaml"
 require "erb"
 require "fileutils"
 require "etc"
+
+require "preflight/settings"
+
 include FileUtils
 
 def halt(message)
@@ -22,17 +25,11 @@ halt("usage: preflight <project_path>") unless ARGV.length==1 && File.directory?
 @path_to_project = ARGV.shift
 @created = []
 
-config_file = File.join(@path_to_project, "config/preflight.yml")
-halt("#{config_file} not found") unless File.exists?(config_file)
-@preflight_config = YAML.load(ERB.new(File.read(config_file)).result)
+@settings = Preflight::Settings.load_from_project(@path_to_project)
 
-@app_root = @preflight_config['app_root'] || File.expand_path(@path_to_project)
-@app_user = @preflight_config['app_user'] || Etc.getpwuid(File.stat(@app_root).uid).name
-@java_options = @preflight_config['java_options'] || "-Xmx2048m -client"
-@https_port = @preflight_config['https_port'] || "4443"
-@http_port = @preflight_config['http_port'] || "9080"
+puts @settings.inspect
 
-unless @preflight_config['jruby']
+unless @settings.jruby?
   halt(%{Your config/preflight.yml must at least contain a pointer to the desired jruby-complete jar.
 Ex:
 
@@ -46,10 +43,10 @@ script_start_time = Time.now
 @jruby_jar_file  = "vendor/jruby.jar"
 @preflight_dir   = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 
-@gem_home = "file:" + File.expand_path(File.join(@app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
+@gem_home = "file:" + File.expand_path(File.join(@settings.app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
 @gem_path = @gem_home + ":vendor/bundler_gem"
 
-@java_dash_jar = "GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" java #{@java_options} -jar"
+@java_dash_jar = "GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" java #{@settings.java_options} -jar"
 
 def jruby!(cmd)
   x! "cd #{@path_to_project} && #{@java_dash_jar} #{@jruby_jar_file} #{cmd}"
@@ -108,7 +105,7 @@ end
 def install_jetty(vendor_dir)
   jetty_dir = File.join(vendor_dir, "jetty")
   Dir["#{vendor_dir}/jett*"].to_a.each{|f|rm_rf(f)}
-  download @preflight_config['jetty'], File.join(vendor_dir, "jetty.zip")
+  download @settings.jetty, File.join(vendor_dir, "jetty.zip")
   unzip File.join(vendor_dir, "jetty.zip"), vendor_dir, '*/start.jar */lib/jetty*.jar */lib/servl*.jar'
   rm File.join(vendor_dir, "jetty.zip")
   mv Dir["#{vendor_dir}/jetty*"].to_a.first, jetty_dir
@@ -118,7 +115,7 @@ def install_jetty(vendor_dir)
 end
 
 def install_jruby_rack_jar(vendor_dir)
-  download @preflight_config['jruby-rack'], File.join(vendor_dir, "jruby-rack.jar")
+  download @settings.jruby_rack, File.join(vendor_dir, "jruby-rack.jar")
 end
 
 def write_jetty_xml(jetty_dir)
@@ -151,11 +148,11 @@ vendor_dir = File.join(@path_to_project, "vendor")
 
 mkdir_p File.join(@path_to_project, "bin")
 mkdir_p File.join(@path_to_project, "vendor")
-download @preflight_config['jruby'], File.join(@path_to_project, @jruby_jar_file)
+download @settings.jruby, File.join(@path_to_project, @jruby_jar_file)
 create_ruby_script ruby_script_path
 create_rake_script rake_script_path
 bundle_install if File.exists?(File.join(@path_to_project, "Gemfile.lock"))
-if @preflight_config['jetty']
+if @settings.jetty?
   jetty_dir = install_jetty(vendor_dir)
   install_jruby_rack_jar vendor_dir #raise if jar not found
   write_jetty_xml jetty_dir
