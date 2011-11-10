@@ -38,7 +38,7 @@ describe "preflight - basics" do
           
           Asserting all this in one test to optimize for test running time.} do
       absolute_script_path = File.expand_path("spec/sample_projects/no_dependencies/bin/rake project_info another_task load_path gem_path boom")
-      rake_result = x("cd /tmp && #{absolute_script_path} project_info")
+      rake_result = x("cd /tmp && #{absolute_script_path} --trace")
 
       rake_result[:stdout].should include("PWD=#{File.expand_path("spec/sample_projects/no_dependencies")}")
       rake_result[:stdout].should include("Hi, I'm the no_dependencies project")
