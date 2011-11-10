@@ -25,10 +25,12 @@ describe "preflight - bundler and gems" do
       rake_result = x("spec/sample_projects/has_gems_via_bundler/bin/rake load_path_with_bundler")
       load_path_elements = rake_result[:stdout].split("\n").select{|line|line =~ /^--/}
       load_path_elements.length.should >= 3
-      load_path_elements.each do |element|
-        element = element.sub("-- ", "")
-        (element =~ /META-INF\/jruby\.home/ || element =~ /vendor\/bundler_gem/ || element =~ /^\.$/ || element =~ /vendor\/bundle\//).should >= 0
-      end
+      invalid_load_path_elements = 
+        load_path_elements.reject do |element|
+          element = element.sub("-- ", "")
+          (element =~ /META-INF\/jruby\.home/ || element =~ /vendor\/bundler_gem/ || element =~ /^\.$/ || element =~ /vendor\/bundle\//)
+        end
+      invalid_load_path_elements.should == []
     end
 
     it "can be used from a script fed to jruby." do
