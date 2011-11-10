@@ -1,12 +1,12 @@
 require "spec_helper"
 
 describe "preflight - basics" do
-  before(:all) do 
+  before(:all) do
     reset
     @result = x!("bin/preflight spec/sample_projects/no_dependencies")
   end
-  after(:all) do 
-    reset 
+  after(:all) do
+    reset
   end
 
   it "will put the jruby jar under vendor" do
@@ -30,12 +30,12 @@ describe "preflight - basics" do
   end
 
   describe "makes a rake script that" do
-    it %{ - runs from any directory (properly cd's) 
+    it %{ - runs from any directory (properly cd's)
           - the ruby used is indeed jruby
           - allows you to execute several tasks in a row
           - shows the trace of a rake failure
           - nails the GEM_PATH to within the jar so we don't go 'accidentally' loading gems and such from another ruby env, the result of which is insanity.
-          
+
           Asserting all this in one test to optimize for test running time.} do
       absolute_script_path = File.expand_path("spec/sample_projects/no_dependencies/bin/rake project_info another_task load_path gem_path boom")
       rake_result = x("cd /tmp && #{absolute_script_path} --trace")
@@ -45,7 +45,7 @@ describe "preflight - basics" do
       rake_result[:stdout].should include("RUBY_PLATFORM=java")
       rake_result[:stdout].should include("jruby.jar!/META-INF")
       rake_result[:stdout].should include("You ran another task")
-                                         
+
       rake_result[:stderr].should include("BOOM")
       rake_result[:stderr].should include("xxx")
       rake_result[:stderr].should include("yyy")
@@ -66,5 +66,5 @@ describe "preflight - basics" do
         (element =~ /META-INF\/jruby\.home/ || element =~ /vendor\/bundler_gem/).should >= 0
       end
     end
-  end  
+  end
 end

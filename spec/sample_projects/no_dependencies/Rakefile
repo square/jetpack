@@ -1,6 +1,6 @@
 task :project_info do
   require "fileutils"
-  
+
   puts "Hi, I'm the no_dependencies project"
   puts "RUBY_PLATFORM=#{RUBY_PLATFORM}"
   puts "LOAD_PATH=#{$LOAD_PATH.join("\n")}"

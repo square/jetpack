@@ -27,10 +27,10 @@ describe "preflight - web start" do
 
   it "runs" do
     run_app
-    
+
     #HTTP 4443 - intended to be proxied to from something listening on 443
     x!("curl https://localhost:10443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
-    
+
     #HTTP 9080 - intended for internal health checking
     x!("curl http://localhost:10080/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
   end

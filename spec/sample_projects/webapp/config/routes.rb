@@ -1,6 +1,6 @@
 Foo::Application.routes.draw do
   match 'hello' => 'application#hello'
-  
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

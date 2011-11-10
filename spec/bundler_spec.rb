@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "preflight - bundler and gems" do  
+describe "preflight - bundler and gems" do
 
   before(:all) do
     reset
@@ -9,11 +9,11 @@ describe "preflight - bundler and gems" do
     x!("bin/preflight spec/sample_projects/has_gems_via_bundler")
   end
 
-  after(:all) do 
+  after(:all) do
     rm_rf("spec/sample_projects/has_gems_via_bundler/vendor/bundle")
     rm_rf("spec/sample_projects/has_gems_via_bundler/vendor/bundler_gem")
   end
-  
+
   describe "presence of the library" do
     it "installed bundler into vendor/bundler_gem." do
       files = Dir["spec/sample_projects/has_gems_via_bundler/vendor/bundler_gem/**/*.rb"].to_a.map{|f|File.basename(f)}

@@ -125,7 +125,7 @@ end
 
 def write_jetty_xml(jetty_dir)
   jetty_xml_contents = ERB.new(File.read(File.join(@preflight_dir, "web/jetty.xml.erb"))).result(binding)
-  
+
   mkdir_p File.join(jetty_dir, "etc")
   write_script(File.join(jetty_dir, "etc/jetty.xml"), jetty_xml_contents)
 end
