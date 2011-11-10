@@ -65,7 +65,7 @@ end
 
 def install_bundler_gem
   unless File.exists?("#{@path_to_project}/vendor/bundler_gem")
-    jruby! " -S gem install #{@preflight_dir}/gems/bundler-1.0.18.gem -i vendor/bundler_gem --no-rdoc --no-ri"
+    jruby! " -S gem install #{@preflight_dir}/gems/bundler-1.1.rc.gem -i vendor/bundler_gem --no-rdoc --no-ri"
   end
   @created << "#{@path_to_project}/vendor/bundler_gem"
 end
