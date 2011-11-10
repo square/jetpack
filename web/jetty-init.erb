@@ -9,7 +9,7 @@ WEB_ROOT=<%=@settings.app_root%>
 
 JAVA_OPTIONS="<%=@settings.java_options%>"
 JETTY_HOME=<%=@settings.app_root%>/vendor/jetty
-JETTY_RUN=<%=@settings.app_root%>/vendor/jetty/run
+JETTY_RUN=<%=File.dirname(@settings.jetty_pid_path)%>
 JETTY_PORT=4443
 JETTY_LOGS=$WEB_ROOT/log
 # Avoid unnecessary su call if we're already the app user

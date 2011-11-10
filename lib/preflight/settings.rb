@@ -35,6 +35,10 @@ module Preflight
       respond_to?(:jetty)
     end
     
+    def jetty_pid_path
+      File.join(app_root, "/vendor/jetty/run/jetty.pid")
+    end
+    
     def inspect
       self.class.name + ":\n" + @keys.map{|k|"  #{k.ljust(20)} = #{send(k.to_sym)}"}.join("\n") + "\n"
     end
