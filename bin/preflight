@@ -5,6 +5,9 @@ require "erb"
 require "fileutils"
 require "etc"
 
+local_lib_dir = File.join(File.dirname(__FILE__), "../lib")
+$LOAD_PATH << local_lib_dir if File.directory?(local_lib_dir)
+
 require "preflight/settings"
 
 include FileUtils
