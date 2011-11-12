@@ -118,7 +118,13 @@ load Gem.bin_path('rake', 'rake', version)
   write_script rake_script_path, \
 %{#!/bin/bash
 
-export PATH=$(dirname $0):$PATH
+set -e
+
+export FULL_DIR=`cd $(dirname $0); pwd`
+export PATH=$FULL_DIR:$PATH
+export GEM_HOME="#{@gem_home}"
+export GEM_PATH="#{@gem_path}"
+
 cd $(dirname $0)/..
 
 bin/.rake_runner "$@"

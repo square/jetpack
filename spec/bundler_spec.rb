@@ -25,7 +25,7 @@ describe "preflight - bundler and gems" do
       rake_result = x("spec/sample_projects/has_gems_via_bundler/bin/rake load_path_with_bundler")
       load_path_elements = rake_result[:stdout].split("\n").select{|line|line =~ /^--/}
       load_path_elements.length.should >= 3
-      invalid_load_path_elements = 
+      invalid_load_path_elements =
         load_path_elements.reject do |element|
           element = element.sub("-- ", "")
           (element =~ /META-INF\/jruby\.home/ || element =~ /vendor\/bundler_gem/ || element =~ /^\.$/ || element =~ /vendor\/bundle\//)
@@ -36,7 +36,7 @@ describe "preflight - bundler and gems" do
     it "can be used from a script fed to jruby." do
       rake_result = x(%{spec/sample_projects/has_gems_via_bundler/bin/ruby -e 'require \\"rubygems\\"; require \\"bundler\\"; puts Bundler::VERSION'})
       rake_result[:stderr].should     == ""
-      rake_result[:stdout].should include("1.0.18")
+      rake_result[:stdout].should include("1.1.rc")
       rake_result[:exitstatus].should == 0
     end
   end
