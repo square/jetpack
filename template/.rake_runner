@@ -17,7 +17,7 @@ if ARGV.first =~ /^_(.*)_$/ and Gem::Version.correct? $1 then
 end
 
 if File.exists?(File.expand_path('../../Gemfile.lock', __FILE__))
-  rake_line = `grep rake Gemfile.lock | head -1`.chomp
+  rake_line = `grep -E "rake \\\\([0-9]" Gemfile.lock`.chomp
   if rake_line.length > 0
     rake_line =~ /\((.*)\)/
     $LOAD_PATH.unshift(File.expand_path("vendor/bundle/jruby/1.8/gems/rake-#{$1}/lib"))
