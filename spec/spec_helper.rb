@@ -38,6 +38,7 @@ def reset
   Dir["spec/sample_projects/*/vendor/jetty"].each{|d|FileUtils.rm_rf(d)}
   Dir["spec/sample_projects/*/vendor/cache"].each{|d|FileUtils.rm_rf(d)}
   Dir["spec/sample_projects/*/WEB-INF"].each{|d|FileUtils.rm_rf(d)}
+  Dir["spec/sample_projects/*/log"].each{|d|FileUtils.rm_rf(d)}
 end
 
 RSpec.configure do |config|
