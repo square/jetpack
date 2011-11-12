@@ -127,7 +127,7 @@ export GEM_PATH="#{@gem_path}"
 
 cd $(dirname $0)/..
 
-bin/.rake_runner "$@"
+.rake_runner "$@"
 }
 
 

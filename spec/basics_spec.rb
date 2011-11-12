@@ -41,6 +41,7 @@ describe "preflight - basics" do
       rake_result = x("cd /tmp && #{absolute_script_path} --trace")
 
       rake_result[:stdout].should include("PWD=#{File.expand_path("spec/sample_projects/no_dependencies")}")
+      rake_result[:stdout].should include("DOLLAR_ZERO=#{File.expand_path('spec/sample_projects/no_dependencies/bin/.rake_runner')}")
       rake_result[:stdout].should include("Hi, I'm the no_dependencies project")
       rake_result[:stdout].should include("RUBY_PLATFORM=java")
       rake_result[:stdout].should include("jruby.jar!/META-INF")
