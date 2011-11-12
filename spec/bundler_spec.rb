@@ -65,4 +65,11 @@ describe "preflight - bundler and gems" do
       rake_result[:exitstatus].should == 0
     end
   end
+
+  describe "bin/rake" do
+    it "uses rake version specified in Gemfile" do
+      rake_result = x("spec/sample_projects/has_gems_via_bundler/bin/rake rake_version")
+      rake_result[:stdout].lines.to_a.last.chomp.should == "0.9.2.2"
+    end
+  end
 end

@@ -12,3 +12,7 @@ task :load_path_with_bundler do
   require "bundler"
   $LOAD_PATH.each{|path|puts "-- #{path}"}
 end
+
+task :rake_version do
+  puts RAKEVERSION
+end
