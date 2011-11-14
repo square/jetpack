@@ -1,6 +1,7 @@
 require "fileutils"
 require "open4"
 require "net/http"
+require "stringio"
 
 include FileUtils
 
