@@ -8,7 +8,6 @@ describe "preflight - web start" do
 
   after(:all) do
     reset
-    system("pkill -9 java")
   end
 
   it "will unzip jetty under vendor if jetty.xml is present" do
@@ -26,24 +25,24 @@ describe "preflight - web start" do
   end
 
   it "runs" do
-    run_app
+    pid_to_kill = run_app
 
     #HTTP 4443 - intended to be proxied to from something listening on 443
     x!("curl https://localhost:10443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
 
     #HTTP 9080 - intended for internal health checking
     x!("curl http://localhost:10080/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
+
+    system("kill -9 #{pid_to_kill}")
   end
 
   def run_app
-    Thread.new do
-      system("cd spec/sample_projects/webapp/vendor/jetty && RAILS_ENV=development java -jar start.jar") || raise("app start failed")
-    end
+    jetty_pid = Process.spawn({'RAILS_ENV' => 'development'}, 'java', '-jar', 'start.jar', {:chdir => "spec/sample_projects/webapp/vendor/jetty"})
     start_time = Time.now
     loop do
       begin
         TCPSocket.open("localhost", 10443)
-        return
+        return jetty_pid
       rescue Errno::ECONNREFUSED
         raise "it's taking too long to start the server, something might be wrong" if Time.now - start_time > 60
         sleep 0.1
