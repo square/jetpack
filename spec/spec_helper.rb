@@ -24,7 +24,7 @@ deps = %w(jetty-hightide-7.4.5.v20110725.zip jruby-complete-1.6.4.jar jruby-rack
 mkdir_p "spec/local_mirror" unless File.directory?("spec/local_mirror")
 deps.each do |file|
   target = File.join("spec", "local_mirror", file)
-  x! "curl --silent --show-error -o target http://mirrors.squareup.com/distfiles/#{file}" unless File.exists?(target)
+  x! "curl --silent --show-error -o #{target} http://mirrors.squareup.com/distfiles/#{file}" unless File.exists?(target)
 end
 
 def reset
