@@ -28,10 +28,10 @@ describe "preflight - web start" do
   it "respects the maximun number of concurrent connections" do
     jetty_xml = "spec/sample_projects/webapp/vendor/jetty/etc/jetty.xml"
     settings = YAML.load_file("spec/sample_projects/webapp/config/preflight.yml")
-    max_threads_setting = "<Set name=\"maxThreads\">#{settings['max_concurrent_connections']}</Set>"
+    max_threads_setting = /<Set name="maxThreads">#{settings["max_concurrent_connections"]}<\/Set>/
 
     File.exists?(jetty_xml).should == true
-    File.readlines(hetty_xml).grep(max_thread_setting).should == true
+    File.readlines(jetty_xml).grep(max_threads_setting).should_not be_empty
   end
 
   it "runs" do
