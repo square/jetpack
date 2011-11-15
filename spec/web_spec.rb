@@ -1,4 +1,5 @@
 require "spec_helper"
+require "yaml"
 
 describe "preflight - web start" do
   before(:all) do
@@ -22,6 +23,15 @@ describe "preflight - web start" do
     File.exists?("spec/sample_projects/webapp/WEB-INF/web.xml").should == true
     File.exists?("spec/sample_projects/webapp/vendor/jetty/etc/jetty.xml").should == true
     File.exists?("spec/sample_projects/webapp/vendor/jetty/jetty-init").should == true
+  end
+
+  it "respects the maximun number of concurrent connections" do
+    jetty_xml = "spec/sample_projects/webapp/vendor/jetty/etc/jetty.xml"
+    settings = YAML.load_file("spec/sample_projects/webapp/config/preflight.yml")
+    max_threads_setting = "<Set name=\"maxThreads\">#{settings['max_concurrent_connections']}</Set>"
+
+    File.exists?(jetty_xml).should == true
+    File.readlines(hetty_xml).grep(max_thread_setting).should == true
   end
 
   it "runs" do
