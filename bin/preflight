@@ -127,6 +127,8 @@ def install_jetty(vendor_dir)
   mv Dir["#{vendor_dir}/jetty*"].to_a.first, jetty_dir
   cp File.join(@preflight_dir, "web/start.ini"), jetty_dir
   mkdir "#{jetty_dir}/run"
+  rm_rf "#{jetty_dir}/webapps"
+  mkdir_p "#{jetty_dir}/webapps"
   jetty_dir
 end
 
