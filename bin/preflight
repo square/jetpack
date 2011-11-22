@@ -63,7 +63,7 @@ def download(url, local_file)
   x! "curl --silent --show-error -o #{local_file} #{url}"
 end
 
-def unzip(file, directory, pattern)
+def unzip(file, directory, pattern="")
   x! "unzip -qq #{file} #{pattern} -d #{directory}"
 end
 
@@ -122,11 +122,11 @@ def install_jetty(vendor_dir)
   jetty_dir = File.join(vendor_dir, "jetty")
   Dir["#{vendor_dir}/jett*"].to_a.each{|f|rm_rf(f)}
   download @settings.jetty, File.join(vendor_dir, "jetty.zip")
-  unzip File.join(vendor_dir, "jetty.zip"), vendor_dir, '*/start.jar */lib/jetty*.jar */lib/servl*.jar'
+  unzip File.join(vendor_dir, "jetty.zip"), vendor_dir
   rm File.join(vendor_dir, "jetty.zip")
   mv Dir["#{vendor_dir}/jetty*"].to_a.first, jetty_dir
+  cp File.join(@preflight_dir, "web/start.ini"), jetty_dir
   mkdir "#{jetty_dir}/run"
-  Dir[File.join(jetty_dir, "**/async-rest*")].each{|d|rm_rf(d)}
   jetty_dir
 end
 
