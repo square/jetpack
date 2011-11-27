@@ -22,6 +22,11 @@ describe "preflight - web start" do
   it "places config files" do
     File.exists?("spec/sample_projects/webapp/WEB-INF/web.xml").should == true
     File.exists?("spec/sample_projects/webapp/vendor/jetty/etc/jetty.xml").should == true
+    File.exists?("spec/sample_projects/webapp/vendor/jetty/etc/custom-project-specific-jetty.xml").should == true
+    File.exists?("spec/sample_projects/webapp/vendor/jetty/etc/template-from-project-jetty.xml").should == true
+    File.exists?("spec/sample_projects/webapp/vendor/jetty/etc/template-from-project-jetty.xml.erb").should == false
+    File.read("spec/sample_projects/webapp/vendor/jetty/etc/template-from-project-jetty.xml").should 
+      include("<Arg>10443</Arg>")
     File.exists?("spec/sample_projects/webapp/vendor/jetty/jetty-init").should == true
   end
 

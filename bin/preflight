@@ -82,7 +82,7 @@ def bundle_install
 end
 
 def write_script(script_path, contents)
-  File.open(script_path, "w+") { |f| f << contents }
+  File.open(script_path, "w") { |f| f << contents }
   chmod 0700, script_path
   @created << script_path
 end
@@ -148,10 +148,26 @@ def copy_fake_keystore(jetty_dir)
   cp File.join(@preflight_dir, "spec/keys/fake.p12"), File.join(jetty_dir, "etc")
 end
 
+def copy_config_jetty_dir_into(jetty_dir)
+  config_jetty_dir_in_project = File.join(@path_to_project, "config/jetty")
+  return unless File.directory?(config_jetty_dir_in_project)
+  x! "cp -R #{config_jetty_dir_in_project}/* #{jetty_dir}/"
+end
+
+def process_template_files_in(dir)
+  Dir[File.join(dir, "**/*.erb")].each do |erb_file|
+    evaled_contents = ERB.new(File.read(erb_file)).result(binding)
+    target_file = erb_file.sub(/\.erb$/, "")
+    File.open(target_file, "w"){|f|f<<evaled_contents}
+    File.new(target_file).chmod(File.stat(erb_file).mode)
+    rm erb_file
+  end
+end
+
 def create_web_inf_subdirectory
   mkdir_p File.join(@path_to_project, "WEB-INF")
   web_xml_contents = ERB.new(File.read(File.join(@preflight_dir, "web/web.xml.erb"))).result(binding)
-  File.open(File.join(@path_to_project, "WEB-INF/web.xml"), "w+"){|f|f<<web_xml_contents}
+  File.open(File.join(@path_to_project, "WEB-INF/web.xml"), "w"){|f|f<<web_xml_contents}
 end
 
 def write_jetty_init_script(jetty_dir)
@@ -177,8 +193,12 @@ if @settings.jetty?
   install_jruby_rack_jar vendor_dir #raise if jar not found
   write_jetty_xml jetty_dir
   copy_fake_keystore jetty_dir
+  copy_config_jetty_dir_into jetty_dir
+  
   write_jetty_init_script jetty_dir #raise if app_user isn't specified in config
-
+  
+  process_template_files_in jetty_dir
+  
   create_web_inf_subdirectory
 end
 
