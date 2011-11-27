@@ -154,9 +154,10 @@ def process_template_files_in(dir)
 end
 
 def create_web_inf_subdirectory
-  mkdir_p File.join(@path_to_project, "WEB-INF")
-  web_xml_contents = ERB.new(File.read(File.join(@preflight_dir, "web/web.xml.erb"))).result(binding)
-  File.open(File.join(@path_to_project, "WEB-INF/web.xml"), "w"){|f|f<<web_xml_contents}
+  web_inf_dir = File.join(@path_to_project, "WEB-INF")
+  mkdir_p web_inf_dir
+  x! "cp -R #{File.join(@preflight_dir, "web_inf_files")}/* #{web_inf_dir}/"
+  process_template_files_in web_inf_dir
 end
 
 ruby_script_path = File.join(@path_to_project, "bin/ruby")
