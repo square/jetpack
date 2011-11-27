@@ -125,10 +125,7 @@ def install_jetty(vendor_dir)
   unzip File.join(vendor_dir, "jetty.zip"), vendor_dir
   rm File.join(vendor_dir, "jetty.zip")
   mv Dir["#{vendor_dir}/jetty*"].to_a.first, jetty_dir
-  cp File.join(@preflight_dir, "web/start.ini"), jetty_dir
-  mkdir "#{jetty_dir}/run"
   rm_rf "#{jetty_dir}/webapps"
-  mkdir_p "#{jetty_dir}/webapps"
   jetty_dir
 end
 
@@ -136,19 +133,11 @@ def install_jruby_rack_jar(vendor_dir)
   download @settings.jruby_rack, File.join(vendor_dir, "jruby-rack.jar")
 end
 
-def write_jetty_xml(jetty_dir)
-  jetty_xml_contents = ERB.new(File.read(File.join(@preflight_dir, "web/jetty.xml.erb"))).result(binding)
-
-  mkdir_p File.join(jetty_dir, "etc")
-  write_script(File.join(jetty_dir, "etc/jetty.xml"), jetty_xml_contents)
+def copy_jetty_files_dir_into(jetty_dir)
+  x! "cp -R #{File.join(@preflight_dir, "jetty_files")}/* #{jetty_dir}/"
 end
 
-def copy_fake_keystore(jetty_dir)
-  mkdir_p File.join(jetty_dir, "etc")
-  cp File.join(@preflight_dir, "spec/keys/fake.p12"), File.join(jetty_dir, "etc")
-end
-
-def copy_config_jetty_dir_into(jetty_dir)
+def copy_project_config_jetty_dir_into(jetty_dir)
   config_jetty_dir_in_project = File.join(@path_to_project, "config/jetty")
   return unless File.directory?(config_jetty_dir_in_project)
   x! "cp -R #{config_jetty_dir_in_project}/* #{jetty_dir}/"
@@ -170,11 +159,6 @@ def create_web_inf_subdirectory
   File.open(File.join(@path_to_project, "WEB-INF/web.xml"), "w"){|f|f<<web_xml_contents}
 end
 
-def write_jetty_init_script(jetty_dir)
-  jetty_init_contents = ERB.new(File.read(File.join(@preflight_dir, "web/jetty-init.erb"))).result(binding)
-  write_script(File.join(jetty_dir, "jetty-init"), jetty_init_contents)
-end
-
 ruby_script_path = File.join(@path_to_project, "bin/ruby")
 jruby_script_path = File.join(@path_to_project, "bin/jruby")
 rake_script_path = File.join(@path_to_project, "bin/rake")
@@ -191,12 +175,9 @@ bundle_install if File.exists?(File.join(@path_to_project, "Gemfile.lock"))
 if @settings.jetty?
   jetty_dir = install_jetty(vendor_dir)
   install_jruby_rack_jar vendor_dir #raise if jar not found
-  write_jetty_xml jetty_dir
-  copy_fake_keystore jetty_dir
-  copy_config_jetty_dir_into jetty_dir
-  
-  write_jetty_init_script jetty_dir #raise if app_user isn't specified in config
-  
+
+  copy_jetty_files_dir_into jetty_dir
+  copy_project_config_jetty_dir_into jetty_dir  
   process_template_files_in jetty_dir
   
   create_web_inf_subdirectory
