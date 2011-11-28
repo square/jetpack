@@ -144,7 +144,7 @@ if @settings.jetty?
   overlay_files File.join(@preflight_dir, "web_inf_files"), web_inf_dir
 end
 
-config_preflight_dir_in_project = File.join(@path_to_project, "config/preflight")
+config_preflight_dir_in_project = File.join(@path_to_project, "config/preflight_files")
 if File.directory?(config_preflight_dir_in_project)
   overlay_files config_preflight_dir_in_project, @path_to_project
 end
