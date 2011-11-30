@@ -12,7 +12,7 @@ Deploys need to be performed using MRI. Here's a sample section of a project Gem
       #other MRI 1.9 gems
 
       gem 'capistrano'
-      gem 'liftoff', :git => "git@git.squareup.com:square/liftoff.git", :branch => "master"
+      gem 'preflight', :git => "git@git.squareup.com:square/preflight.git", :branch => "master"
     end
 
 
