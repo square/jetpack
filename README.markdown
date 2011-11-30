@@ -4,6 +4,18 @@ Tracker project: [https://www.pivotaltracker.com/projects/395833](https://www.pi
 
 Preflight, as much as possible, uses standard ruby-world tools to prepare the app for deployment, and then presents the ruby app to jetty as a Java EE web application.
 
+Install:
+
+Deploys need to be performed using MRI. Here's a sample section of a project Gemfile:
+
+    platforms :ruby_19 do
+      #other MRI 1.9 gems
+
+      gem 'capistrano'
+      gem 'liftoff', :git => "git@git.squareup.com:square/liftoff.git", :branch => "master"
+    end
+
+
 == 1. Create config/preflight.yml in your project ==
 
 Example config/preflight.yml:
