@@ -11,7 +11,6 @@ Deploys need to be performed using MRI. Here's a sample section of a project Gem
     platforms :ruby_19 do
       #other MRI 1.9 gems
 
-      gem 'capistrano'
       gem 'preflight', :git => "git@git.squareup.com:square/preflight.git", :branch => "master"
     end
 
