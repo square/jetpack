@@ -8,6 +8,10 @@ require "etc"
 local_lib_dir = File.join(File.dirname(__FILE__), "../lib")
 $LOAD_PATH << local_lib_dir if File.directory?(local_lib_dir)
 
+#Env vars like RUBYOPT get passed on to jruby.
+#Cleanse the environment of these vars so that jruby is not affected.
+ENV.delete_if{|k,v|k =~ /(^RUBY|^BUNDLE)/}
+
 require "preflight/settings"
 
 include FileUtils
