@@ -110,9 +110,9 @@ def process_template_files(erb_files)
 end
 
 def note_files_created(dir)
-  before = Dir["#{dir}/**/*"]
+  before = Dir["#{dir}/**/{*,.*}"]
   yield
-  after = Dir["#{dir}/**/*"]
+  after = Dir["#{dir}/**/{*,.*}"]
   after - before
 end
 
