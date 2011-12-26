@@ -10,7 +10,6 @@ WEB_ROOT=<%=@settings.app_root%>
 JAVA_OPTIONS="<%=@settings.java_options%>"
 JETTY_HOME=<%=@settings.app_root%>/vendor/jetty
 JETTY_RUN=<%=File.dirname(@settings.jetty_pid_path)%>
-JETTY_PORT=4443
 JETTY_LOGS=$WEB_ROOT/log
 # Avoid unnecessary su call if we're already the app user
 test `whoami` != <%=@settings.app_user%> && JETTY_USER=<%=@settings.app_user%>
@@ -70,8 +69,9 @@ test `whoami` != <%=@settings.app_user%> && JETTY_USER=<%=@settings.app_user%>
 #   set to this value for use by configure.xml files, f.e.:
 #
 #    <Arg><SystemProperty name="jetty.home" default="."/>/webapps/jetty.war</Arg>
-#
-# JETTY_PORT
+# 
+# !!! PREFLIGHT NOTE: JETTY_PORT IS IGNORED !!!
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ JETTY_PORT
 #   Override the default port for Jetty servers. If not set then the
 #   default value in the xml configuration file will be used. The java
 #   system property "jetty.port" will be set to this value for use in
@@ -103,7 +103,7 @@ START_STOP_DAEMON=1
 
 usage()
 {
-    echo "Usage: $0 {start|stop|run|restart|check|supervise} [ CONFIGS ... ] "
+    echo "Usage: $0 {start|stop|run|restart|check|supervise}"
     exit 1
 }
 
@@ -151,7 +151,7 @@ ensure_rails_env_set()
 ACTION=$1
 shift
 ARGS="$*"
-CONFIGS=""
+# CONFIGS="" -- Not used in preflight. Rely on start.ini instead.
 NO_START=0
 
 ##################################################
@@ -266,38 +266,38 @@ then
    exit 1
 fi
 
-
+# !!!!!!! Not used in preflight. Rely on start.ini instead. !!!!!!!!!!
 ###########################################################
 # Get the list of config.xml files from the command line.
 ###########################################################
-if [ ! -z "$ARGS" ]
-then
-  for A in $ARGS
-  do
-    if [ -f $A ]
-    then
-       CONF="$A"
-    elif [ -f $JETTY_HOME/etc/$A ]
-    then
-       CONF="$JETTY_HOME/etc/$A"
-    elif [ -f ${A}.xml ]
-    then
-       CONF="${A}.xml"
-    elif [ -f $JETTY_HOME/etc/${A}.xml ]
-    then
-       CONF="$JETTY_HOME/etc/${A}.xml"
-    else
-       echo "** ERROR: Cannot find configuration '$A' specified in the command line."
-       exit 1
-    fi
-    if [ ! -r $CONF ]
-    then
-       echo "** ERROR: Cannot read configuration '$A' specified in the command line."
-       exit 1
-    fi
-    CONFIGS="$CONFIGS $CONF"
-  done
-fi
+#if [ ! -z "$ARGS" ]
+#then
+#  for A in $ARGS
+#  do
+#    if [ -f $A ]
+#    then
+#       CONF="$A"
+#    elif [ -f $JETTY_HOME/etc/$A ]
+#    then
+#       CONF="$JETTY_HOME/etc/$A"
+#    elif [ -f ${A}.xml ]
+#    then
+#       CONF="${A}.xml"
+#    elif [ -f $JETTY_HOME/etc/${A}.xml ]
+#    then
+#       CONF="$JETTY_HOME/etc/${A}.xml"
+#    else
+#       echo "** ERROR: Cannot find configuration '$A' specified in the command line."
+#       exit 1
+#    fi
+#    if [ ! -r $CONF ]
+#    then
+#       echo "** ERROR: Cannot read configuration '$A' specified in the command line."
+#       exit 1
+#    fi
+#    CONFIGS="$CONFIGS $CONF"
+#  done
+#fi
 
 
 ##################################################
@@ -316,57 +316,58 @@ then
   fi
 fi
 
+# -- Not used in preflight. Rely on start.ini instead.
 ##################################################
 # Read the configuration file if one exists
 ##################################################
-CONFIG_LINES=
-if [ -z "$CONFIGS" ] && [ -f "$JETTY_CONF" ] && [ -r "$JETTY_CONF" ]
-then
-  CONFIG_LINES=`cat $JETTY_CONF | grep -v "^[:space:]*#" | tr "\n" " "`
-fi
+#CONFIG_LINES=
+#if [ -z "$CONFIGS" ] && [ -f "$JETTY_CONF" ] && [ -r "$JETTY_CONF" ]
+#then
+#  CONFIG_LINES=`cat $JETTY_CONF | grep -v "^[:space:]*#" | tr "\n" " "`
+#fi
 
 ##################################################
 # Get the list of config.xml files from jetty.conf
 ##################################################
-if [ ! -z "${CONFIG_LINES}" ]
-then
-  for CONF in ${CONFIG_LINES}
-  do
-    if [ ! -r "$CONF" ]
-    then
-      echo "** WARNING: Cannot read '$CONF' specified in '$JETTY_CONF'"
-    elif [ -f "$CONF" ]
-    then
-      # assume it's a configure.xml file
-      CONFIGS="$CONFIGS $CONF"
-    elif [ -d "$CONF" ]
-    then
-      # assume it's a directory with configure.xml files
-      # for example: /etc/jetty.d/
-      # sort the files before adding them to the list of CONFIGS
-      XML_FILES=`ls ${CONF}/*.xml | sort | tr "\n" " "`
-      for FILE in ${XML_FILES}
-      do
-         if [ -r "$FILE" ] && [ -f "$FILE" ]
-         then
-            CONFIGS="$CONFIGS $FILE"
-         else
-           echo "** WARNING: Cannot read '$FILE' specified in '$JETTY_CONF'"
-         fi
-      done
-    else
-      echo "** WARNING: Don''t know what to do with '$CONF' specified in '$JETTY_CONF'"
-    fi
-  done
-fi
+#if [ ! -z "${CONFIG_LINES}" ]
+#then
+#  for CONF in ${CONFIG_LINES}
+#  do
+#    if [ ! -r "$CONF" ]
+#    then
+#      echo "** WARNING: Cannot read '$CONF' specified in '$JETTY_CONF'"
+#    elif [ -f "$CONF" ]
+#    then
+#      # assume it's a configure.xml file
+#      CONFIGS="$CONFIGS $CONF"
+#    elif [ -d "$CONF" ]
+#    then
+#      # assume it's a directory with configure.xml files
+#      # for example: /etc/jetty.d/
+#      # sort the files before adding them to the list of CONFIGS
+#      XML_FILES=`ls ${CONF}/*.xml | sort | tr "\n" " "`
+#      for FILE in ${XML_FILES}
+#      do
+#         if [ -r "$FILE" ] && [ -f "$FILE" ]
+#         then
+#            CONFIGS="$CONFIGS $FILE"
+#         else
+#           echo "** WARNING: Cannot read '$FILE' specified in '$JETTY_CONF'"
+#         fi
+#      done
+#    else
+#      echo "** WARNING: Don''t know what to do with '$CONF' specified in '$JETTY_CONF'"
+#    fi
+#  done
+#fi
 
 #####################################################
 # Run the standard server if there's nothing else to run
 #####################################################
-if [ -z "$CONFIGS" ]
-then
-    CONFIGS="${JETTY_HOME}/etc/jetty.xml"
-fi
+#if [ -z "$CONFIGS" ]
+#then
+#    CONFIGS="${JETTY_HOME}/etc/jetty.xml"
+#fi
 
 
 #####################################################
@@ -462,10 +463,17 @@ JAVA_VERSION=`expr "$($JAVA -version 2>&1 | head -1)" : '.*1\.\([0-9]\)'`
 #####################################################
 # See if JETTY_PORT is defined
 #####################################################
-if [ "$JETTY_PORT" != "" ]
-then
-  JAVA_OPTIONS="$JAVA_OPTIONS -Djetty.port=$JETTY_PORT"
-fi
+#
+# PREFLIGHT NOTE:
+# We do not allow the init script to set jetty.port 
+# when using preflight, as preflight sets this via 
+# jetty.xml, and setting port in both places causes
+# jetty to attempt to bind to the same port.
+#
+#if [ "$JETTY_PORT" != "" ]
+#then
+#  JAVA_OPTIONS="$JAVA_OPTIONS -Djetty.port=$JETTY_PORT"
+#fi
 
 #####################################################
 # See if JETTY_LOGS is defined
@@ -498,7 +506,7 @@ JAVA_OPTIONS="$JAVA_OPTIONS -Djetty.home=$JETTY_HOME -Djava.io.tmpdir=$TMP"
 JETTY_START=$JETTY_HOME/start.jar
 [ ! -f $JETTY_START ] && JETTY_START=$JETTY_HOME/lib/start.jar
 
-RUN_ARGS="$JAVA_OPTIONS -jar $JETTY_START $JETTY_ARGS $CONFIGS"
+RUN_ARGS="$JAVA_OPTIONS -jar $JETTY_START $JETTY_ARGS"
 RUN_CMD="$JAVA $RUN_ARGS"
 
 #####################################################
@@ -664,9 +672,9 @@ case "$ACTION" in
         echo "JETTY_ARGS     =  $JETTY_ARGS"
         echo "JETTY_RUN      =  $JETTY_RUN"
         echo "JETTY_PID      =  $JETTY_PID"
-        echo "JETTY_PORT     =  $JETTY_PORT"
+        #echo "JETTY_PORT     =  $JETTY_PORT"  JETTY_PORT is not used with preflight, see note elsewhere in this file.
         echo "JETTY_LOGS     =  $JETTY_LOGS"
-        echo "CONFIGS        =  $CONFIGS"
+        #echo "CONFIGS        =  $CONFIGS"   -- Not used with preflight. Rely on start.ini instead.
         echo "RAILS_ENV      =  $RAILS_ENV"
         echo "JAVA_OPTIONS   =  $JAVA_OPTIONS"
         echo "JAVA           =  $JAVA"

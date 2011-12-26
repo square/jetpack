@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 
+#think: bash-like ruby
+
 require "yaml"
 require "erb"
 require "fileutils"
@@ -63,7 +65,7 @@ def download(url, local_file)
   x! "curl --silent --show-error -o #{local_file} #{url}"
 end
 
-def unzip(file, directory, pattern)
+def unzip(file, directory, pattern="")
   x! "unzip -qq #{file} #{pattern} -d #{directory}"
 end
 
@@ -71,62 +73,22 @@ def install_bundler_gem
   unless File.exists?("#{@path_to_project}/vendor/bundler_gem")
     jruby! " -S gem install #{@preflight_dir}/gems/bundler-1.1.rc.gem -i vendor/bundler_gem --no-rdoc --no-ri"
   end
-  @created << "#{@path_to_project}/vendor/bundler_gem"
 end
 
 def bundle_install
   install_bundler_gem
   #Do the equivalent of 'bundle' in code so we know exactly which bundler we're using.
   jruby! " -e 'require \"rubygems\"; require \"bundler\"; require \"bundler/cli\"; cli=Bundler::CLI.new; cli.options={:deployment=>true}; cli.install'"
-  @created << "#{@path_to_project}/vendor/bundle"
-end
-
-def write_script(script_path, contents)
-  File.open(script_path, "w+") { |f| f << contents }
-  chmod 0700, script_path
-  @created << script_path
-end
-
-def create_ruby_script(ruby_script_path)
-  write_script ruby_script_path, \
-%{#!/bin/bash
-
-cd $(dirname $0)/..
-#{@java_dash_jar} #{@jruby_jar_file} "$@"
-}
-end
-
-def create_rake_script(rake_script_path)
-  write_script File.join(File.dirname(rake_script_path), ".rake_runner"),
-    File.open(File.expand_path("../../template/.rake_runner", __FILE__)).read
-
-  write_script rake_script_path, \
-%{#!/bin/bash
-
-set -e
-
-export FULL_DIR=`cd $(dirname $0); pwd`
-export PATH=$FULL_DIR:$PATH
-export GEM_HOME="#{@gem_home}"
-export GEM_PATH="#{@gem_path}"
-
-cd $(dirname $0)/..
-
-.rake_runner "$@"
-}
-
-
 end
 
 def install_jetty(vendor_dir)
   jetty_dir = File.join(vendor_dir, "jetty")
   Dir["#{vendor_dir}/jett*"].to_a.each{|f|rm_rf(f)}
   download @settings.jetty, File.join(vendor_dir, "jetty.zip")
-  unzip File.join(vendor_dir, "jetty.zip"), vendor_dir, '*/start.jar */lib/jetty*.jar */lib/servl*.jar'
+  unzip File.join(vendor_dir, "jetty.zip"), vendor_dir
   rm File.join(vendor_dir, "jetty.zip")
   mv Dir["#{vendor_dir}/jetty*"].to_a.first, jetty_dir
-  mkdir "#{jetty_dir}/run"
-  Dir[File.join(jetty_dir, "**/async-rest*")].each{|d|rm_rf(d)}
+  rm_rf "#{jetty_dir}/webapps"
   jetty_dir
 end
 
@@ -134,55 +96,62 @@ def install_jruby_rack_jar(vendor_dir)
   download @settings.jruby_rack, File.join(vendor_dir, "jruby-rack.jar")
 end
 
-def write_jetty_xml(jetty_dir)
-  jetty_xml_contents = ERB.new(File.read(File.join(@preflight_dir, "web/jetty.xml.erb"))).result(binding)
+def process_template_files(erb_files)
+  erb_files.each do |erb_file|
+    evaled_contents = ERB.new(File.read(erb_file)).result(binding)
+    target_file = erb_file.sub(/\.erb$/, "")
+    File.open(target_file, "w"){|f|f<<evaled_contents}
+    File.new(target_file).chmod(File.stat(erb_file).mode)
+    rm erb_file
 
-  mkdir_p File.join(jetty_dir, "etc")
-  write_script(File.join(jetty_dir, "etc/jetty.xml"), jetty_xml_contents)
+    @created.delete(erb_file)
+    @created << target_file
+  end
 end
 
-def copy_fake_keystore(jetty_dir)
-  mkdir_p File.join(jetty_dir, "etc")
-  cp File.join(@preflight_dir, "spec/keys/fake.p12"), File.join(jetty_dir, "etc")
+def note_files_created(dir)
+  before = Dir["#{dir}/**/*"]
+  yield
+  after = Dir["#{dir}/**/*"]
+  after - before
 end
 
-def create_web_inf_subdirectory
-  mkdir_p File.join(@path_to_project, "WEB-INF")
-  web_xml_contents = ERB.new(File.read(File.join(@preflight_dir, "web/web.xml.erb"))).result(binding)
-  File.open(File.join(@path_to_project, "WEB-INF/web.xml"), "w+"){|f|f<<web_xml_contents}
+def overlay_files(overlay_dir, target_dir)
+  files_created = note_files_created(target_dir) do
+    x! "cp -pR #{overlay_dir}/ #{target_dir}/"
+  end
+
+  process_template_files files_created.select{|f|f=~/\.erb$/}
 end
 
-def write_jetty_init_script(jetty_dir)
-  jetty_init_contents = ERB.new(File.read(File.join(@preflight_dir, "web/jetty-init.erb"))).result(binding)
-  write_script(File.join(jetty_dir, "jetty-init"), jetty_init_contents)
-end
-
-ruby_script_path = File.join(@path_to_project, "bin/ruby")
-jruby_script_path = File.join(@path_to_project, "bin/jruby")
-rake_script_path = File.join(@path_to_project, "bin/rake")
 bin_dir = File.join(@path_to_project, "bin")
-vendor_dir = File.join(@path_to_project, "vendor")
+mkdir_p bin_dir
+overlay_files File.join(@preflight_dir, "bin_files"), bin_dir
 
-mkdir_p File.join(@path_to_project, "bin")
-mkdir_p File.join(@path_to_project, "vendor")
+vendor_dir = File.join(@path_to_project, "vendor")
+mkdir_p vendor_dir
 download @settings.jruby, File.join(@path_to_project, @jruby_jar_file)
-create_ruby_script ruby_script_path
-ln_sf File.expand_path(ruby_script_path), jruby_script_path
-create_rake_script rake_script_path
+
 bundle_install if File.exists?(File.join(@path_to_project, "Gemfile.lock"))
 if @settings.jetty?
   jetty_dir = install_jetty(vendor_dir)
   install_jruby_rack_jar vendor_dir #raise if jar not found
-  write_jetty_xml jetty_dir
-  copy_fake_keystore jetty_dir
-  write_jetty_init_script jetty_dir #raise if app_user isn't specified in config
 
-  create_web_inf_subdirectory
+  overlay_files File.join(@preflight_dir, "jetty_files"), File.join(@path_to_project, "vendor/jetty")
+
+  web_inf_dir = File.join(@path_to_project, "WEB-INF")
+  mkdir_p web_inf_dir
+  overlay_files File.join(@preflight_dir, "web_inf_files"), web_inf_dir
+end
+
+config_preflight_dir_in_project = File.join(@path_to_project, "config/preflight_files")
+if File.directory?(config_preflight_dir_in_project)
+  overlay_files config_preflight_dir_in_project, @path_to_project
 end
 
 elapsed_seconds = (Time.now - script_start_time).to_i
 
 puts %{Created:
-  #{@created.join("\n  ")}
+  #{@created.uniq.sort.join("\n  ")}
 Time: #{elapsed_seconds} s
 }
