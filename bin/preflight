@@ -56,9 +56,10 @@ script_start_time = Time.now
 @gem_path = @gem_home + ":vendor/bundler_gem"
 
 @java_dash_jar = "PATH=$PATH:$(dirname $0) GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" java #{@settings.java_options} -jar"
+@jruby_opts = @settings.ruby_version.to_s == '1.9' ? '--1.9' : ''
 
 def jruby!(cmd)
-  x! "cd #{@path_to_project} && #{@java_dash_jar} #{@jruby_jar_file} #{cmd}"
+  x! "cd #{@path_to_project} && #{@java_dash_jar} #{@jruby_jar_file} #{@jruby_opts} #{cmd}"
 end
 
 def download(url, local_file)
@@ -110,9 +111,9 @@ def process_template_files(erb_files)
 end
 
 def note_files_created(dir)
-  before = Dir["#{dir}/**/*"]
+  before = Dir["#{dir}/**/{*,.*}"]
   yield
-  after = Dir["#{dir}/**/*"]
+  after = Dir["#{dir}/**/{*,.*}"]
   after - before
 end
 
