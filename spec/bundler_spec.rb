@@ -72,4 +72,13 @@ describe "preflight - bundler and gems" do
       rake_result[:stdout].lines.to_a.last.chomp.should == "0.9.2.2"
     end
   end
+
+  describe "Gemfile.lock that does not contain PLATFORM=java" do
+    it "fails the preflight run and prints out a message about what must be done" do
+      rake_result = x("bin/preflight spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock")
+      rake_result[:stderr].should include("ERROR: Your Gemfile.lock does not contain PLATFORM java. You must re-generate your Gemfile.lock using jruby. (Otherwise, jruby-specific gems would not be installed by bundler.)")
+      rake_result[:exitstatus].should == 1
+    end
+  end
+
 end

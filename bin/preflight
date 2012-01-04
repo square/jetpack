@@ -76,7 +76,18 @@ def install_bundler_gem
   end
 end
 
+def check_gemfile_lock_file_for_platform_java
+  gemfile_lock_lines = File.read(File.join(@path_to_project, "Gemfile.lock")).split("\n")
+  platforms_start = gemfile_lock_lines.find_index{|line|line == "PLATFORMS"} + 1
+  platforms_count = gemfile_lock_lines.slice(platforms_start..-1).find_index{|line|line == ""} - 1
+  platforms = gemfile_lock_lines.slice(platforms_start..(platforms_start+platforms_count)).map{|platform_str|platform_str.strip}
+  unless platforms.include?("java")
+    halt "ERROR: Your Gemfile.lock does not contain PLATFORM java. You must re-generate your Gemfile.lock using jruby. (Otherwise, jruby-specific gems would not be installed by bundler.)"
+  end
+end
+
 def bundle_install
+  check_gemfile_lock_file_for_platform_java
   install_bundler_gem
   #Do the equivalent of 'bundle' in code so we know exactly which bundler we're using.
   jruby! " -e 'require \"rubygems\"; require \"bundler\"; require \"bundler/cli\"; cli=Bundler::CLI.new; cli.options={:deployment=>true}; cli.install'"
