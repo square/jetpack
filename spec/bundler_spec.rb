@@ -72,4 +72,49 @@ describe "preflight - bundler and gems" do
       rake_result[:stdout].lines.to_a.last.chomp.should == "0.9.2.2"
     end
   end
+
+  describe "Gemfile.lock that does not contain PLATFORM=java" do
+    before do
+      File.open("spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock/Gemfile.lock", "w") do |f|
+        f << %{GEM
+  remote: http://rubygems.org/
+  specs:
+    rake (0.9.2.2)
+    spruz (0.2.13)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rake (~> 0.9.2)
+  spruz
+}
+      end
+    end
+
+    after do
+      FileUtils.rm_f("spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock/Gemfile.lock")
+    end
+
+    it "regenerates the Gemfile.lock and prints out a warning message" do
+      File.read("spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock/Gemfile.lock").should_not include("java")
+      preflight_result = x("bin/preflight spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock")
+      preflight_result[:stderr].gsub("\n", "").squeeze(" ").should include(%{
+        WARNING: Your Gemfile.lock does not contain PLATFORM java.
+        Automtically regenerating and overwriting Gemfile.lock using jruby
+         - because otherwise, jruby-specific gems would not be installed by bundler.
+        To make this message go away, you must re-generate your Gemfile.lock using jruby.
+      }.gsub("\n", "").squeeze(" "))
+      preflight_result[:exitstatus].should == 0
+
+      File.read("spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock/Gemfile.lock").should include("java")
+
+      rake_result = x("cd spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock && " +
+                      %{bin/ruby -e 'require \\"rubygems\\"; require \\"bundler\\"; Bundler.require; puts Spruz::Bijection.name'})
+      rake_result[:stderr].should     == ""
+      rake_result[:stdout].should     == "Spruz::Bijection\n"
+      rake_result[:exitstatus].should == 0
+    end
+  end
+
 end
