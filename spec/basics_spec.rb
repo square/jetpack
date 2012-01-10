@@ -1,4 +1,5 @@
 require "spec_helper"
+require "tmpdir"
 
 describe "preflight - basics" do
   before(:all) do
@@ -26,6 +27,16 @@ describe "preflight - basics" do
       rake_result[:stderr].should     == ""
       rake_result[:stdout].should include("ruby")
       rake_result[:exitstatus].should == 0
+    end
+
+    it 'does not spawn a new PID' do
+      # This makes writing daemon wrappers around bin/ruby much easier.
+      Dir.mktmpdir do |dir|
+        tmpfile = File.join(dir, 'test_pid')
+        pid = Process.spawn("spec/sample_projects/no_dependencies/bin/ruby -e 'puts Process.pid'", STDOUT=>tmpfile)
+        Process.wait(pid)
+        pid.should == File.read(tmpfile).chomp.to_i
+      end
     end
   end
 
