@@ -2,9 +2,11 @@ require "spec_helper"
 require "tmpdir"
 
 describe "preflight - basics" do
+  let(:project) { "spec/sample_projects/no_dependencies" }
+
   before(:all) do
     reset
-    @result = x!("bin/preflight spec/sample_projects/no_dependencies")
+    @result = x!("bin/preflight #{project}")
   end
   after(:all) do
     reset
@@ -13,17 +15,17 @@ describe "preflight - basics" do
   it "will put the jruby jar under vendor" do
     @result[:stderr].should == ""
     @result[:exitstatus].should == 0
-    File.exists?("spec/sample_projects/no_dependencies/vendor/jruby.jar").should == true
+    File.exists?("#{project}/vendor/jruby.jar").should == true
   end
 
   it "creates a rake script" do
-    @result[:stdout].should include("spec/sample_projects/no_dependencies/bin/rake\n")
-    File.exists?("spec/sample_projects/no_dependencies/bin/rake").should == true
+    @result[:stdout].should include("#{project}/bin/rake\n")
+    File.exists?("#{project}/bin/rake").should == true
   end
 
   describe "creates a ruby script that" do
     it "allows you to execute using the jruby jar." do
-      rake_result = x(%{spec/sample_projects/no_dependencies/bin/ruby --version})
+      rake_result = x(%{#{project}/bin/ruby --version})
       rake_result[:stderr].should     == ""
       rake_result[:stdout].should include("ruby")
       rake_result[:exitstatus].should == 0
@@ -33,7 +35,7 @@ describe "preflight - basics" do
       # This makes writing daemon wrappers around bin/ruby much easier.
       Dir.mktmpdir do |dir|
         tmpfile = File.join(dir, 'test_pid')
-        pid = Process.spawn("spec/sample_projects/no_dependencies/bin/ruby -e 'puts Process.pid'", STDOUT=>tmpfile)
+        pid = Process.spawn("#{project}/bin/ruby -e 'puts Process.pid'", STDOUT=>tmpfile)
         Process.wait(pid)
         pid.should == File.read(tmpfile).chomp.to_i
       end
@@ -48,11 +50,11 @@ describe "preflight - basics" do
           - nails the GEM_PATH to within the jar so we don't go 'accidentally' loading gems and such from another ruby env, the result of which is insanity.
 
           Asserting all this in one test to optimize for test running time.} do
-      absolute_script_path = File.expand_path("spec/sample_projects/no_dependencies/bin/rake project_info another_task load_path gem_path boom")
+      absolute_script_path = File.expand_path("#{project}/bin/rake project_info another_task load_path gem_path boom")
       rake_result = x("cd /tmp && #{absolute_script_path} --trace")
 
-      rake_result[:stdout].should include("PWD=#{File.expand_path("spec/sample_projects/no_dependencies")}")
-      rake_result[:stdout].should include("DOLLAR_ZERO=#{File.expand_path('spec/sample_projects/no_dependencies/bin/.rake_runner')}")
+      rake_result[:stdout].should include("PWD=#{File.expand_path(project)}")
+      rake_result[:stdout].should include("DOLLAR_ZERO=#{File.expand_path("#{project}/bin/.rake_runner")}")
       rake_result[:stdout].should include("Hi, I'm the no_dependencies project")
       rake_result[:stdout].should include("RUBY_PLATFORM=java")
       rake_result[:stdout].should include("jruby.jar!/META-INF")
