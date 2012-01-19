@@ -1,13 +1,13 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name        = "preflight"
+  s.name        = "jetpack"
   s.version     = "0.0.3"
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Steve Conover"]
   s.email       = ["steve@squareup.com"]
-  s.homepage    = "https://git.squareup.com/square/preflight"
-  s.summary     = %q{Preflight prepares your jRuby project for jvm deployment.}
+  s.homepage    = "https://github.com/square/jetpack"
+  s.summary     = %q{Jetpack prepares your jRuby project for jvm deployment.}
 
   s.add_development_dependency "bundler"
 

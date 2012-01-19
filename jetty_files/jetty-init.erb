@@ -70,7 +70,7 @@ test `whoami` != <%=@settings.app_user%> && JETTY_USER=<%=@settings.app_user%>
 #
 #    <Arg><SystemProperty name="jetty.home" default="."/>/webapps/jetty.war</Arg>
 # 
-# !!! PREFLIGHT NOTE: JETTY_PORT IS IGNORED !!!
+# !!! JETPACK NOTE: JETTY_PORT IS IGNORED !!!
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ JETTY_PORT
 #   Override the default port for Jetty servers. If not set then the
 #   default value in the xml configuration file will be used. The java
@@ -464,7 +464,7 @@ JAVA_VERSION=`expr "$($JAVA -version 2>&1 | head -1)" : '.*1\.\([0-9]\)'`
 # See if JETTY_PORT is defined
 #####################################################
 #
-# PREFLIGHT NOTE:
+# JETPACK NOTE:
 # We do not allow the init script to set jetty.port 
 # when using jetpack, as jetpack sets this via 
 # jetty.xml, and setting port in both places causes
