@@ -23,9 +23,7 @@ Create `config/jetpack.yml` in your project:
 
 Run jetpack:
 
-    gem install jetpack
-
-    jetpack [your project directory]
+    bundle exec jetpack .
 
 Of note, you'll now have:
 
