@@ -4,7 +4,7 @@ Jetpack prepares your JRuby webapp for JVM deployment.
 
 There are already many tools in existence that help developers run JRuby webapps on popular servlet containers, 
 such as [trinidad](https://github.com/trinidad/trinidad), [warbler](https://github.com/jruby/warbler), [mizuno](https://github.com/matadon/mizuno), and [kirk](https://github.com/strobecorp/kirk).
-Jetpack is not fundamentally different from these tools: like thes rest of them it uses the [jruby-rack](https://github.com/jruby/jruby-rack) jar as a foundation. The key differences are stylistic.
+Jetpack is not fundamentally different from these tools: like the rest of them it uses the [jruby-rack](https://github.com/jruby/jruby-rack) jar as a foundation. The key differences are stylistic.
 
 Jetpack does:
 
@@ -20,7 +20,7 @@ Jetpack does not:
 * Force your ruby webapp to load files from a jar or war.
 
 In short, Jetpack creates a little self-contained JRuby/Jetty/vendored-gem world around your ruby project, 
-which you only need transport to a server and fire up using a JRE.
+which you only need to transport to a server and fire up using a JRE.
 
 Jetpack's implementation mainly consists of an [honest, proletarian, bash-like ruby script](https://github.com/square/jetpack/blob/master/bin/jetpack).
 
