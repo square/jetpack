@@ -11,7 +11,7 @@ Jetpack does:
 * Use [Jetty](http://jetty.codehaus.org/jetty/)...
 * ...in all of its out-of-the-box, XML-configuration-file glory.
 * Use bundler to "vendor" all of your gems.
-* Use the [jruby-complete jar](http://jruby.org/download), and provides convenience wrapper scripts (bin/ruby and bin/rake) in your project.
+* Use the [jruby-complete jar](http://jruby.org/download), and provide convenience wrapper scripts (bin/ruby and bin/rake) in your project.
 
 Jetpack does not:
 
