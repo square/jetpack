@@ -1,10 +1,10 @@
 require "spec_helper"
 require "yaml"
 
-describe "preflight - web start" do
+describe "jetpack - web start" do
   before(:all) do
     reset
-    @result = x!("bin/preflight spec/sample_projects/webapp")
+    @result = x!("bin/jetpack spec/sample_projects/webapp")
   end
 
   after(:all) do
@@ -32,7 +32,7 @@ describe "preflight - web start" do
 
   it "respects the maximun number of concurrent connections" do
     jetty_xml = "spec/sample_projects/webapp/vendor/jetty/etc/jetty.xml"
-    settings = YAML.load_file("spec/sample_projects/webapp/config/preflight.yml")
+    settings = YAML.load_file("spec/sample_projects/webapp/config/jetpack.yml")
     max_threads_setting = /<Set name="maxThreads">#{settings["max_concurrent_connections"]}<\/Set>/
 
     File.exists?(jetty_xml).should == true

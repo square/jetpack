@@ -1,19 +1,19 @@
-# Preflight
+# Jetpack
 
-Preflight prepares your (j)ruby project for jvm deployment.
+Jetpack prepares your (j)ruby project for jvm deployment.
 
-Preflight, as much as possible, uses standard ruby-world tools to prepare the app for deployment, and then presents the ruby app to jetty as a Java EE web application.
+Jetpack, as much as possible, uses standard ruby-world tools to prepare the app for deployment, and then presents the ruby app to jetty as a Java EE web application.
 
 ## Install
 
 Deploys need to be performed using MRI. Here is a sample section of a project Gemfile:
 
     platforms :ruby_19 do
-      gem 'preflight'
+      gem 'jetpack'
     end
 
 
-Create `config/preflight.yml` in your project:
+Create `config/jetpack.yml` in your project:
 
     jruby: "http://jruby.org.s3.amazonaws.com/downloads/1.6.5.1/jruby-complete-1.6.5.1.jar"
     jetty: "http://dist.codehaus.org/jetty/jetty-hightide-7.4.5/jetty-hightide-7.4.5.v20110725.zip"
@@ -21,11 +21,11 @@ Create `config/preflight.yml` in your project:
     app_user: "myapp"
     app_root: "/usr/local/myapp/myapp"
 
-Run preflight:
+Run jetpack:
 
-    gem install preflight
+    gem install jetpack
 
-    preflight [your project directory]
+    jetpack [your project directory]
 
 Of note, you'll now have:
 

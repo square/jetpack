@@ -14,7 +14,7 @@ $LOAD_PATH << local_lib_dir if File.directory?(local_lib_dir)
 #Cleanse the environment of these vars so that jruby is not affected.
 ENV.delete_if{|k,v|k =~ /(^RUBY|^BUNDLE)/}
 
-require "preflight/settings"
+require "jetpack/settings"
 
 include FileUtils
 
@@ -29,17 +29,17 @@ def x!(cmd)
 end
 
 
-halt("usage: preflight <project_path>") unless ARGV.length==1 && File.directory?(ARGV[0])
+halt("usage: jetpack <project_path>") unless ARGV.length==1 && File.directory?(ARGV[0])
 
 @path_to_project = ARGV.shift
 @created = []
 
-@settings = Preflight::Settings.load_from_project(@path_to_project)
+@settings = Jetpack::Settings.load_from_project(@path_to_project)
 
 puts @settings.inspect
 
 unless @settings.jruby?
-  halt(%{Your config/preflight.yml must at least contain a pointer to the desired jruby-complete jar.
+  halt(%{Your config/jetpack.yml must at least contain a pointer to the desired jruby-complete jar.
 Ex:
 
 jruby: http://jruby.org.s3.amazonaws.com/downloads/1.6.4/jruby-complete-1.6.4.jar
@@ -50,7 +50,7 @@ end
 script_start_time = Time.now
 
 @jruby_jar_file  = "vendor/jruby.jar"
-@preflight_dir   = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+@jetpack_dir   = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 
 @gem_home = "file:" + File.expand_path(File.join(@settings.app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
 @gem_path = @gem_home + ":vendor/bundler_gem"
@@ -72,7 +72,7 @@ end
 
 def install_bundler_gem
   unless File.exists?("#{@path_to_project}/vendor/bundler_gem")
-    jruby! " -S gem install #{@preflight_dir}/gems/bundler-1.1.rc.gem -i vendor/bundler_gem --no-rdoc --no-ri"
+    jruby! " -S gem install #{@jetpack_dir}/gems/bundler-1.1.rc.gem -i vendor/bundler_gem --no-rdoc --no-ri"
   end
 end
 
@@ -144,7 +144,7 @@ end
 
 bin_dir = File.join(@path_to_project, "bin")
 mkdir_p bin_dir
-overlay_files File.join(@preflight_dir, "bin_files"), bin_dir
+overlay_files File.join(@jetpack_dir, "bin_files"), bin_dir
 
 vendor_dir = File.join(@path_to_project, "vendor")
 mkdir_p vendor_dir
@@ -155,16 +155,16 @@ if @settings.jetty?
   jetty_dir = install_jetty(vendor_dir)
   install_jruby_rack_jar vendor_dir #raise if jar not found
 
-  overlay_files File.join(@preflight_dir, "jetty_files"), File.join(@path_to_project, "vendor/jetty")
+  overlay_files File.join(@jetpack_dir, "jetty_files"), File.join(@path_to_project, "vendor/jetty")
 
   web_inf_dir = File.join(@path_to_project, "WEB-INF")
   mkdir_p web_inf_dir
-  overlay_files File.join(@preflight_dir, "web_inf_files"), web_inf_dir
+  overlay_files File.join(@jetpack_dir, "web_inf_files"), web_inf_dir
 end
 
-config_preflight_dir_in_project = File.join(@path_to_project, "config/preflight_files")
-if File.directory?(config_preflight_dir_in_project)
-  overlay_files config_preflight_dir_in_project, @path_to_project
+config_jetpack_dir_in_project = File.join(@path_to_project, "config/jetpack_files")
+if File.directory?(config_jetpack_dir_in_project)
+  overlay_files config_jetpack_dir_in_project, @path_to_project
 end
 
 elapsed_seconds = (Time.now - script_start_time).to_i

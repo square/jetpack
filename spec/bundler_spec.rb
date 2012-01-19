@@ -1,12 +1,12 @@
 require "spec_helper"
 
-describe "preflight - bundler and gems" do
+describe "jetpack - bundler and gems" do
 
   before(:all) do
     reset
     rm_rf("spec/sample_projects/has_gems_via_bundler/vendor/bundle")
     rm_rf("spec/sample_projects/has_gems_via_bundler/vendor/bundler_gem")
-    x!("bin/preflight spec/sample_projects/has_gems_via_bundler")
+    x!("bin/jetpack spec/sample_projects/has_gems_via_bundler")
   end
 
   after(:all) do
@@ -98,14 +98,14 @@ DEPENDENCIES
 
     it "regenerates the Gemfile.lock and prints out a warning message" do
       File.read("spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock/Gemfile.lock").should_not include("java")
-      preflight_result = x("bin/preflight spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock")
-      preflight_result[:stderr].gsub("\n", "").squeeze(" ").should include(%{
+      jetpack_result = x("bin/jetpack spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock")
+      jetpack_result[:stderr].gsub("\n", "").squeeze(" ").should include(%{
         WARNING: Your Gemfile.lock does not contain PLATFORM java.
         Automtically regenerating and overwriting Gemfile.lock using jruby
          - because otherwise, jruby-specific gems would not be installed by bundler.
         To make this message go away, you must re-generate your Gemfile.lock using jruby.
       }.gsub("\n", "").squeeze(" "))
-      preflight_result[:exitstatus].should == 0
+      jetpack_result[:exitstatus].should == 0
 
       File.read("spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock/Gemfile.lock").should include("java")
 

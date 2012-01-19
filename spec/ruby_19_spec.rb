@@ -1,13 +1,13 @@
 require "spec_helper"
 
-describe "preflight - bundler and gems in 1.9 mode" do
+describe "jetpack - bundler and gems in 1.9 mode" do
   let(:project) { 'has_gems_via_bundler_19' }
 
   before(:all) do
     reset
     rm_rf("spec/sample_projects/#{project}/vendor/bundle")
     rm_rf("spec/sample_projects/#{project}/vendor/bundler_gem")
-    x!("bin/preflight spec/sample_projects/#{project}")
+    x!("bin/jetpack spec/sample_projects/#{project}")
   end
 
   after(:all) do

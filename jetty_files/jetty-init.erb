@@ -151,7 +151,7 @@ ensure_rails_env_set()
 ACTION=$1
 shift
 ARGS="$*"
-# CONFIGS="" -- Not used in preflight. Rely on start.ini instead.
+# CONFIGS="" -- Not used in jetpack. Rely on start.ini instead.
 NO_START=0
 
 ##################################################
@@ -266,7 +266,7 @@ then
    exit 1
 fi
 
-# !!!!!!! Not used in preflight. Rely on start.ini instead. !!!!!!!!!!
+# !!!!!!! Not used in jetpack. Rely on start.ini instead. !!!!!!!!!!
 ###########################################################
 # Get the list of config.xml files from the command line.
 ###########################################################
@@ -316,7 +316,7 @@ then
   fi
 fi
 
-# -- Not used in preflight. Rely on start.ini instead.
+# -- Not used in jetpack. Rely on start.ini instead.
 ##################################################
 # Read the configuration file if one exists
 ##################################################
@@ -466,7 +466,7 @@ JAVA_VERSION=`expr "$($JAVA -version 2>&1 | head -1)" : '.*1\.\([0-9]\)'`
 #
 # PREFLIGHT NOTE:
 # We do not allow the init script to set jetty.port 
-# when using preflight, as preflight sets this via 
+# when using jetpack, as jetpack sets this via 
 # jetty.xml, and setting port in both places causes
 # jetty to attempt to bind to the same port.
 #
@@ -672,9 +672,9 @@ case "$ACTION" in
         echo "JETTY_ARGS     =  $JETTY_ARGS"
         echo "JETTY_RUN      =  $JETTY_RUN"
         echo "JETTY_PID      =  $JETTY_PID"
-        #echo "JETTY_PORT     =  $JETTY_PORT"  JETTY_PORT is not used with preflight, see note elsewhere in this file.
+        #echo "JETTY_PORT     =  $JETTY_PORT"  JETTY_PORT is not used with jetpack, see note elsewhere in this file.
         echo "JETTY_LOGS     =  $JETTY_LOGS"
-        #echo "CONFIGS        =  $CONFIGS"   -- Not used with preflight. Rely on start.ini instead.
+        #echo "CONFIGS        =  $CONFIGS"   -- Not used with jetpack. Rely on start.ini instead.
         echo "RAILS_ENV      =  $RAILS_ENV"
         echo "JAVA_OPTIONS   =  $JAVA_OPTIONS"
         echo "JAVA           =  $JAVA"

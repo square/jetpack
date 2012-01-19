@@ -2,10 +2,10 @@ require "ostruct"
 require "yaml"
 require "erb"
 
-module Preflight
+module Jetpack
   class Settings < OpenStruct
     def self.load_from_project(project_dir)
-      config_file = File.join(project_dir, "config/preflight.yml")
+      config_file = File.join(project_dir, "config/jetpack.yml")
       raise("#{config_file} not found") unless File.exists?(config_file)
       yaml = YAML.load(ERB.new(File.read(config_file)).result)
       Settings.new(project_dir, yaml)

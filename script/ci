@@ -48,7 +48,7 @@ function prepare_and_run() {
 }
 
 function tag_green_build() {
-  tag_name="ci-preflight-master/latest"
+  tag_name="ci-jetpack-master/latest"
   git tag -f -m "tagging green build" "$tag_name"
   git push -f origin "$tag_name"
 }

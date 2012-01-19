@@ -1,12 +1,12 @@
 require "spec_helper"
 require "tmpdir"
 
-describe "preflight - basics" do
+describe "jetpack - basics" do
   let(:project) { "spec/sample_projects/no_dependencies" }
 
   before(:all) do
     reset
-    @result = x!("bin/preflight #{project}")
+    @result = x!("bin/jetpack #{project}")
   end
   after(:all) do
     reset
