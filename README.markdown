@@ -2,24 +2,23 @@
 
 Jetpack prepares your JRuby webapp for JVM deployment.
 
-There are already many tools in existence that help developers run JRuby webapps on popular servlet containers, 
+There are already many tools in existence that help developers run JRuby webapps on popular servlet containers,
 such as [trinidad](https://github.com/trinidad/trinidad), [warbler](https://github.com/jruby/warbler), [mizuno](https://github.com/matadon/mizuno), and [kirk](https://github.com/strobecorp/kirk).
 Jetpack is not fundamentally different from these tools: like the rest of them it uses the [jruby-rack](https://github.com/jruby/jruby-rack) jar as a foundation. The key differences are stylistic.
 
-Jetpack does:
+Jetpack:
 
-* Use [Jetty](http://jetty.codehaus.org/jetty/)...
-* ...in all of its out-of-the-box, XML-configuration-file glory.
-* Use bundler to "vendor" all of your gems.
-* Use the [jruby-complete jar](http://jruby.org/download), and provide convenience wrapper scripts (bin/ruby and bin/rake) in your project.
+* Uses [Jetty](http://jetty.codehaus.org/jetty/)... in all of its
+  out-of-the-box, XML-configuration-file glory.
+* Uses bundler to "vendor" all of your gems.
+* Uses the [jruby-complete jar](http://jruby.org/download), and provides
+  convenience wrapper scripts (`bin/ruby` and `bin/rake`) in your project.
+* Does not attempt to run Jetty in a ruby-first, embedded manner.
+* Does not assume JRuby is already installed in your server environment (a
+  basic JRE will do just fine).
+* Does not force your ruby webapp to load files from a jar or war.
 
-Jetpack does not:
-
-* Attempt to run Jetty in a ruby-first, embedded manner.
-* Assume JRuby is already installed in your server environment (a basic JRE will do just fine).
-* Force your ruby webapp to load files from a jar or war.
-
-In short, Jetpack creates a little self-contained JRuby/Jetty/vendored-gem world around your ruby project, 
+In short, Jetpack creates a little self-contained JRuby/Jetty/vendored-gem world around your ruby project,
 which you only need to transport to a server and fire up using a JRE.
 
 Jetpack's implementation mainly consists of an [honest, proletarian, bash-like ruby script](https://github.com/square/jetpack/blob/master/bin/jetpack).
