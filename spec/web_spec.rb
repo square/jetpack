@@ -26,7 +26,7 @@ describe "jetpack - web start" do
     File.exists?("spec/sample_projects/webapp/vendor/jetty/etc/template-from-project-jetty.xml").should == true
     File.exists?("spec/sample_projects/webapp/vendor/jetty/etc/template-from-project-jetty.xml.erb").should == false
     File.read("spec/sample_projects/webapp/vendor/jetty/etc/template-from-project-jetty.xml").should 
-      include("<Arg>10443</Arg>")
+      include("<Arg>9443</Arg>")
     File.exists?("spec/sample_projects/webapp/vendor/jetty/jetty-init").should == true
   end
 
@@ -42,11 +42,11 @@ describe "jetpack - web start" do
   it "runs" do
     pid_to_kill = run_app
 
-    #HTTP 4443 - intended to be proxied to from something listening on 443
-    x!("curl https://localhost:10443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
+    #HTTP XX443 - intended to be proxied to from something listening on 443
+    x!("curl https://localhost:9443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
 
-    #HTTP 9080 - intended for internal health checking
-    x!("curl http://localhost:10080/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
+    #HTTP XXX80 - intended for internal health checking
+    x!("curl http://localhost:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
 
     system("kill -9 #{pid_to_kill}")
   end
@@ -56,7 +56,7 @@ describe "jetpack - web start" do
     start_time = Time.now
     loop do
       begin
-        TCPSocket.open("localhost", 10443)
+        TCPSocket.open("localhost", 9443)
         return jetty_pid
       rescue Errno::ECONNREFUSED
         raise "it's taking too long to start the server, something might be wrong" if Time.now - start_time > 60
