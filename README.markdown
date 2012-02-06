@@ -1,6 +1,6 @@
 # Jetpack
 
-Jetpack prepares your JRuby webapp for JVM deployment.
+jet.pack: package your JRuby webapp for Jetty.
 
 There are already many tools in existence that help developers run JRuby webapps on popular servlet containers,
 such as [trinidad](https://github.com/trinidad/trinidad), [warbler](https://github.com/jruby/warbler), [mizuno](https://github.com/matadon/mizuno), and [kirk](https://github.com/strobecorp/kirk).
