@@ -27,7 +27,7 @@ Jetpack's implementation mainly consists of an [honest, proletarian, bash-like r
 
 Deploys need to be performed using MRI. Here is a sample section of a project Gemfile:
 
-    platforms :ruby_19 do
+    platforms :mri do
       gem 'jetpack'
     end
 
@@ -39,6 +39,13 @@ Create `config/jetpack.yml` in your project:
     jruby-rack: "http://repository.codehaus.org/org/jruby/rack/jruby-rack/1.0.10/jruby-rack-1.0.10.jar"
     app_user: "myapp"
     app_root: "/usr/local/myapp/myapp"
+
+Some other settings you might care about:
+     java_options: "-Xmx2048m"
+     http_port: 4080
+     https_port: 4443
+     max_concurrent_connections: 20
+     ruby_version: 1.8
 
 Run jetpack:
 
