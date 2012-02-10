@@ -26,6 +26,7 @@
       </New>
     </Set>
 
+    <% unless @settings.https_port.to_s.empty? %>
     <Call name="addConnector">
       <Arg>
         <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
@@ -37,7 +38,9 @@
         </New>
       </Arg>
     </Call>
+    <% end %>
 
+    <% unless @settings.http_port.to_s.empty? %>
     <Call name="addConnector">
       <Arg>
         <New class="org.eclipse.jetty.server.nio.SelectChannelConnector">
@@ -46,6 +49,7 @@
         </New>
       </Arg>
     </Call>
+    <% end %>
 
     <!-- set the rails.env java system property based on the RAILS_ENV environment variable -->
     <!-- this is used by jruby-rack to set Rails.env -->

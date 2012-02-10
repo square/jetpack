@@ -16,8 +16,8 @@ module Jetpack
       contents["app_root"] =      user_defined_options["app_root"]        || File.expand_path(project_dir)
       contents["app_user"] =      user_defined_options["app_user"]        || Etc.getpwuid(File.stat(contents["app_root"]).uid).name
       contents["java_options"] =  user_defined_options["java_options"]    || "-Xmx2048m"
-      contents["https_port"] =    user_defined_options["https_port"]      || "4443"
-      contents["http_port"] =     user_defined_options["http_port"]       || "4080"
+      contents["https_port"] =    user_defined_options["https_port"]      if user_defined_options.key?("https_port")
+      contents["http_port"] =     user_defined_options["http_port"]       if user_defined_options.key?("http_port")
       contents["jruby_rack"] =    user_defined_options["jruby-rack"]      if user_defined_options.key?("jruby-rack")
       contents["jetty"] =         user_defined_options["jetty"]           if user_defined_options.key?("jetty")
       contents["jruby"] =         user_defined_options["jruby"]           if user_defined_options.key?("jruby")
