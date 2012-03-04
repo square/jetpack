@@ -37,10 +37,6 @@ module Jetpack
       respond_to?(:jetty)
     end
 
-    def rails?
-      File.exists?(File.join(app_root, "config/environment.rb"))
-    end
-
     def jetty_pid_path
       File.join(app_root, "/vendor/jetty/run/jetty.pid")
     end

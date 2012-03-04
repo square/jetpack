@@ -61,18 +61,16 @@
     </Call>
     <% end %>
 
-    <% if @settings.rails? %>
-      <!-- set the rails.env java system property based on the RAILS_ENV environment variable -->
-      <!-- this is used by jruby-rack to set Rails.env -->
-      <Call class="java.lang.System" name="setProperty">
-        <Arg>rails.env</Arg>
-        <Arg>
-          <Call class="java.lang.System" name="getenv">
-            <Arg>RAILS_ENV</Arg>
-          </Call>
-        </Arg>
-      </Call>
-    <% end %>
+    <!-- set the rails.env java system property based on the RAILS_ENV environment variable -->
+    <!-- this is used by jruby-rack to set Rails.env -->
+    <Call class="java.lang.System" name="setProperty">
+      <Arg>rails.env</Arg>
+      <Arg>
+        <Call class="java.lang.System" name="getenv">
+          <Arg>RAILS_ENV</Arg>
+        </Call>
+      </Arg>
+    </Call>
 
     <Set name="handler">
       <New id="Handlers" class="org.eclipse.jetty.server.handler.HandlerCollection">
