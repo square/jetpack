@@ -105,22 +105,38 @@
     <Set name="dumpAfterStart">false</Set>
     <Set name="dumpBeforeStop">false</Set>
 
+    <New id="ServerLog" class="java.io.PrintStream">
+      <Arg>
+        <New class="org.eclipse.jetty.util.RolloverFileOutputStream">
+          <Arg><Property name="jetty.logs" default="./logs"/>../../log/jetty_stderr_yyyy_mm_dd.log</Arg>
+          <Arg type="boolean">false</Arg>
+          <Arg type="int">30</Arg>
+          <Arg><Call class="java.util.TimeZone" name="getTimeZone"><Arg>GMT</Arg></Call></Arg>
+          <Get id="ServerLogName" name="datedFilename"/>
+        </New>
+      </Arg>
+    </New>
+
+    <Call class="org.eclipse.jetty.util.log.Log" name="info"><Arg>Redirecting stderr/stdout to <Ref id="ServerLogName"/></Arg></Call>
+    <Call class="java.lang.System" name="setErr"><Arg><Ref id="ServerLog"/></Arg></Call>
+    <Call class="java.lang.System" name="setOut"><Arg><Ref id="ServerLog"/></Arg></Call>
+
     <Ref id="Handlers">
       <Call name="addHandler">
         <Arg>
           <New id="RequestLog" class="org.eclipse.jetty.server.handler.RequestLogHandler">
-	        <Set name="requestLog">
+            <Set name="requestLog">
               <New id="RequestLogImpl" class="org.eclipse.jetty.server.NCSARequestLog">
-	            <Set name="filename">../../log/jetty_request_yyyy_mm_dd.log</Set>																																																																										
+                <Set name="filename">../../log/jetty_request_yyyy_mm_dd.log</Set>
                 <Set name="filenameDateFormat">yyyy_MM_dd</Set>
-                <Set name="retainDays">90</Set>
+                <Set name="retainDays">30</Set>
                 <Set name="append">true</Set>
                 <Set name="extended">false</Set>
                 <Set name="logCookies">false</Set>
                 <Set name="LogTimeZone">GMT</Set>
-	          </New>
-	        </Set>
-	      </New>
+              </New>
+            </Set>
+          </New>
         </Arg>
       </Call>
     </Ref>
