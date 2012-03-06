@@ -1,4 +1,5 @@
 spec/local_mirror
 pkg
+.rvmrc
 .idea/*
 .DS_STORE

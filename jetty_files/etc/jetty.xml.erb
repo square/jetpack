@@ -108,7 +108,7 @@
     <New id="ServerLog" class="java.io.PrintStream">
       <Arg>
         <New class="org.eclipse.jetty.util.RolloverFileOutputStream">
-          <Arg><Property name="jetty.logs" default="./logs"/>../../log/jetty_stderr_yyyy_mm_dd.log</Arg>
+          <Arg>../../log/jetty_stderr_yyyy_mm_dd.log</Arg>
           <Arg type="boolean">false</Arg>
           <Arg type="int">30</Arg>
           <Arg><Call class="java.util.TimeZone" name="getTimeZone"><Arg>GMT</Arg></Call></Arg>
