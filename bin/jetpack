@@ -160,6 +160,11 @@ if @settings.jetty?
   web_inf_dir = File.join(@path_to_project, "WEB-INF")
   mkdir_p web_inf_dir
   FileUtils.mkdir_p(File.join(@path_to_project, "log"))
+  @listener = if @settings.rails?
+    "org.jruby.rack.rails.RailsServletContextListener"
+  else
+    "org.jruby.rack.RackServletContextListener"
+  end
   overlay_files File.join(@jetpack_dir, "web_inf_files"), web_inf_dir
 end
 

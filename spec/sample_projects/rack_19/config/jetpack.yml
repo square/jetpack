@@ -1,0 +1,6 @@
+jruby: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-complete-1.6.4.jar"
+jetty: "file://<%= File.expand_path('spec/local_mirror') %>/jetty-hightide-7.4.5.v20110725.zip"
+jruby-rack: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-rack-1.0.10.jar"
+http_port: 10080
+https_port: 10443
+ruby_version: 1.9
