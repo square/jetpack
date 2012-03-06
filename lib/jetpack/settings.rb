@@ -23,6 +23,7 @@ module Jetpack
       contents["jruby"] =         user_defined_options["jruby"]           if user_defined_options.key?("jruby")
       contents["max_concurrent_connections"] = user_defined_options["max_concurrent_connections"] || 20
       contents["ruby_version"] =  user_defined_options["ruby_version"]    || "1.8"
+      contents["app_type"]     =  user_defined_options["app_type"]        || "rails"
 
       @keys = contents.keys.sort
 
@@ -38,7 +39,7 @@ module Jetpack
     end
 
     def rails?
-      File.exists?(File.join(app_root, "config/environment.rb"))
+      app_type == 'rails'
     end
 
     def jetty_pid_path
