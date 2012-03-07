@@ -46,6 +46,7 @@ Some other settings you might care about:
      https_port: 4443
      max_concurrent_connections: 20
      ruby_version: 1.8
+     app_type: rack
 
 Run jetpack:
 
