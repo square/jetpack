@@ -36,7 +36,7 @@ describe "jetpack - bundler and gems" do
     it "can be used from a script fed to jruby." do
       rake_result = x(%{spec/sample_projects/has_gems_via_bundler/bin/ruby -e 'require \\"rubygems\\"; require \\"bundler\\"; puts Bundler::VERSION'})
       rake_result[:stderr].should     == ""
-      rake_result[:stdout].should include("1.1.rc")
+      rake_result[:stdout].should include("1.1.0")
       rake_result[:exitstatus].should == 0
     end
   end
