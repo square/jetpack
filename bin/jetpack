@@ -136,7 +136,7 @@ end
 
 def overlay_files(overlay_dir, target_dir)
   files_created = note_files_created(target_dir) do
-    x! "cp -pR #{overlay_dir}/ #{target_dir}/"
+    FileUtils.cp_r(Dir.glob("#{overlay_dir}/**/{*,.[^.]*}"), target_dir, :preserve => true)
   end
 
   process_template_files files_created.select{|f|f=~/\.erb$/}
