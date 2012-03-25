@@ -110,7 +110,7 @@
     <New id="ServerLog" class="java.io.PrintStream">
       <Arg>
         <New class="org.eclipse.jetty.util.RolloverFileOutputStream">
-          <Arg>../../log/jetty_stderr_yyyy_mm_dd.log</Arg>
+          <Arg><Property name="jetty.home"/>/../../log/jetty_stderr_yyyy_mm_dd.log</Arg>
           <Arg type="boolean">false</Arg>
           <Arg type="int">30</Arg>
           <Arg><Call class="java.util.TimeZone" name="getTimeZone"><Arg>GMT</Arg></Call></Arg>
@@ -129,7 +129,7 @@
           <New id="RequestLog" class="org.eclipse.jetty.server.handler.RequestLogHandler">
             <Set name="requestLog">
               <New id="RequestLogImpl" class="org.eclipse.jetty.server.NCSARequestLog">
-                <Set name="filename">../../log/jetty_request_yyyy_mm_dd.log</Set>
+                <Set name="filename"><Property name="jetty.home"/>/../../log/jetty_request_yyyy_mm_dd.log</Set>
                 <Set name="filenameDateFormat">yyyy_MM_dd</Set>
                 <Set name="retainDays">30</Set>
                 <Set name="append">true</Set>
