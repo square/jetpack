@@ -89,9 +89,9 @@
              <!-- Set up the webapp context for the rails root, which is ../../ from here -->
              <New class="org.eclipse.jetty.webapp.WebAppContext">
                <Arg><Ref id="Contexts"/></Arg>
-               <Arg>../../</Arg> <!-- "resource base" -->
+               <Arg><Property name="jetty.home"/>/../../</Arg> <!-- "resource base" -->
                <Arg>/</Arg>      <!-- webapp root -->
-               <Set name="extraClasspath">../jruby.jar;../jruby-rack.jar</Set>
+               <Set name="extraClasspath"><Property name="jetty.home"/>/../jruby.jar;<Property name="jetty.home"/>/../jruby-rack.jar</Set>
                                  <!-- cp that makes ruby+rack work -->
              </New>
            </Item>
