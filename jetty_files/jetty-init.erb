@@ -14,6 +14,10 @@ JETTY_LOGS=$WEB_ROOT/log
 # Avoid unnecessary su call if we're already the app user
 test `whoami` != <%=@settings.app_user%> && JETTY_USER=<%=@settings.app_user%>
 
+<% if @settings.environment %>
+source <%=@settings.environment%>
+<% end %>
+
 # Startup script for jetty under *nix systems (it works under NT/cygwin too).
 
 # To get the service to restart correctly on reboot, uncomment below (3 lines):
