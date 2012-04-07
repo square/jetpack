@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd $(dirname $0)/../vendor/jetty
+
+exec java -jar <%= @settings.java_options %> start.jar
