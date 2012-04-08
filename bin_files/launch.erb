@@ -1,5 +1,17 @@
 #!/bin/bash
 
-cd $(dirname $0)/../vendor/jetty
+# trace back to the original location of the launch file,
+# or else /../vendor/jetty will be relative to a symlink
+# see: http://stackoverflow.com/a/246128
+source="${BASH_SOURCE[0]}"
+while [ -h "$source" ] ; do source="$(readlink "$source")"; done
+this_dir="$( cd -P "$( dirname "$source" )" && pwd )"
 
-exec java -jar <%= @settings.java_options %> start.jar
+cd $this_dir/../vendor/jetty
+
+exec java -jar \
+     -Xmx2048m -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-ReduceInitialCardMarks -Djetty.ssl.keystore=/etc/pki/tls/private/wildcard.squareup.com.p12 \
+     -Djetty.logs=$this_dir/../log \
+     -Djetty.home=$this_dir/../vendor/jetty \
+     -Djava.io.tmpdir=/tmp \
+     start.jar
