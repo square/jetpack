@@ -32,7 +32,8 @@ describe "jetpack - web start" do
 
   it "places a launch script, and includes java_options" do
     File.exists?("spec/sample_projects/webapp/bin/launch").should == true
-    File.read("spec/sample_projects/webapp/bin/launch").should include("java -jar -Xmx256M start.jar")
+    File.read("spec/sample_projects/webapp/bin/launch").should include("java -jar -Xmx256M")
+    File.read("spec/sample_projects/webapp/bin/launch").should include("start.jar")
   end
 
   it "respects the maximun number of concurrent connections, http and https port" do

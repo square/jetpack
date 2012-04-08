@@ -9,8 +9,7 @@ this_dir="$( cd -P "$( dirname "$source" )" && pwd )"
 
 cd $this_dir/../vendor/jetty
 
-exec java -jar \
-     -Xmx2048m -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-ReduceInitialCardMarks -Djetty.ssl.keystore=/etc/pki/tls/private/wildcard.squareup.com.p12 \
+exec java -jar <%= @settings.java_options %> \
      -Djetty.logs=$this_dir/../log \
      -Djetty.home=$this_dir/../vendor/jetty \
      -Djava.io.tmpdir=/tmp \
