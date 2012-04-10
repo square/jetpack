@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# trace back to the original location of the launch file,
+# or else /../vendor/jetty will be relative to a symlink
+# see: http://stackoverflow.com/a/246128
+source="${BASH_SOURCE[0]}"
+while [ -h "$source" ] ; do source="$(readlink "$source")"; done
+this_dir="$( cd -P "$( dirname "$source" )" && pwd )"
+
+cd $this_dir/../vendor/jetty
+
+exec java -jar <%= @settings.java_options %> \
+     -Djetty.logs=$this_dir/../log \
+     -Djetty.home=$this_dir/../vendor/jetty \
+     -Djava.io.tmpdir=/tmp \
+     start.jar

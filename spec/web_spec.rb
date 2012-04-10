@@ -30,6 +30,12 @@ describe "jetpack - web start" do
     File.exists?("spec/sample_projects/webapp/vendor/jetty/jetty-init").should == true
   end
 
+  it "places a launch script, and includes java_options" do
+    File.exists?("spec/sample_projects/webapp/bin/launch").should == true
+    File.read("spec/sample_projects/webapp/bin/launch").should include("java -jar -Xmx256M")
+    File.read("spec/sample_projects/webapp/bin/launch").should include("start.jar")
+  end
+
   it "respects the maximun number of concurrent connections, http and https port" do
     jetty_xml = "spec/sample_projects/webapp/vendor/jetty/etc/jetty.xml"
     settings = YAML.load_file("spec/sample_projects/webapp/config/jetpack.yml")

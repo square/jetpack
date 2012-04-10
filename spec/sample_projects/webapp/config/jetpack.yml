@@ -4,3 +4,4 @@ jruby-rack: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-rack-1.0.
 http_port: 9080
 https_port: 9443
 max_concurrent_connections: 15
+java_options: -Xmx256M
