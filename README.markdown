@@ -41,14 +41,15 @@ Create `config/jetpack.yml` in your project:
     app_root: "/usr/local/myapp/myapp"
 
 Some other settings you might care about:
-     java_options: "-Xmx2048m"
-     http_port: 4080
-     https_port: 4443
-     max_concurrent_connections: 20
-     ruby_version: 1.8
-     app_type: rack
 
-Run jetpack:
+    java_options: "-Xmx2048m"
+    http_port: 4080
+    https_port: 4443
+    max_concurrent_connections: 20
+    ruby_version: 1.8
+    app_type: rack
+
+Run Jetpack:
 
     bundle exec jetpack .
 
