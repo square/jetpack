@@ -37,15 +37,15 @@
     <param-value><%= @gem_path %></param-value>
   </context-param>
 
-  <filter>
-    <filter-name>RackFilter</filter-name>
-    <filter-class>org.jruby.rack.RackFilter</filter-class>
-  </filter>
+  <servlet>
+   <servlet-name>RackServlet</servlet-name>
+   <servlet-class>org.jruby.rack.RackServlet</servlet-class>
+  </servlet>
 
-  <filter-mapping>
-    <filter-name>RackFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+  <servlet-mapping>
+   <servlet-name>RackServlet</servlet-name>
+   <url-pattern>/*</url-pattern>
+  </servlet-mapping>
 
   <listener>
     <listener-class><%= @listener %></listener-class>
