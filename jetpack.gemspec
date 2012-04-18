@@ -2,10 +2,10 @@
 
 Gem::Specification.new do |s|
   s.name        = "jetpack"
-  s.version     = "0.1.0"
+  s.version     = "0.1.1"
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Steve Conover", "Xavier Shay"]
-  s.email       = ["steve@squareup.com", "xavier@squareup.com"]
+  s.authors     = ["Steve Conover", "Xavier Shay", "Taylor Phillips", "Chris Heisterkamp"]
+  s.email       = ["steve@squareup.com", "xavier@squareup.com", "taylor@squareup.com", "cheister@squareup.com"]
   s.homepage    = "https://github.com/square/jetpack"
   s.summary     = %q{Jetpack prepares your jRuby project for jvm deployment.}
 
