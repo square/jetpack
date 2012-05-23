@@ -115,4 +115,27 @@
         </New>
       </Arg>
     </New>
+
+    <Ref id="Handlers">
+      <Call name="addHandler">
+        <Arg>
+          <New id="RequestLog" class="org.eclipse.jetty.server.handler.RequestLogHandler">
+            <Set name="requestLog">
+              <New id="RequestLogImpl" class="org.eclipse.jetty.server.NCSARequestLog">
+                <Set name="filename"><Property name="jetty.home"/>/../../log/jetty_request_yyyy_mm_dd.log</Set>
+                <Set name="filenameDateFormat">yyyy_MM_dd</Set>
+                <Set name="retainDays">30</Set>
+                <Set name="append">true</Set>
+                <Set name="extended">true</Set>
+                <Set name="logLatency">true</Set>
+                <Set name="logDispatch">true</Set>
+                <Set name="preferProxiedForAddress">true</Set>
+                <Set name="logCookies">false</Set>
+                <Set name="LogTimeZone">GMT</Set>
+              </New>
+            </Set>
+          </New>
+        </Arg>
+      </Call>
+    </Ref>
 </Configure>
