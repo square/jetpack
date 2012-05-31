@@ -49,8 +49,8 @@ end
 
 script_start_time = Time.now
 
-@jruby_jar_file  = "vendor/jruby.jar"
-@jetpack_dir   = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+@jruby_jar_file = "vendor/jruby.jar"
+@jetpack_dir = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 
 @gem_home = "file:" + File.expand_path(File.join(@settings.app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
 @gem_path = @gem_home + ":vendor/bundler_gem"
@@ -110,6 +110,16 @@ def install_jetty(vendor_dir)
   jetty_dir
 end
 
+def install_commons_validator(lib_dir)
+  commons_validator_zip = File.join(lib_dir, "commons-validator.zip")
+  download "http://mirrors.axint.net/apache//commons/validator/binaries/commons-validator-1.4.0-bin.zip", commons_validator_zip
+  unzip commons_validator_zip, lib_dir
+  mv File.join(lib_dir, "commons-validator-1.4.0", "commons-validator-1.4.0.jar"), lib_dir
+  rm_rf(File.join(lib_dir, "commons-validator-1.4.0"))
+  rm commons_validator_zip
+  lib_dir
+end
+
 def install_jruby_rack_jar(vendor_dir)
   download @settings.jruby_rack, File.join(vendor_dir, "jruby-rack.jar")
 end
@@ -166,6 +176,20 @@ if @settings.jetty?
     "org.jruby.rack.RackServletContextListener"
   end
   overlay_files File.join(@jetpack_dir, "web_inf_files"), web_inf_dir
+
+  if @settings.jetty_filters?
+    web_inf_lib_dir = File.join(web_inf_dir, "lib")
+    mkdir_p web_inf_lib_dir
+
+    install_commons_validator web_inf_lib_dir
+
+    web_inf_classes_dir = File.join(web_inf_dir, "classes")
+    mkdir_p web_inf_classes_dir
+
+    puts "Compiling Jetty filters"
+    x! "javac -classpath #{vendor_dir}/jetty/lib/servlet-api-3.0.jar -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/IgnoreUnknownHttpMethodsFilter.java"
+    x! "javac -classpath #{vendor_dir}/jetty/lib/servlet-api-3.0.jar:#{web_inf_lib_dir}/commons-validator-1.4.0.jar -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/ValidUrlFilter.java"
+  end
 end
 
 config_jetpack_dir_in_project = File.join(@path_to_project, "config/jetpack_files")

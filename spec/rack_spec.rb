@@ -13,14 +13,15 @@ describe "jetpack - web start for rack app" do
 
   it "runs" do
     pid_to_kill = run_app("spec/sample_projects/rack_19")
+    begin
+      #HTTP 4443 - intended to be proxied to from something listening on 443
+      x!("curl https://localhost:10443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
 
-    #HTTP 4443 - intended to be proxied to from something listening on 443
-    x!("curl https://localhost:10443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
-
-    #HTTP 9080 - intended for internal health checking
-    x!("curl http://localhost:10080/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
-
-    system("kill -9 #{pid_to_kill}")
+      #HTTP 9080 - intended for internal health checking
+      x!("curl http://localhost:10080/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
+    ensure
+      system("kill -9 #{pid_to_kill}")
+    end
   end
 
   def run_app(app)
