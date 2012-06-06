@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = "jetpack"
-  s.version     = "0.1.1"
+  s.version     = "0.1.2"
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Steve Conover", "Xavier Shay", "Taylor Phillips", "Chris Heisterkamp"]
   s.email       = ["steve@squareup.com", "xavier@squareup.com", "taylor@squareup.com", "cheister@squareup.com"]

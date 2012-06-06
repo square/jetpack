@@ -1,6 +1,7 @@
 package jetpack.filter;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -31,12 +32,31 @@ public class ValidUrlFilter implements Filter {
 
         HttpServletRequest req = (HttpServletRequest)request;
 
-        if (urlValidator.isValid(req.getRequestURL().toString())) {
+        String requestUrl = req.getRequestURL().toString();
+        String queryString = req.getQueryString();
+        if (queryString != null) {
+            requestUrl += "?" + queryString;
+        }
+
+        if (urlValidator.isValid(requestUrl) && isValidQuery(queryString)) {
            chain.doFilter(request, response);
         } else {
            HttpServletResponse res = (HttpServletResponse)response;
            res.sendError(HttpServletResponse.SC_BAD_REQUEST);
            return;
         }
+    }
+
+    // commons validator allows any character in query string, we want to restrict it a bit
+    // and not allow unescaped angle brackets for example.
+    private static final String QUERY_REGEX = "^([-\\w:@&=~+,.!*'%$_;\\(\\)]*)$";
+    private static final Pattern QUERY_PATTERN = Pattern.compile(QUERY_REGEX);
+
+    protected boolean isValidQuery(String query) {
+        if (query == null) {
+            return true;
+        }
+
+        return QUERY_PATTERN.matcher(query).matches();
     }
 }
