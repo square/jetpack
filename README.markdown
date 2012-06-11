@@ -48,6 +48,9 @@ Some other settings you might care about:
     max_concurrent_connections: 20
     ruby_version: 1.8
     app_type: rack
+    keystore_type: JCEKS
+    keystore: /data/app/secrets/mystore.jceks
+    keystore_password: sekret
 
 Run Jetpack:
 
