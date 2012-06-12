@@ -20,18 +20,11 @@ def x!(cmd)
   return result
 end
 
+real_tmp_dir = FileUtils.cd("/tmp") { FileUtils.pwd } #because on osx it's really /private/tmp
+TEST_ROOT =  File.absolute_path("#{real_tmp_dir}/jetpack_test_root")
+
 def reset
-  Dir["spec/sample_projects/*/vendor/bundle"].each{|d|FileUtils.rm_rf(d)}
-  Dir["spec/sample_projects/*/vendor/bundler_gem"].each{|d|FileUtils.rm_rf(d)}
-  Dir["spec/sample_projects/*/*.jar"].each{|f|FileUtils.rm(f)}
-  Dir["spec/sample_projects/*/.bundle"].each{|d|FileUtils.rm_rf(d)}
-  Dir["spec/sample_projects/*/bin"].each{|d|FileUtils.rm_rf(d)}
-  Dir["spec/sample_projects/*/vendor/jruby.jar"].each{|f|FileUtils.rm_f(f)}
-  Dir["spec/sample_projects/*/vendor/jruby-rack.jar"].each{|f|FileUtils.rm_f(f)}
-  Dir["spec/sample_projects/*/vendor/jetty"].each{|d|FileUtils.rm_rf(d)}
-  Dir["spec/sample_projects/*/vendor/cache"].each{|d|FileUtils.rm_rf(d)}
-  Dir["spec/sample_projects/*/WEB-INF"].each{|d|FileUtils.rm_rf(d)}
-  Dir["spec/sample_projects/*/log"].each{|d|FileUtils.rm_rf(d)}
+  FileUtils.rm_rf(TEST_ROOT)
 end
 
 RSpec.configure do |config|

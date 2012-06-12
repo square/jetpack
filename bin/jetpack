@@ -28,13 +28,17 @@ def x!(cmd)
   system(cmd) || halt("'#{cmd}' failed.")
 end
 
+halt("usage: jetpack <project_path> <dest path>") unless ARGV.length==2 && File.directory?(ARGV[0])
 
-halt("usage: jetpack <project_path>") unless ARGV.length==1 && File.directory?(ARGV[0])
+src_dir, @dest_dir = ARGV
+rm_rf(@dest_dir)
+dest_parent = @dest_dir.split(File::SEPARATOR).slice(0..-2).join(File::SEPARATOR)
+mkdir_p(dest_parent)
+cp_r(src_dir, @dest_dir)
 
-@path_to_project = ARGV.shift
 @created = []
 
-@settings = Jetpack::Settings.load_from_project(@path_to_project)
+@settings = Jetpack::Settings.load_from_project(@dest_dir)
 
 puts @settings.inspect
 
@@ -59,7 +63,7 @@ script_start_time = Time.now
 @jruby_opts = @settings.ruby_version.to_s == '1.9' ? '--1.9' : ''
 
 def jruby!(cmd)
-  x! "cd #{@path_to_project} && #{@java_dash_jar} #{@jruby_jar_file} #{@jruby_opts} #{cmd}"
+  x! "cd #{@dest_dir} && #{@java_dash_jar} #{@jruby_jar_file} #{@jruby_opts} #{cmd}"
 end
 
 def download(url, local_file)
@@ -71,13 +75,13 @@ def unzip(file, directory, pattern="")
 end
 
 def install_bundler_gem
-  unless File.exists?("#{@path_to_project}/vendor/bundler_gem")
+  unless File.exists?("#{@dest_dir}/vendor/bundler_gem")
     jruby! " -S gem install #{@jetpack_dir}/gems/bundler-1.1.0.gem -i vendor/bundler_gem --no-rdoc --no-ri"
   end
 end
 
 def regenerate_gemfile_lock_if_platform_java_is_not_found
-  gemfile_lock_lines = File.read(File.join(@path_to_project, "Gemfile.lock")).split("\n")
+  gemfile_lock_lines = File.read(File.join(@dest_dir, "Gemfile.lock")).split("\n")
   platforms_start = gemfile_lock_lines.find_index{|line|line == "PLATFORMS"} + 1
   platforms_count = gemfile_lock_lines.slice(platforms_start..-1).find_index{|line|line == ""} - 1
   platforms = gemfile_lock_lines.slice(platforms_start..(platforms_start+platforms_count)).map{|platform_str|platform_str.strip}
@@ -152,24 +156,24 @@ def overlay_files(overlay_dir, target_dir)
   process_template_files files_created.select{|f|f=~/\.erb$/}
 end
 
-bin_dir = File.join(@path_to_project, "bin")
+bin_dir = File.join(@dest_dir, "bin")
 mkdir_p bin_dir
 overlay_files File.join(@jetpack_dir, "bin_files"), bin_dir
 
-vendor_dir = File.join(@path_to_project, "vendor")
+vendor_dir = File.join(@dest_dir, "vendor")
 mkdir_p vendor_dir
-download @settings.jruby, File.join(@path_to_project, @jruby_jar_file)
+download @settings.jruby, File.join(@dest_dir, @jruby_jar_file)
 
-bundle_install if File.exists?(File.join(@path_to_project, "Gemfile.lock"))
+bundle_install if File.exists?(File.join(@dest_dir, "Gemfile.lock"))
 if @settings.jetty?
   jetty_dir = install_jetty(vendor_dir)
   install_jruby_rack_jar vendor_dir #raise if jar not found
 
-  overlay_files File.join(@jetpack_dir, "jetty_files"), File.join(@path_to_project, "vendor/jetty")
+  overlay_files File.join(@jetpack_dir, "jetty_files"), File.join(@dest_dir, "vendor/jetty")
 
-  web_inf_dir = File.join(@path_to_project, "WEB-INF")
+  web_inf_dir = File.join(@dest_dir, "WEB-INF")
   mkdir_p web_inf_dir
-  FileUtils.mkdir_p(File.join(@path_to_project, "log"))
+  FileUtils.mkdir_p(File.join(@dest_dir, "log"))
   @listener = if @settings.rails?
     "org.jruby.rack.rails.RailsServletContextListener"
   else
@@ -192,9 +196,9 @@ if @settings.jetty?
   end
 end
 
-config_jetpack_dir_in_project = File.join(@path_to_project, "config/jetpack_files")
+config_jetpack_dir_in_project = File.join(@dest_dir, "config/jetpack_files")
 if File.directory?(config_jetpack_dir_in_project)
-  overlay_files config_jetpack_dir_in_project, @path_to_project
+  overlay_files config_jetpack_dir_in_project, @dest_dir
 end
 
 elapsed_seconds = (Time.now - script_start_time).to_i
