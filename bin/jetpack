@@ -6,6 +6,7 @@ require "yaml"
 require "erb"
 require "fileutils"
 require "etc"
+require "pathname"
 
 local_lib_dir = File.join(File.dirname(__FILE__), "../lib")
 $LOAD_PATH << local_lib_dir if File.directory?(local_lib_dir)
@@ -31,14 +32,10 @@ end
 halt("usage: jetpack <project_path> <dest path>") unless ARGV.length==2 && File.directory?(ARGV[0])
 
 src_dir, @dest_dir = ARGV
-rm_rf(@dest_dir)
-dest_parent = @dest_dir.split(File::SEPARATOR).slice(0..-2).join(File::SEPARATOR)
-mkdir_p(dest_parent)
-cp_r(src_dir, @dest_dir)
 
 @created = []
 
-@settings = Jetpack::Settings.load_from_project(@dest_dir)
+@settings = Jetpack::Settings.load_from_project(src_dir)
 
 puts @settings.inspect
 
@@ -156,6 +153,13 @@ def overlay_files(overlay_dir, target_dir)
   process_template_files files_created.select{|f|f=~/\.erb$/}
 end
 
+def dest_dir_files
+  base_path = Pathname.new(@dest_dir)
+  files = Dir["#{@dest_dir}/**/{*,.*}"].map{|f|Pathname.new(f).relative_path_from(base_path).to_s}
+  files.sort.uniq - ["..", "."]
+end
+
+project_files = dest_dir_files
 bin_dir = File.join(@dest_dir, "bin")
 mkdir_p bin_dir
 overlay_files File.join(@jetpack_dir, "bin_files"), bin_dir
@@ -199,6 +203,11 @@ end
 config_jetpack_dir_in_project = File.join(@dest_dir, "config/jetpack_files")
 if File.directory?(config_jetpack_dir_in_project)
   overlay_files config_jetpack_dir_in_project, @dest_dir
+end
+
+jetpack_created_files = dest_dir_files - project_files
+File.open(File.join(@dest_dir, ".jetpack-generated"), "w") do |f| 
+  f.puts jetpack_created_files.sort.join("\n")
 end
 
 elapsed_seconds = (Time.now - script_start_time).to_i
