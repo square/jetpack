@@ -52,7 +52,7 @@ describe "jetpack - web start" do
   end
 
   it "runs" do
-    pid_to_kill = run_app
+    pid_to_kill = run_app(dest, check_port=9080)
     begin
       #HTTP XX443 - intended to be proxied to from something listening on 443
       x!("curl https://localhost:9443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
@@ -65,20 +65,6 @@ describe "jetpack - web start" do
       x!("curl http://127.0.0.1:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
     ensure
       system("kill -9 #{pid_to_kill}")
-    end
-  end
-
-  def run_app
-    jetty_pid = Process.spawn({'RAILS_ENV' => 'development'}, 'java', '-jar', 'start.jar', {:chdir => "#{dest}/vendor/jetty"})
-    start_time = Time.now
-    loop do
-      begin
-        TCPSocket.open("localhost", 9443)
-        return jetty_pid
-      rescue Errno::ECONNREFUSED
-        raise "it's taking too long to start the server, something might be wrong" if Time.now - start_time > 60
-        sleep 0.1
-      end
     end
   end
 end

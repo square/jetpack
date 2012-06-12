@@ -13,7 +13,7 @@ describe "jetpack - filters" do
   end
 
   it "runs" do
-    pid_to_kill = run_app
+    pid_to_kill = run_app(dest, check_port=11080)
     begin
       x!("curl https://localhost:11443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
 
@@ -41,20 +41,6 @@ describe "jetpack - filters" do
 
     ensure
       system("kill -9 #{pid_to_kill}")
-    end
-  end
-
-  def run_app
-    jetty_pid = Process.spawn({'RAILS_ENV' => 'development'}, 'java', '-jar', 'start.jar', {:chdir => "#{dest}/vendor/jetty"})
-    start_time = Time.now
-    loop do
-      begin
-        TCPSocket.open("localhost", 11443)
-        return jetty_pid
-      rescue Errno::ECONNREFUSED
-        raise "it's taking too long to start the server, something might be wrong" if Time.now - start_time > 60
-        sleep 0.1
-      end
     end
   end
 end
