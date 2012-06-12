@@ -2,11 +2,12 @@ require "spec_helper"
 require "yaml"
 
 describe "jetpack - filters" do
+  let(:dest) { "#{TEST_ROOT}/webapp_filters" }
+  
   before(:all) do
     reset
-    @result = x!("bin/jetpack spec/sample_projects/webapp_filters")
+    @result = x!("bin/jetpack spec/sample_projects/webapp_filters #{dest}")
   end
-
   after(:all) do
     reset
   end
@@ -44,7 +45,7 @@ describe "jetpack - filters" do
   end
 
   def run_app
-    jetty_pid = Process.spawn({'RAILS_ENV' => 'development'}, 'java', '-jar', 'start.jar', {:chdir => "spec/sample_projects/webapp_filters/vendor/jetty"})
+    jetty_pid = Process.spawn({'RAILS_ENV' => 'development'}, 'java', '-jar', 'start.jar', {:chdir => "#{dest}/vendor/jetty"})
     start_time = Time.now
     loop do
       begin
