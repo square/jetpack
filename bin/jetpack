@@ -71,8 +71,10 @@ def unzip(file, directory, pattern="")
   x! "unzip -qq #{file} #{pattern} -d #{directory}"
 end
 
-def same_contents_in_both_dirs?(dir1, dir2, file_or_dir)
-  system("diff -qr #{dir1}/#{file_or_dir} #{dir2}/#{file_or_dir}")
+def same_contents_in_both_dirs?(src_dir, target_dir, file_or_dir)
+  File.exists?(File.join(src_dir, file_or_dir)) ?
+    system("diff -qr #{src_dir}/#{file_or_dir} #{target_dir}/#{file_or_dir}") :
+    true
 end
 
 def install_bundler_gem
@@ -179,7 +181,9 @@ def rsync
   ].join(" "))
 end
 
-if File.exists?(@dest_dir) && same_contents_in_both_dirs?(@src_dir, @dest_dir, "config/jetpack.yml")
+if File.exists?(@dest_dir) && 
+     same_contents_in_both_dirs?(@src_dir, @dest_dir, "config/jetpack.yml") &&
+     same_contents_in_both_dirs?(@src_dir, @dest_dir, "Gemfile.lock")
   rsync  
   $stderr.puts "config/jetpack.yml is the same in both directories, skipping build."
   exit
