@@ -183,7 +183,8 @@ end
 
 if File.exists?(@dest_dir) && 
      same_contents_in_both_dirs?(@src_dir, @dest_dir, "config/jetpack.yml") &&
-     same_contents_in_both_dirs?(@src_dir, @dest_dir, "Gemfile.lock")
+     same_contents_in_both_dirs?(@src_dir, @dest_dir, "Gemfile.lock") &&
+     same_contents_in_both_dirs?(@src_dir, @dest_dir, "config/jetpack_files")
   rsync  
   $stderr.puts "config/jetpack.yml is the same in both directories, skipping build."
   exit

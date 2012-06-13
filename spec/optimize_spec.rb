@@ -120,5 +120,14 @@ DEPENDENCIES
       x!("bin/jetpack #{src} #{dest}")[:exitstatus].should == 0
       File.exists?("#{dest}/vendor/jruby.jar").should == true
     end
+
+    it "will rebuild if the jetpack_files dir changes" do
+      FileUtils.mkdir("#{src}/config/jetpack_files")
+      FileUtils.touch("#{src}/config/jetpack_files/foo")
+
+      x!("bin/jetpack #{src} #{dest}")[:exitstatus].should == 0
+      File.exists?("#{dest}/vendor/jruby.jar").should == true
+    end
+
   end
 end
