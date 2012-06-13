@@ -32,8 +32,8 @@
         <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
           <Set name="port"><%=@settings.https_port%></Set>
           <Set name="maxIdleTime">30000</Set>
-          <Set name="password"><SystemProperty name="jetty.ssl.password" default="foobar" /></Set>
-          <Set name="keystore"><SystemProperty name="jetty.ssl.keystore" default="etc/fake.p12" /></Set>
+          <Set name="password"><%= @settings.keystore_password %></Set>
+          <Set name="keystore"><%= @settings.keystore %></Set>
           <!-- Using RC4 to avoid the Rizzo/Duong attack on block ciphers. -->
           <Set name="IncludeCipherSuites">
             <Array type="java.lang.String">
@@ -44,7 +44,7 @@
               <Item>SSL_RSA_WITH_RC4_128_SHA</Item>
             </Array>
           </Set>
-          <Set name="keystoreType">PKCS12</Set>
+          <Set name="keystoreType"><%= @settings.keystore_type %></Set>
         </New>
       </Arg>
     </Call>
