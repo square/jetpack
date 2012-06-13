@@ -62,7 +62,10 @@ vendor/jruby.jar
     rm("#{dest}/vendor/jruby.jar")
 
     x!("bin/jetpack #{src} #{dest}")[:exitstatus].should == 0
+    File.exists?("#{dest}/bin/ruby").should == true
+      #previously created jetpack files should not be deleted by rsync
     File.exists?("#{dest}/vendor/jruby.jar").should == false
+      #because we deleted it
     File.exists?("#{dest}/newfile").should == true
     File.exists?("#{dest}/Rakefile").should == false
   end
