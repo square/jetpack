@@ -20,7 +20,6 @@ module Jetpack
       contents["http_port"]                  = user_defined_options["http_port"]                  if user_defined_options.key?("http_port")
       contents["jruby_rack"]                 = user_defined_options["jruby-rack"]                 if user_defined_options.key?("jruby-rack")
       contents["jetty"]                      = user_defined_options["jetty"]                      if user_defined_options.key?("jetty")
-      contents["jetty_filters"]              = user_defined_options["jetty_filters"]              if user_defined_options.key?("jetty_filters")
       contents["jruby"]                      = user_defined_options["jruby"]                      if user_defined_options.key?("jruby")
       contents["max_concurrent_connections"] = user_defined_options["max_concurrent_connections"] || 20
       contents["ruby_version"]               = user_defined_options["ruby_version"]               || "1.8"
@@ -41,10 +40,6 @@ module Jetpack
 
     def jetty?
       respond_to?(:jetty)
-    end
-
-    def jetty_filters?
-      respond_to?(:jetty_filters)
     end
 
     def rails?

@@ -37,7 +37,7 @@
     <param-value><%= @gem_path %></param-value>
   </context-param>
 
-<% if @settings.jetty_filters? %>
+
   <filter>
     <filter-name>IgnoreUnknownHttpMethodsFilter</filter-name>
     <filter-class>jetpack.filter.IgnoreUnknownHttpMethodsFilter</filter-class>
@@ -57,7 +57,7 @@
     <filter-name>ValidUrlFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-<% end %>
+
 
   <filter>
     <filter-name>GzipFilter</filter-name>

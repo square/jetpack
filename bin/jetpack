@@ -127,6 +127,20 @@ def install_commons_validator(lib_dir)
   lib_dir
 end
 
+def setup_special_filters(vendor_dir)
+  web_inf_lib_dir = File.join(@dest_dir, "WEB-INF/lib")
+  mkdir_p web_inf_lib_dir
+
+  install_commons_validator web_inf_lib_dir
+
+  web_inf_classes_dir = File.join(@dest_dir, "WEB-INF/classes")
+  mkdir_p web_inf_classes_dir
+
+  puts "Compiling Jetty filters"
+  x! "javac -classpath #{vendor_dir}/jetty/lib/servlet-api-3.0.jar -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/IgnoreUnknownHttpMethodsFilter.java"
+  x! "javac -classpath #{vendor_dir}/jetty/lib/servlet-api-3.0.jar:#{web_inf_lib_dir}/commons-validator-1.4.0.jar -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/ValidUrlFilter.java"
+end
+
 def install_jruby_rack_jar(vendor_dir)
   download @settings.jruby_rack, File.join(vendor_dir, "jruby-rack.jar")
 end
@@ -211,20 +225,8 @@ if @settings.jetty?
   else
     "org.jruby.rack.RackServletContextListener"
   end
-
-  if @settings.jetty_filters?
-    web_inf_lib_dir = File.join(@dest_dir, "WEB-INF/lib")
-    mkdir_p web_inf_lib_dir
-
-    install_commons_validator web_inf_lib_dir
-
-    web_inf_classes_dir = File.join(@dest_dir, "WEB-INF/classes")
-    mkdir_p web_inf_classes_dir
-
-    puts "Compiling Jetty filters"
-    x! "javac -classpath #{vendor_dir}/jetty/lib/servlet-api-3.0.jar -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/IgnoreUnknownHttpMethodsFilter.java"
-    x! "javac -classpath #{vendor_dir}/jetty/lib/servlet-api-3.0.jar:#{web_inf_lib_dir}/commons-validator-1.4.0.jar -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/ValidUrlFilter.java"
-  end
+  
+  setup_special_filters(vendor_dir)
 end
 
 config_jetpack_dir_in_project = File.join(@dest_dir, "config/jetpack_files")

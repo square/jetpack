@@ -35,6 +35,33 @@ describe "jetpack - sample https start" do
       x!("curl http://#{Socket.gethostname}:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
 
       x!("curl http://127.0.0.1:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
+
+      #Make sure our filters are effective
+
+      x!("curl https://localhost:9443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
+
+      x!("curl https://localhost:9443/hello?foo=bar --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
+
+      x!("curl --head --request DEBUG https://localhost:9443/ --insecure")[:stdout].split("\n").first.strip.should == "HTTP/1.1 405 Method Not Allowed"
+
+      x!("curl --head 'https://localhost:9443/<script>xss</script>.aspx' --insecure")[:stdout].split("\n").first.strip.should == "HTTP/1.1 400 Bad Request"
+
+      x!("curl --head 'https://localhost:9443/?foo=<script>xss</script>.aspx' --insecure")[:stdout].split("\n").first.strip.should == "HTTP/1.1 400 Bad Request"
+
+      x!("curl http://localhost:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
+
+      x!("curl http://localhost:9080/hello?foo=bar")[:stdout].split("<br/>").first.strip.should == "Hello World"
+
+      x!("curl http://#{Socket.gethostname}:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
+
+      x!("curl http://127.0.0.1:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
+
+      x!("curl --head --request DEBUG http://localhost:9080/")[:stdout].split("\n").first.strip.should == "HTTP/1.1 405 Method Not Allowed"
+
+      x!("curl --head 'http://localhost:9080/<script>xss</script>.aspx'")[:stdout].split("\n").first.strip.should == "HTTP/1.1 400 Bad Request"
+
+      x!("curl --head 'http://localhost:9080/?foo=<script>xss</script>.aspx'")[:stdout].split("\n").first.strip.should == "HTTP/1.1 400 Bad Request"
+
     ensure
       system("kill -9 #{pid_to_kill}")
     end
