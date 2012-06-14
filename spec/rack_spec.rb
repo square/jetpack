@@ -2,11 +2,14 @@ require "spec_helper"
 require "yaml"
 
 describe "jetpack - web start for rack app" do
-  let(:dest) { "#{TEST_ROOT}/rack_19" }
+  let(:project) { "#{TEST_ROOT}/rack_19" }
+  let(:dest)    { "#{TEST_ROOT}/rack_19_dest" }
 
   before(:all) do
     reset
-    @result = x!("bin/jetpack spec/sample_projects/rack_19 #{dest}")
+    FileUtils.cp_r("spec/sample_projects/rack_19", "#{TEST_ROOT}/")
+    x!("bin/jetpack-bootstrap #{project} base")
+    @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do
     reset

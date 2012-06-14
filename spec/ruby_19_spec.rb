@@ -1,11 +1,14 @@
 require "spec_helper"
 
 describe "jetpack - bundler and gems in 1.9 mode" do
-  let(:dest) { "#{TEST_ROOT}/has_gems_via_bundler_19" }
+  let(:project) { "#{TEST_ROOT}/has_gems_via_bundler_19" }
+  let(:dest)    { "#{TEST_ROOT}/has_gems_via_bundler_19_dest" }
 
   before(:all) do
     reset
-    @result = x!("bin/jetpack spec/sample_projects/has_gems_via_bundler_19 #{dest}")
+    FileUtils.cp_r("spec/sample_projects/has_gems_via_bundler_19", "#{TEST_ROOT}/")
+    x!("bin/jetpack-bootstrap #{project} base")
+    @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do
     reset

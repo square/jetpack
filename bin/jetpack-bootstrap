@@ -1,0 +1,43 @@
+#!/usr/bin/ruby
+
+#think: bash-like ruby
+
+require "fileutils"
+include FileUtils
+
+def halt(message)
+  $stderr.puts message
+  exit 1
+end
+
+def x!(cmd)
+  puts cmd if ENV['VERBOSE']
+  system(cmd) || halt("'#{cmd}' failed.")
+end
+
+
+jetpack_dir = File.join(File.dirname(__FILE__), "..")
+
+unless ARGV.length>=1 && 
+       File.directory?(ARGV[0]) &&
+       ARGV.slice(1..-1).
+         map{|collection|File.directory?(File.join(jetpack_dir, "collections/#{collection}"))}.
+         uniq == [true]
+  halt("usage: jetpack-bootstrap project_path [collection...]\n" +
+       "valid collections: " + Dir["#{jetpack_dir}/collections/*"].to_a.sort.join(" ")) 
+end
+
+path_to_project = ARGV.shift
+collections = ARGV.empty? ? ["sample_http"] : ARGV
+collections.unshift("base") unless collections[0] == "base"
+collections.uniq!
+jetpack_files_dir = File.join(path_to_project, "config/jetpack_files")
+
+halt("#{jetpack_files_dir} already exists, exiting.") if File.exists?(jetpack_files_dir)
+
+mkdir_p(jetpack_files_dir)
+collections.each do |collection|
+  # this (/.) is what you have to do in ruby to make the children of the source dir
+  # all (including dotfiles) copy cleanly underneath the dest dir
+  FileUtils.cp_r("#{jetpack_dir}/collections/#{collection}/.", "#{jetpack_files_dir}/")
+end

@@ -1,11 +1,14 @@
 require "spec_helper"
 
 describe "jetpack - bundler and gems" do
-  let(:dest) { "#{TEST_ROOT}/has_gems_via_bundler" }
+  let(:project) { "#{TEST_ROOT}/has_gems_via_bundler" }
+  let(:dest) { "#{TEST_ROOT}/has_gems_via_bundler_dest" }
   
   before(:all) do
     reset
-    @result = x!("bin/jetpack spec/sample_projects/has_gems_via_bundler #{dest}")
+    FileUtils.cp_r("spec/sample_projects/has_gems_via_bundler", "#{TEST_ROOT}/has_gems_via_bundler")
+    x!("bin/jetpack-bootstrap #{project} base")
+    @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do
     reset
@@ -96,7 +99,10 @@ DEPENDENCIES
 
     it "regenerates the Gemfile.lock and prints out a warning message" do
       File.read("spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock/Gemfile.lock").should_not include("java")
-      jetpack_result = x("bin/jetpack spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock #{TEST_ROOT}/has_gems_via_bundler_bad_gemfile_lock")
+      FileUtils.cp_r("spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock",
+                     "#{TEST_ROOT}/has_gems_via_bundler_bad_gemfile_lock")
+      x!("bin/jetpack-bootstrap #{TEST_ROOT}/has_gems_via_bundler_bad_gemfile_lock base")
+      jetpack_result = x("bin/jetpack #{TEST_ROOT}/has_gems_via_bundler_bad_gemfile_lock #{TEST_ROOT}/has_gems_via_bundler_bad_gemfile_lock_dest")
       jetpack_result[:stderr].gsub("\n", "").squeeze(" ").should include(%{
         WARNING: Your Gemfile.lock does not contain PLATFORM java.
         Automtically regenerating and overwriting Gemfile.lock using jruby
@@ -105,9 +111,9 @@ DEPENDENCIES
       }.gsub("\n", "").squeeze(" "))
       jetpack_result[:exitstatus].should == 0
 
-      File.read("#{TEST_ROOT}/has_gems_via_bundler_bad_gemfile_lock/Gemfile.lock").should include("java")
+      File.read("#{TEST_ROOT}/has_gems_via_bundler_bad_gemfile_lock_dest/Gemfile.lock").should include("java")
 
-      rake_result = x("cd #{TEST_ROOT}/has_gems_via_bundler_bad_gemfile_lock && " +
+      rake_result = x("cd #{TEST_ROOT}/has_gems_via_bundler_bad_gemfile_lock_dest && " +
                       %{bin/ruby -e 'require \\"rubygems\\"; require \\"bundler\\"; Bundler.require; puts Spruz::Bijection.name'})
       rake_result[:stderr].should     == ""
       rake_result[:stdout].should     == "Spruz::Bijection\n"

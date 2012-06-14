@@ -40,6 +40,7 @@ TEST_ROOT =  File.absolute_path("#{real_tmp_dir}/jetpack_test_root")
 
 def reset
   FileUtils.rm_rf(TEST_ROOT)
+  FileUtils.mkdir_p(TEST_ROOT)
 end
 
 RSpec.configure do |config|

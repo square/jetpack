@@ -2,11 +2,14 @@ require "spec_helper"
 require "yaml"
 
 describe "jetpack - filters" do
-  let(:dest) { "#{TEST_ROOT}/webapp_filters" }
-  
+  let(:project) { "#{TEST_ROOT}/webapp_filters" }
+  let(:dest)    { "#{TEST_ROOT}/webapp_filters_dest" }
+
   before(:all) do
     reset
-    @result = x!("bin/jetpack spec/sample_projects/webapp_filters #{dest}")
+    FileUtils.cp_r("spec/sample_projects/webapp_filters", "#{TEST_ROOT}/")
+    x!("bin/jetpack-bootstrap #{project} base")
+    @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do
     reset

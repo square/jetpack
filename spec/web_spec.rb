@@ -2,11 +2,14 @@ require "spec_helper"
 require "yaml"
 
 describe "jetpack - web start" do
-  let(:dest) { "#{TEST_ROOT}/no_dependencies" }
+  let(:project) { "#{TEST_ROOT}/webapp" }
+  let(:dest)    { "#{TEST_ROOT}/webapp_dest" }
 
   before(:all) do
     reset
-    @result = x!("bin/jetpack spec/sample_projects/webapp #{dest}")
+    FileUtils.cp_r("spec/sample_projects/webapp", "#{TEST_ROOT}/")
+    x!("bin/jetpack-bootstrap #{project} base")
+    @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do
     reset
@@ -18,23 +21,6 @@ describe "jetpack - web start" do
     File.directory?("#{dest}/vendor/jetty").should == true
     File.directory?("#{dest}/vendor/jetty/lib").should == true
     File.exists?("#{dest}/vendor/jetty/start.jar").should == true
-  end
-
-  it "places config files" do
-    File.exists?("#{dest}/WEB-INF/web.xml").should == true
-    File.exists?("#{dest}/vendor/jetty/etc/jetty.xml").should == true
-    File.exists?("#{dest}/vendor/jetty/etc/custom-project-specific-jetty.xml").should == true
-    File.exists?("#{dest}/vendor/jetty/etc/template-from-project-jetty.xml").should == true
-    File.exists?("#{dest}/vendor/jetty/etc/template-from-project-jetty.xml.erb").should == false
-    File.read("#{dest}/vendor/jetty/etc/template-from-project-jetty.xml").should 
-      include("<Arg>9443</Arg>")
-    File.exists?("#{dest}/vendor/jetty/jetty-init").should == true
-  end
-
-  it "places a launch script, and includes java_options" do
-    File.exists?("#{dest}/bin/launch").should == true
-    File.read("#{dest}/bin/launch").should include("java -jar -Xmx256M")
-    File.read("#{dest}/bin/launch").should include("start.jar")
   end
 
   it "respects the maximun number of concurrent connections, http and https port" do

@@ -73,7 +73,7 @@ source <%=@settings.environment%>
 #   set to this value for use by configure.xml files, f.e.:
 #
 #    <Arg><SystemProperty name="jetty.home" default="."/>/webapps/jetty.war</Arg>
-# 
+#
 # !!! JETPACK NOTE: JETTY_PORT IS IGNORED !!!
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ JETTY_PORT
 #   Override the default port for Jetty servers. If not set then the
@@ -469,8 +469,8 @@ JAVA_VERSION=`expr "$($JAVA -version 2>&1 | head -1)" : '.*1\.\([0-9]\)'`
 #####################################################
 #
 # JETPACK NOTE:
-# We do not allow the init script to set jetty.port 
-# when using jetpack, as jetpack sets this via 
+# We do not allow the init script to set jetty.port
+# when using jetpack, as jetpack sets this via
 # jetty.xml, and setting port in both places causes
 # jetty to attempt to bind to the same port.
 #

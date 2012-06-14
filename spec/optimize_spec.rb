@@ -9,6 +9,7 @@ describe "jetpack - optimize the run" do
     reset
     mkdir_p(TEST_ROOT)
     cp_r("spec/sample_projects/no_dependencies", src)
+    x!("bin/jetpack-bootstrap #{src} base")[:exitstatus].should == 0
   end
   after do
     reset
@@ -23,11 +24,27 @@ describe "jetpack - optimize the run" do
     x!("bin/jetpack #{src} #{dest}")
     File.exists?("#{dest}/.jetpack-generated").should == true
     File.read("#{dest}/.jetpack-generated").should ==
-%{bin
+%{WEB-INF
+WEB-INF/web.xml
+bin
 bin/.rake_runner
 bin/launch
 bin/rake
 bin/ruby
+vendor/jetty
+vendor/jetty/etc
+vendor/jetty/etc/fake.crt
+vendor/jetty/etc/fake.jceks
+vendor/jetty/etc/fake.key
+vendor/jetty/etc/fake.p12
+vendor/jetty/etc/fake.pem
+vendor/jetty/etc/jetty.xml
+vendor/jetty/jetty-init
+vendor/jetty/run
+vendor/jetty/run/.gitkeep
+vendor/jetty/start.ini
+vendor/jetty/webapps
+vendor/jetty/webapps/.gitkeep
 vendor/jruby.jar
 }
   end
@@ -121,7 +138,6 @@ DEPENDENCIES
     end
 
     it "will rebuild if the jetpack_files dir changes" do
-      FileUtils.mkdir("#{src}/config/jetpack_files")
       FileUtils.touch("#{src}/config/jetpack_files/foo")
 
       x!("bin/jetpack #{src} #{dest}")[:exitstatus].should == 0

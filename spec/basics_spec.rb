@@ -2,11 +2,14 @@ require "spec_helper"
 require "tmpdir"
 
 describe "jetpack - basics" do
-  let(:dest) { "#{TEST_ROOT}/no_dependencies" }
+  let(:project) { "#{TEST_ROOT}/no_dependencies" }
+  let(:dest)    { "#{TEST_ROOT}/no_dependencies_dest" }
 
   before(:all) do
     reset
-    @result = x!("bin/jetpack spec/sample_projects/no_dependencies #{dest}")
+    FileUtils.cp_r("spec/sample_projects/no_dependencies", "#{TEST_ROOT}/")
+    x!("bin/jetpack-bootstrap #{project} base")
+    @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do
     reset
@@ -19,8 +22,21 @@ describe "jetpack - basics" do
   end
 
   it "creates a rake script" do
-    @result[:stdout].should include("#{dest}/bin/rake\n")
     File.exists?("#{dest}/bin/rake").should == true
+  end
+
+  describe "base bootstrap does too much, needs to go into another collection (+spec)" do
+    it "places config files" do
+      File.exists?("#{dest}/WEB-INF/web.xml").should == true
+      File.exists?("#{dest}/vendor/jetty/etc/jetty.xml").should == true
+      File.exists?("#{dest}/vendor/jetty/jetty-init").should == true
+    end
+
+    it "places a launch script, and includes java_options" do
+      File.exists?("#{dest}/bin/launch").should == true
+      # File.read("#{dest}/bin/launch").should include("java -jar -Xmx256M") TODO
+      File.read("#{dest}/bin/launch").should include("start.jar")
+    end
   end
 
   describe "creates a ruby script that" do
