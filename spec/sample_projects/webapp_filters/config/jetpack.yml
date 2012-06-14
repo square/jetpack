@@ -6,3 +6,5 @@ https_port: 11443
 max_concurrent_connections: 15
 java_options: -Xmx256M
 jetty_filters: true
+keystore: "etc/fake.p12"
+keystore_password: "foobar"
