@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
+
+<!-- =============================================================== -->
+<!-- Configure the Jetty Server                                      -->
+<!--                                                                 -->
+<!-- Documentation of this file format can be found at:              -->
+<!-- http://wiki.eclipse.org/Jetty/Reference/jetty.xml_syntax        -->
+<!--                                                                 -->
+<!-- Additional configuration files are available in $JETTY_HOME/etc -->
+<!-- and can be mixed in.  For example:                              -->
+<!--   java -jar start.jar etc/jetty-ssl.xml                         -->
+<!--                                                                 -->
+<!-- See start.ini file for the default configuraton files           -->
+<!-- =============================================================== -->
+
+
+
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+
+    <Set name="ThreadPool">
+      <New class="org.eclipse.jetty.util.thread.QueuedThreadPool">
+        <Set name="minThreads">10</Set>
+        <Set name="maxThreads"><%=@settings.max_concurrent_connections %></Set>
+        <Set name="detailedDump">false</Set>
+      </New>
+    </Set>
+
+    <% unless @settings.http_port.to_s.empty? %>
+    <Call name="addConnector">
+      <Arg>
+        <New class="org.eclipse.jetty.server.nio.SelectChannelConnector">
+          <Set name="port"><%=@settings.http_port%></Set>
+          <Set name="maxIdleTime">30000</Set>
+        </New>
+      </Arg>
+    </Call>
+    <% end %>
+
+    <% if @settings.rails? %>
+      <!-- set the rails.env java system property based on the RAILS_ENV environment variable -->
+      <!-- this is used by jruby-rack to set Rails.env -->
+      <Call class="java.lang.System" name="setProperty">
+        <Arg>rails.env</Arg>
+        <Arg>
+          <Call class="java.lang.System" name="getenv">
+            <Arg>RAILS_ENV</Arg>
+          </Call>
+        </Arg>
+      </Call>
+    <% end %>
+
+    <Set name="handler">
+      <New id="Handlers" class="org.eclipse.jetty.server.handler.HandlerCollection">
+        <Set name="handlers">
+         <Array type="org.eclipse.jetty.server.Handler">
+           <Item>
+             <New id="Contexts" class="org.eclipse.jetty.server.handler.ContextHandlerCollection"/>
+           </Item>
+           <Item>
+
+             <!-- Set up the webapp context for the rails root, which is ../../ from here -->
+             <New class="org.eclipse.jetty.webapp.WebAppContext">
+               <Arg><Ref id="Contexts"/></Arg>
+               <Arg><Property name="jetty.home"/>/../../</Arg> <!-- "resource base" -->
+               <Arg>/</Arg>      <!-- webapp root -->
+               <Set name="extraClasspath"><Property name="jetty.home"/>/../jruby.jar;<Property name="jetty.home"/>/../jruby-rack.jar</Set>
+                                 <!-- cp that makes ruby+rack work -->
+             </New>
+           </Item>
+         </Array>
+        </Set>
+      </New>
+    </Set>
+
+    <Set name="stopAtShutdown">true</Set>
+    <Set name="sendServerVersion">true</Set>
+    <Set name="sendDateHeader">true</Set>
+    <Set name="gracefulShutdown">1</Set>
+    <Set name="dumpAfterStart">false</Set>
+    <Set name="dumpBeforeStop">false</Set>
+
+    <New id="ServerLog" class="java.io.PrintStream">
+      <Arg>
+        <New class="org.eclipse.jetty.util.RolloverFileOutputStream">
+          <Arg><Property name="jetty.home"/>/../../log/jetty_stderr_yyyy_mm_dd.log</Arg>
+          <Arg type="boolean">false</Arg>
+          <Arg type="int">30</Arg>
+          <Arg><Call class="java.util.TimeZone" name="getTimeZone"><Arg>GMT</Arg></Call></Arg>
+          <Get id="ServerLogName" name="datedFilename"/>
+        </New>
+      </Arg>
+    </New>
+
+    <Ref id="Handlers">
+      <Call name="addHandler">
+        <Arg>
+          <New id="RequestLog" class="org.eclipse.jetty.server.handler.RequestLogHandler">
+            <Set name="requestLog">
+              <New id="RequestLogImpl" class="org.eclipse.jetty.server.NCSARequestLog">
+                <Set name="filename"><Property name="jetty.home"/>/../../log/jetty_request_yyyy_mm_dd.log</Set>
+                <Set name="filenameDateFormat">yyyy_MM_dd</Set>
+                <Set name="retainDays">30</Set>
+                <Set name="append">true</Set>
+                <Set name="extended">true</Set>
+                <Set name="logLatency">true</Set>
+                <Set name="logDispatch">true</Set>
+                <Set name="preferProxiedForAddress">true</Set>
+                <Set name="logCookies">false</Set>
+                <Set name="LogTimeZone">GMT</Set>
+              </New>
+            </Set>
+          </New>
+        </Arg>
+      </Call>
+    </Ref>
+</Configure>

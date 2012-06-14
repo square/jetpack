@@ -8,7 +8,7 @@ describe "jetpack - web start" do
   before(:all) do
     reset
     FileUtils.cp_r("spec/sample_projects/webapp", "#{TEST_ROOT}/")
-    x!("bin/jetpack-bootstrap #{project} http")
+    x!("bin/jetpack-bootstrap #{project} sample_http")
     @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do
@@ -17,6 +17,7 @@ describe "jetpack - web start" do
 
   describe "http bootstrap" do
     it "places jetty config files" do
+      File.exists?("#{project}/config/jetpack_files/bin/ruby.erb").should == true
       File.exists?("#{project}/config/jetpack_files/WEB-INF/web.xml.erb").should == true
       File.exists?("#{project}/config/jetpack_files/vendor/jetty/etc/jetty.xml.erb").should == true
     end
@@ -45,14 +46,14 @@ describe "jetpack - web start" do
     jetty_xml_content.grep(max_threads_setting).should_not be_empty
 
     jetty_xml_content.grep(/<New class="org.eclipse.jetty.server.nio.SelectChannelConnector">/).should_not be_empty
-    jetty_xml_content.grep(/<New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">/).should_not be_empty
+    jetty_xml_content.grep(/<New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">/).should be_empty
   end
 
   it "runs" do
     pid_to_kill = run_app(dest, check_port=9080)
     begin
       #HTTP XX443 - intended to be proxied to from something listening on 443
-      x!("curl https://localhost:9443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
+      #x!("curl https://localhost:9443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
 
       #HTTP XXX80 - intended for internal health checking
       x!("curl http://localhost:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
