@@ -34,7 +34,8 @@ def run_app(app, check_port, env={'RAILS_ENV' => 'development'})
   end
 end
 
-real_tmp_dir = FileUtils.cd("/tmp") { FileUtils.pwd } #because on osx it's really /private/tmp
+real_tmp_dir = nil
+FileUtils.cd("/tmp") { real_tmp_dir = FileUtils.pwd } #because on osx it's really /private/tmp
 TEST_ROOT =  File.absolute_path("#{real_tmp_dir}/jetpack_test_root")
 
 def reset

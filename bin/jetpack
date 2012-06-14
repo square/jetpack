@@ -6,6 +6,7 @@ require "yaml"
 require "erb"
 require "fileutils"
 require "etc"
+require "pathname"
 
 local_lib_dir = File.join(File.dirname(__FILE__), "../lib")
 $LOAD_PATH << local_lib_dir if File.directory?(local_lib_dir)
@@ -30,15 +31,11 @@ end
 
 halt("usage: jetpack <project_path> <dest path>") unless ARGV.length==2 && File.directory?(ARGV[0])
 
-src_dir, @dest_dir = ARGV
-rm_rf(@dest_dir)
-dest_parent = @dest_dir.split(File::SEPARATOR).slice(0..-2).join(File::SEPARATOR)
-mkdir_p(dest_parent)
-cp_r(src_dir, @dest_dir)
+@src_dir, @dest_dir = ARGV
 
 @created = []
 
-@settings = Jetpack::Settings.load_from_project(@dest_dir)
+@settings = Jetpack::Settings.load_from_project(@src_dir)
 
 puts @settings.inspect
 
@@ -56,7 +53,7 @@ script_start_time = Time.now
 @jruby_jar_file = "vendor/jruby.jar"
 @jetpack_dir = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 
-@gem_home = "file:" + File.expand_path(File.join(@settings.app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
+@gem_home = "file:" + @jruby_jar_file + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
 @gem_path = @gem_home + ":vendor/bundler_gem"
 
 @java_dash_jar = "PATH=$PATH:$(dirname $0) GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" exec java #{@settings.java_options} -jar"
@@ -72,6 +69,12 @@ end
 
 def unzip(file, directory, pattern="")
   x! "unzip -qq #{file} #{pattern} -d #{directory}"
+end
+
+def same_contents_in_both_dirs?(src_dir, target_dir, file_or_dir)
+  File.exists?(File.join(src_dir, file_or_dir)) ?
+    system("diff -qr #{src_dir}/#{file_or_dir} #{target_dir}/#{file_or_dir}") :
+    true
 end
 
 def install_bundler_gem
@@ -156,6 +159,41 @@ def overlay_files(overlay_dir, target_dir)
   process_template_files files_created.select{|f|f=~/\.erb$/}
 end
 
+def dest_dir_files
+  base_path = Pathname.new(@dest_dir)
+  files = Dir["#{@dest_dir}/**/{*,.*}"].map{|f|Pathname.new(f).relative_path_from(base_path).to_s}
+  files.sort.uniq - ["..", "."]
+end
+
+def reset_dest_dir
+  rm_rf(@dest_dir)
+  dest_parent = @dest_dir.split(File::SEPARATOR).slice(0..-2).join(File::SEPARATOR)
+  mkdir_p(dest_parent)
+  cp_r(@src_dir, @dest_dir, :preserve => true)
+end
+
+def rsync
+  x!([
+    "rsync -av --delete --stats",
+    "--exclude=.jetpack-generated",
+    "--exclude-from=#{@dest_dir}/.jetpack-generated",
+    "#{@src_dir}/ #{@dest_dir}"
+  ].join(" "))
+end
+
+if File.exists?(@dest_dir) && 
+     same_contents_in_both_dirs?(@src_dir, @dest_dir, "config/jetpack.yml") &&
+     same_contents_in_both_dirs?(@src_dir, @dest_dir, "Gemfile.lock") &&
+     same_contents_in_both_dirs?(@src_dir, @dest_dir, "config/jetpack_files")
+  rsync  
+  $stderr.puts "config/jetpack.yml is the same in both directories, skipping build."
+  exit
+else
+  reset_dest_dir
+end
+
+project_files = dest_dir_files
+
 bin_dir = File.join(@dest_dir, "bin")
 mkdir_p bin_dir
 overlay_files File.join(@jetpack_dir, "bin_files"), bin_dir
@@ -199,6 +237,11 @@ end
 config_jetpack_dir_in_project = File.join(@dest_dir, "config/jetpack_files")
 if File.directory?(config_jetpack_dir_in_project)
   overlay_files config_jetpack_dir_in_project, @dest_dir
+end
+
+jetpack_created_files = dest_dir_files - project_files
+File.open(File.join(@dest_dir, ".jetpack-generated"), "w") do |f| 
+  f.puts jetpack_created_files.sort.join("\n")
 end
 
 elapsed_seconds = (Time.now - script_start_time).to_i
