@@ -8,11 +8,22 @@ describe "jetpack - web start" do
   before(:all) do
     reset
     FileUtils.cp_r("spec/sample_projects/webapp", "#{TEST_ROOT}/")
-    x!("bin/jetpack-bootstrap #{project} base")
+    x!("bin/jetpack-bootstrap #{project} http")
     @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do
     reset
+  end
+
+  describe "http bootstrap" do
+    it "places jetty config files" do
+      File.exists?("#{project}/config/jetpack_files/WEB-INF/web.xml.erb").should == true
+      File.exists?("#{project}/config/jetpack_files/vendor/jetty/etc/jetty.xml.erb").should == true
+    end
+
+    it "places a launch script, and includes java_options" do
+      File.exists?("#{project}/config/jetpack_files/bin/launch.erb").should == true
+    end
   end
 
   it "will unzip jetty under vendor if jetty.xml is present" do

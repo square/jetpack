@@ -25,20 +25,6 @@ describe "jetpack - basics" do
     File.exists?("#{dest}/bin/rake").should == true
   end
 
-  describe "base bootstrap does too much, needs to go into another collection (+spec)" do
-    it "places config files" do
-      File.exists?("#{dest}/WEB-INF/web.xml").should == true
-      File.exists?("#{dest}/vendor/jetty/etc/jetty.xml").should == true
-      File.exists?("#{dest}/vendor/jetty/jetty-init").should == true
-    end
-
-    it "places a launch script, and includes java_options" do
-      File.exists?("#{dest}/bin/launch").should == true
-      # File.read("#{dest}/bin/launch").should include("java -jar -Xmx256M") TODO
-      File.read("#{dest}/bin/launch").should include("start.jar")
-    end
-  end
-
   describe "creates a ruby script that" do
     it "allows you to execute using the jruby jar." do
       rake_result = x(%{#{dest}/bin/ruby --version})

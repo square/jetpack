@@ -24,27 +24,11 @@ describe "jetpack - optimize the run" do
     x!("bin/jetpack #{src} #{dest}")
     File.exists?("#{dest}/.jetpack-generated").should == true
     File.read("#{dest}/.jetpack-generated").should ==
-%{WEB-INF
-WEB-INF/web.xml
-bin
+%{bin
 bin/.rake_runner
 bin/launch
 bin/rake
 bin/ruby
-vendor/jetty
-vendor/jetty/etc
-vendor/jetty/etc/fake.crt
-vendor/jetty/etc/fake.jceks
-vendor/jetty/etc/fake.key
-vendor/jetty/etc/fake.p12
-vendor/jetty/etc/fake.pem
-vendor/jetty/etc/jetty.xml
-vendor/jetty/jetty-init
-vendor/jetty/run
-vendor/jetty/run/.gitkeep
-vendor/jetty/start.ini
-vendor/jetty/webapps
-vendor/jetty/webapps/.gitkeep
 vendor/jruby.jar
 }
   end
