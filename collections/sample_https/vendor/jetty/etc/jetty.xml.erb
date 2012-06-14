@@ -21,12 +21,11 @@
     <Set name="ThreadPool">
       <New class="org.eclipse.jetty.util.thread.QueuedThreadPool">
         <Set name="minThreads">10</Set>
-        <Set name="maxThreads"><%=@settings.max_concurrent_connections %></Set>
+        <Set name="maxThreads">20</Set>
         <Set name="detailedDump">false</Set>
       </New>
     </Set>
 
-    <% unless @settings.https_port.to_s.empty? %>
     <Call name="addConnector">
       <Arg>
         <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
@@ -48,7 +47,6 @@
         </New>
       </Arg>
     </Call>
-    <% end %>
 
     <% unless @settings.http_port.to_s.empty? %>
     <Call name="addConnector">

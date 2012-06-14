@@ -35,20 +35,6 @@ describe "jetpack - web start" do
     File.exists?("#{dest}/vendor/jetty/start.jar").should == true
   end
 
-  it "respects the maximun number of concurrent connections, http and https port" do
-    jetty_xml = "#{dest}/vendor/jetty/etc/jetty.xml"
-    settings = YAML.load_file("#{dest}/config/jetpack.yml")
-    max_threads_setting = /<Set name="maxThreads">#{settings["max_concurrent_connections"]}<\/Set>/
-
-    File.exists?(jetty_xml).should == true
-
-    jetty_xml_content = File.readlines(jetty_xml)
-    jetty_xml_content.grep(max_threads_setting).should_not be_empty
-
-    jetty_xml_content.grep(/<New class="org.eclipse.jetty.server.nio.SelectChannelConnector">/).should_not be_empty
-    jetty_xml_content.grep(/<New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">/).should be_empty
-  end
-
   it "runs" do
     pid_to_kill = run_app(dest, check_port=9080)
     begin
