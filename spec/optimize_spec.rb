@@ -68,4 +68,56 @@ vendor/jruby.jar
     File.exists?("#{dest}/newfile").should == true
     File.exists?("#{dest}/Rakefile").should == false
   end
+
+  context "situations where jetpack should rebuild" do
+    before do
+      x!("bin/jetpack #{src} #{dest}")[:exitstatus].should == 0
+      File.exists?("#{dest}/vendor/jruby.jar").should == true
+
+      #removing a file out of the desintation.
+      #jetpack will replace it because jetpack.yml changes
+      rm("#{dest}/vendor/jruby.jar")
+    end
+
+    it "will rebuild if jetpack.yml changes" do
+      File.open("#{src}/config/jetpack.yml", "a") do |f|
+        f.puts "max_concurrent_connections: 3"
+      end
+
+      x!("bin/jetpack #{src} #{dest}")[:exitstatus].should == 0
+      File.exists?("#{dest}/vendor/jruby.jar").should == true
+    end
+
+    it "will rebuild if Gemfile.lock changes" do
+      File.open("#{src}/Gemfile", "w") do |f|
+        f << %{
+source 'http://rubygems.org'
+
+gem "rake", "~> 0.9.2"
+gem "spruz"
+        }
+      end
+
+      File.open("#{src}/Gemfile.lock", "w") do |f|
+        f << %{
+GEM
+  remote: http://rubygems.org/
+  specs:
+    rake (0.9.2.2)
+    spruz (0.2.13)
+
+PLATFORMS
+  java
+  ruby
+
+DEPENDENCIES
+  rake (~> 0.9.2)
+  spruz
+        }
+      end
+
+      x!("bin/jetpack #{src} #{dest}")[:exitstatus].should == 0
+      File.exists?("#{dest}/vendor/jruby.jar").should == true
+    end
+  end
 end
