@@ -52,9 +52,6 @@ describe "jetpack - web start" do
   it "runs" do
     pid_to_kill = run_app(dest, check_port=9080)
     begin
-      #HTTP XX443 - intended to be proxied to from something listening on 443
-      #x!("curl https://localhost:9443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
-
       #HTTP XXX80 - intended for internal health checking
       x!("curl http://localhost:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
 
