@@ -20,18 +20,6 @@ module Jetpack
       super(settings)
     end
 
-    def jruby?
-      respond_to?(:jruby)
-    end
-
-    def jetty?
-      respond_to?(:jetty)
-    end
-
-    def rails?
-      app_type == 'rails'
-    end
-
     def inspect
       self.class.name + ":\n" + @keys.map{|k|"  #{k.ljust(20)} = #{send(k.to_sym)}"}.join("\n") + "\n"
     end

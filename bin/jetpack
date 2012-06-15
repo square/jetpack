@@ -39,7 +39,7 @@ halt("usage: jetpack <project_path> <dest path>") unless ARGV.length==2 && File.
 
 puts @settings.inspect
 
-unless @settings.jruby?
+unless @settings.jruby
   halt(%{Your config/jetpack.yml must at least contain a pointer to the desired jruby-complete jar.
 Ex:
 
@@ -218,12 +218,12 @@ mkdir_p vendor_dir
 download @settings.jruby, File.join(@dest_dir, @jruby_jar_file)
 
 bundle_install if File.exists?(File.join(@dest_dir, "Gemfile.lock"))
-if @settings.jetty?
+if @settings.jetty
   jetty_dir = install_jetty(vendor_dir)
   install_jruby_rack_jar vendor_dir #raise if jar not found
 
   FileUtils.mkdir_p(File.join(@dest_dir, "log"))
-  @listener = if @settings.rails?
+  @listener = if @settings.rails
     "org.jruby.rack.rails.RailsServletContextListener"
   else
     "org.jruby.rack.RackServletContextListener"

@@ -59,7 +59,7 @@
     </Call>
     <% end %>
 
-    <% if @settings.rails? %>
+    <% if @settings.rails %>
       <!-- set the rails.env java system property based on the RAILS_ENV environment variable -->
       <!-- this is used by jruby-rack to set Rails.env -->
       <Call class="java.lang.System" name="setProperty">
