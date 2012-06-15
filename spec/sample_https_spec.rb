@@ -9,7 +9,7 @@ describe "jetpack - sample https start" do
     reset
     FileUtils.cp_r("spec/sample_projects/webapp", "#{TEST_ROOT}/")
     x!("bin/jetpack-bootstrap #{project} sample_https")
-    replace_remote_references_with_local_mirror(src)
+    replace_remote_references_with_local_mirror(project)
     @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do

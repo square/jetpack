@@ -37,8 +37,6 @@ Create `config/jetpack.yml` in your project:
     jruby: "http://jruby.org.s3.amazonaws.com/downloads/1.6.5.1/jruby-complete-1.6.5.1.jar"
     jetty: "http://dist.codehaus.org/jetty/jetty-hightide-7.4.5/jetty-hightide-7.4.5.v20110725.zip"
     jruby-rack: "http://repository.codehaus.org/org/jruby/rack/jruby-rack/1.0.10/jruby-rack-1.0.10.jar"
-    app_user: "myapp"
-    app_root: "/usr/local/myapp/myapp"
 
 Some other settings you might care about:
 

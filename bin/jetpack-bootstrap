@@ -42,6 +42,6 @@ cp(File.join(collection_dir(collection_name), "jetpack.yml"), jetpack_yml_path)
 mkdir_p(jetpack_files_dir)
 # this (/.) is what you have to do in ruby to make the children of the source dir
 # all (including dotfiles) copy cleanly underneath the dest dir
-FileUtils.cp_r(collection_dir("base") + "/.", "#{jetpack_files_dir}/") 
-FileUtils.cp_r(collection_dir(collection_name) + "/.", "#{jetpack_files_dir}/")
-FileUtils.rm("#{jetpack_files_dir}/jetpack.yml")
+cp_r(collection_dir("base") + "/.", "#{jetpack_files_dir}/") 
+cp_r(collection_dir(collection_name) + "/.", "#{jetpack_files_dir}/")
+rm("#{jetpack_files_dir}/jetpack.yml")

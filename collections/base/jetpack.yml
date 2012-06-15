@@ -1,1 +1,4 @@
 jruby: "http://jruby.org.s3.amazonaws.com/downloads/1.6.7/jruby-complete-1.6.7.jar"
+java_options: -Xmx256m
+ruby_version: 1.8
+app_type: rails

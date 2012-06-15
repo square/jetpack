@@ -64,6 +64,9 @@ def jruby!(cmd)
 end
 
 def download(url, local_file)
+  raise "refusing to download non-local file '#{url}' in test mode" if Object.const_defined?(:JETPACK_TEST_MODE) &&
+                                                                       JETPACK_TEST_MODE &&
+                                                                       !url =~ /^file/
   x! "curl --silent --show-error -o #{local_file} #{url}"
 end
 
