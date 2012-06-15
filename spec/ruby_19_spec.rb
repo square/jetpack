@@ -8,12 +8,13 @@ describe "jetpack - bundler and gems in 1.9 mode" do
     reset
     FileUtils.cp_r("spec/sample_projects/has_gems_via_bundler_19", "#{TEST_ROOT}/")
     x!("bin/jetpack-bootstrap #{project} base")
+    FileUtils.mv("#{project}/config/custom_jetpack.yml", "#{project}/config/jetpack.yml")
     @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do
     reset
   end
-  
+
   describe "gem installation" do
     it "installed gems are available via Bundler.require" do
       rake_result = x("cd #{dest} && " +

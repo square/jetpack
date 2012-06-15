@@ -10,6 +10,7 @@ describe "jetpack - optimize the run" do
     mkdir_p(TEST_ROOT)
     cp_r("spec/sample_projects/no_dependencies", src)
     x!("bin/jetpack-bootstrap #{src} base")[:exitstatus].should == 0
+    replace_remote_references_with_local_mirror(src)
   end
   after do
     reset
@@ -82,7 +83,7 @@ vendor/jruby.jar
 
     it "will rebuild if jetpack.yml changes" do
       File.open("#{src}/config/jetpack.yml", "a") do |f|
-        f.puts "max_concurrent_connections: 3"
+        f.puts "\njava_options: -Xmx257M"
       end
 
       x!("bin/jetpack #{src} #{dest}")[:exitstatus].should == 0

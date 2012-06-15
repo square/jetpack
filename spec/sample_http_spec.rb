@@ -9,6 +9,7 @@ describe "jetpack - web start" do
     reset
     FileUtils.cp_r("spec/sample_projects/webapp", "#{TEST_ROOT}/")
     x!("bin/jetpack-bootstrap #{project} sample_http")
+    replace_remote_references_with_local_mirror(project)
     @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do
@@ -36,14 +37,14 @@ describe "jetpack - web start" do
   end
 
   it "runs" do
-    pid_to_kill = run_app(dest, check_port=9080)
+    pid_to_kill = run_app(dest, check_port=8080)
     begin
       #HTTP XXX80 - intended for internal health checking
-      x!("curl http://localhost:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
+      x!("curl http://localhost:8080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
 
-      x!("curl http://#{Socket.gethostname}:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
+      x!("curl http://#{Socket.gethostname}:8080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
 
-      x!("curl http://127.0.0.1:9080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
+      x!("curl http://127.0.0.1:8080/hello")[:stdout].split("<br/>").first.strip.should == "Hello World"
     ensure
       system("kill -9 #{pid_to_kill}")
     end

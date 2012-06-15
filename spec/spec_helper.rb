@@ -34,6 +34,17 @@ def run_app(app, check_port, env={'RAILS_ENV' => 'development'})
   end
 end
 
+def replace_remote_references_with_local_mirror(project_dir)
+  contents = File.read("#{project_dir}/config/jetpack.yml")
+  contents.gsub!("http://jruby.org.s3.amazonaws.com/downloads/1.6.7/jruby-complete-1.6.7.jar",
+                 "file://#{File.expand_path('spec/local_mirror')}/jruby-complete-1.6.7.jar")
+  contents.gsub!("http://repo1.maven.org/maven2/org/mortbay/jetty/jetty-hightide/8.1.3.v20120416/jetty-hightide-8.1.3.v20120416.zip",
+                 "file://#{File.expand_path('spec/local_mirror')}/jetty-hightide-8.1.3.v20120416.zip")
+  contents.gsub!("http://repo1.maven.org/maven2/org/jruby/rack/jruby-rack/1.1.5/jruby-rack-1.1.5.jar",
+                 "file://#{File.expand_path('spec/local_mirror')}/jruby-complete-1.6.7.jar")
+  File.open("#{project_dir}/config/jetpack.yml", "w"){|f|f<<contents}
+end
+
 real_tmp_dir = nil
 FileUtils.cd("/tmp") { real_tmp_dir = FileUtils.pwd } #because on osx it's really /private/tmp
 TEST_ROOT =  File.absolute_path("#{real_tmp_dir}/jetpack_test_root")

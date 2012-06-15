@@ -3,11 +3,12 @@ require "spec_helper"
 describe "jetpack - bundler and gems" do
   let(:project) { "#{TEST_ROOT}/has_gems_via_bundler" }
   let(:dest) { "#{TEST_ROOT}/has_gems_via_bundler_dest" }
-  
+
   before(:all) do
     reset
     FileUtils.cp_r("spec/sample_projects/has_gems_via_bundler", "#{TEST_ROOT}/has_gems_via_bundler")
     x!("bin/jetpack-bootstrap #{project} base")
+    replace_remote_references_with_local_mirror(project)
     @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do

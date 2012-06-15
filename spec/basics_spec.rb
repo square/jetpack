@@ -9,6 +9,7 @@ describe "jetpack - basics" do
     reset
     FileUtils.cp_r("spec/sample_projects/no_dependencies", "#{TEST_ROOT}/")
     x!("bin/jetpack-bootstrap #{project} base")
+    replace_remote_references_with_local_mirror(project)
     @result = x!("bin/jetpack #{project} #{dest}")
   end
   after(:all) do
