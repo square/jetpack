@@ -55,7 +55,10 @@ script_start_time = Time.now
 @gem_home = "file:" + File.expand_path(File.join(@settings.app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
 @gem_path = @gem_home + ":vendor/bundler_gem"
 
-@java_dash_jar = "PATH=$PATH:$(dirname $0) GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" exec java #{@settings.java_options} -jar"
+# Don't set min memory size when making the build artifact
+@jar_build_options = @settings.java_options.gsub(/(\s*)-Xms\S+/,'\1')
+
+@java_dash_jar = "PATH=$PATH:$(dirname $0) GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" exec java #{@jar_build_options} -jar"
 @jruby_opts = @settings.ruby_version.to_s == '1.9' ? '--1.9' : ''
 
 def jruby!(cmd)
