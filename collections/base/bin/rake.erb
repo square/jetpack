@@ -4,8 +4,8 @@ set -e
 
 export FULL_DIR=`cd $(dirname $0); pwd`
 export PATH=$FULL_DIR:$PATH
-export GEM_HOME="<%=@gem_home%>"
-export GEM_PATH="<%=@gem_path%>"
+export GEM_HOME="<%= gem_home %>"
+export GEM_PATH="<%= gem_path %>"
 
 cd $(dirname $0)/..
 

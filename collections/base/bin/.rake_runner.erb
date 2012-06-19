@@ -20,7 +20,7 @@ if File.exists?(File.expand_path('../../Gemfile.lock', __FILE__))
   rake_line = `grep -E "rake \\\\([0-9]" Gemfile.lock`.chomp
   if rake_line.length > 0
     rake_line =~ /\((.*)\)/
-    $LOAD_PATH.unshift(File.expand_path("vendor/bundle/jruby/<%= @settings.ruby_version %>/gems/rake-#{$1}/lib"))
+    $LOAD_PATH.unshift(File.expand_path("vendor/bundle/jruby/<%= ruby_version %>/gems/rake-#{$1}/lib"))
     version = "= #{$1}"
     loaded = true
     require 'rake'

@@ -7,6 +7,7 @@ require "erb"
 require "fileutils"
 require "etc"
 require "pathname"
+require "ostruct"
 
 local_lib_dir = File.join(File.dirname(__FILE__), "../lib")
 $LOAD_PATH << local_lib_dir if File.directory?(local_lib_dir)
@@ -14,8 +15,6 @@ $LOAD_PATH << local_lib_dir if File.directory?(local_lib_dir)
 #Env vars like RUBYOPT get passed on to jruby.
 #Cleanse the environment of these vars so that jruby is not affected.
 ENV.delete_if{|k,v|k =~ /(^RUBY|^BUNDLE)/}
-
-require "jetpack/settings"
 
 include FileUtils
 
@@ -35,7 +34,33 @@ halt("usage: jetpack <project_path> <dest path>") unless ARGV.length==2 && File.
 
 @created = []
 
-@settings = Jetpack::Settings.load_from_project(@src_dir)
+class Settings < OpenStruct
+  def self.load_from_project(project_dir)
+    config_file = File.join(project_dir, "config/jetpack.yml")
+    raise("#{config_file} not found") unless File.exists?(config_file)
+    yaml = YAML.load(ERB.new(File.read(config_file)).result)
+    Settings.new(yaml)
+  end
+
+  def initialize(settings)
+    settings = settings.inject({}) do |h, (k,v)|
+      h[k.gsub("-", "_")] = v
+      h
+    end
+    @keys = settings.keys.sort
+    super(settings)
+  end
+
+  def export_binding
+    binding()
+  end
+
+  def inspect
+    self.class.name + ":\n" + @keys.map{|k|"  #{k.ljust(20)} = #{send(k.to_sym)}"}.join("\n") + "\n"
+  end
+end
+
+@settings = Settings.load_from_project(@src_dir)
 
 puts @settings.inspect
 
@@ -50,17 +75,28 @@ end
 
 script_start_time = Time.now
 
-@jruby_jar_file = "vendor/jruby.jar"
+jruby_jar_file = "vendor/jruby.jar"
 @jetpack_dir = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 
-@gem_home = "file:" + @jruby_jar_file + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
-@gem_path = @gem_home + ":vendor/bundler_gem"
+gem_home = "file:" + jruby_jar_file + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
+gem_path = gem_home + ":vendor/bundler_gem"
 
-@java_dash_jar = "PATH=$PATH:$(dirname $0) GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" exec java #{@settings.java_options} -jar"
-@jruby_opts = @settings.ruby_version.to_s == '1.9' ? '--1.9' : ''
+java_dash_jar = "PATH=$PATH:$(dirname $0) GEM_HOME=\"#{gem_home}\" GEM_PATH=\"#{gem_path}\" exec java #{@settings.java_options} -jar"
+jruby_opts = @settings.ruby_version.to_s == '1.9' ? '--1.9' : ''
+
+@jruby_command = "#{java_dash_jar} #{jruby_jar_file} #{jruby_opts}"
+
+@settings.new_ostruct_member("gem_home")
+@settings.gem_home = gem_home
+
+@settings.new_ostruct_member("gem_path")
+@settings.gem_path = gem_path
+
+@settings.new_ostruct_member("jruby_command")
+@settings.jruby_command = @jruby_command
 
 def jruby!(cmd)
-  x! "cd #{@dest_dir} && #{@java_dash_jar} #{@jruby_jar_file} #{@jruby_opts} #{cmd}"
+  x! "cd #{@dest_dir} && #{@jruby_command} #{cmd}"
 end
 
 def download(url, local_file)
@@ -150,7 +186,12 @@ end
 
 def process_template_files(erb_files)
   erb_files.each do |erb_file|
-    evaled_contents = ERB.new(File.read(erb_file)).result(binding)
+    evaled_contents = 
+      begin
+        ERB.new(File.read(erb_file)).result(@settings.export_binding)
+      rescue StandardError => e
+        halt("Error occurred when processing template '#{erb_file}', detail: #{e.message}")
+      end
     target_file = erb_file.sub(/\.erb$/, "")
     File.open(target_file, "w"){|f|f<<evaled_contents}
     File.new(target_file).chmod(File.stat(erb_file).mode)
@@ -215,7 +256,7 @@ project_files = dest_dir_files
 
 vendor_dir = File.join(@dest_dir, "vendor")
 mkdir_p vendor_dir
-download @settings.jruby, File.join(@dest_dir, @jruby_jar_file)
+download @settings.jruby, File.join(@dest_dir, jruby_jar_file)
 
 bundle_install if File.exists?(File.join(@dest_dir, "Gemfile.lock"))
 if @settings.jetty
@@ -223,11 +264,6 @@ if @settings.jetty
   install_jruby_rack_jar vendor_dir #raise if jar not found
 
   FileUtils.mkdir_p(File.join(@dest_dir, "log"))
-  @listener = if @settings.rails
-    "org.jruby.rack.rails.RailsServletContextListener"
-  else
-    "org.jruby.rack.RackServletContextListener"
-  end
   
   setup_special_filters(vendor_dir)
 end

@@ -13,7 +13,7 @@
 
   <context-param>
     <param-name>jruby.compat.version</param-name>
-    <param-value><%= @settings.ruby_version %></param-value>
+    <param-value><%= ruby_version %></param-value>
   </context-param>
 
 
@@ -29,12 +29,12 @@
 
   <context-param>
     <param-name>gem.home</param-name>
-    <param-value><%= @gem_home %></param-value>
+    <param-value><%= gem_home %></param-value>
   </context-param>
 
   <context-param>
     <param-name>gem.path</param-name>
-    <param-value><%= @gem_path %></param-value>
+    <param-value><%= gem_path %></param-value>
   </context-param>
 
 
@@ -84,6 +84,10 @@
   </servlet-mapping>
 
   <listener>
-    <listener-class><%= @listener %></listener-class>
+    <% if rails %>
+      <listener-class>org.jruby.rack.rails.RailsServletContextListener</listener-class>
+    <% else %>
+      <listener-class>org.jruby.rack.RackServletContextListener</listener-class>
+    <% end %>
   </listener>
 </web-app>

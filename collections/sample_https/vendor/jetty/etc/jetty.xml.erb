@@ -29,10 +29,10 @@
     <Call name="addConnector">
       <Arg>
         <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
-          <Set name="port"><%=@settings.https_port%></Set>
+          <Set name="port"><%= https_port %></Set>
           <Set name="maxIdleTime">30000</Set>
-          <Set name="password"><%= @settings.keystore_password %></Set>
-          <Set name="keystore"><%= @settings.keystore %></Set>
+          <Set name="password"><%= keystore_password %></Set>
+          <Set name="keystore"><%= keystore %></Set>
           <!-- Using RC4 to avoid the Rizzo/Duong attack on block ciphers. -->
           <Set name="IncludeCipherSuites">
             <Array type="java.lang.String">
@@ -43,23 +43,23 @@
               <Item>SSL_RSA_WITH_RC4_128_SHA</Item>
             </Array>
           </Set>
-          <Set name="keystoreType"><%= @settings.keystore_type %></Set>
+          <Set name="keystoreType"><%= keystore_type %></Set>
         </New>
       </Arg>
     </Call>
 
-    <% unless @settings.http_port.to_s.empty? %>
+    <% unless http_port.to_s.empty? %>
     <Call name="addConnector">
       <Arg>
         <New class="org.eclipse.jetty.server.nio.SelectChannelConnector">
-          <Set name="port"><%=@settings.http_port%></Set>
+          <Set name="port"><%= http_port %></Set>
           <Set name="maxIdleTime">30000</Set>
         </New>
       </Arg>
     </Call>
     <% end %>
 
-    <% if @settings.rails %>
+    <% if rails %>
       <!-- set the rails.env java system property based on the RAILS_ENV environment variable -->
       <!-- this is used by jruby-rack to set Rails.env -->
       <Call class="java.lang.System" name="setProperty">

@@ -9,7 +9,7 @@ this_dir="$( cd -P "$( dirname "$source" )" && pwd )"
 
 cd $this_dir/../vendor/jetty
 
-exec java -jar <%= @settings.java_options %> \
+exec java -jar <%= java_options %> \
      -Djetty.logs=$this_dir/../log \
      -Djetty.home=$this_dir/../vendor/jetty \
      -Djava.io.tmpdir=/tmp \
