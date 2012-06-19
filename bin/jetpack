@@ -176,8 +176,8 @@ def setup_special_filters(vendor_dir)
   mkdir_p web_inf_classes_dir
 
   puts "Compiling Jetty filters"
-  x! "javac -classpath #{vendor_dir}/jetty/lib/servlet-api-3.0.jar -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/IgnoreUnknownHttpMethodsFilter.java"
-  x! "javac -classpath #{vendor_dir}/jetty/lib/servlet-api-3.0.jar:#{web_inf_lib_dir}/commons-validator-1.4.0.jar -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/ValidUrlFilter.java"
+  x! "javac -classpath \"#{vendor_dir}/jetty/lib/*\" -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/IgnoreUnknownHttpMethodsFilter.java"
+  x! "javac -classpath \"#{vendor_dir}/jetty/lib/*:#{web_inf_lib_dir}/commons-validator-1.4.0.jar\" -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/ValidUrlFilter.java"
 end
 
 def install_jruby_rack_jar(vendor_dir)
@@ -186,7 +186,7 @@ end
 
 def process_template_files(erb_files)
   erb_files.each do |erb_file|
-    evaled_contents = 
+    evaled_contents =
       begin
         ERB.new(File.read(erb_file)).result(@settings.export_binding)
       rescue StandardError => e
@@ -234,18 +234,18 @@ end
 
 def rsync
   x!([
-    "rsync -av --delete --stats",
+    "rsync -avc --delete --stats",
     "--exclude=.jetpack-generated",
     "--exclude-from=#{@dest_dir}/.jetpack-generated",
     "#{@src_dir}/ #{@dest_dir}"
   ].join(" "))
 end
 
-if File.exists?(@dest_dir) && 
+if File.exists?(@dest_dir) &&
      same_contents_in_both_dirs?(@src_dir, @dest_dir, "config/jetpack.yml") &&
      same_contents_in_both_dirs?(@src_dir, @dest_dir, "Gemfile.lock") &&
      same_contents_in_both_dirs?(@src_dir, @dest_dir, "config/jetpack_files")
-  rsync  
+  rsync
   $stderr.puts "config/jetpack.yml is the same in both directories, skipping build."
   exit
 else
@@ -264,7 +264,7 @@ if @settings.jetty
   install_jruby_rack_jar vendor_dir #raise if jar not found
 
   FileUtils.mkdir_p(File.join(@dest_dir, "log"))
-  
+
   setup_special_filters(vendor_dir)
 end
 
@@ -274,7 +274,7 @@ if File.directory?(config_jetpack_dir_in_project)
 end
 
 jetpack_created_files = dest_dir_files - project_files
-File.open(File.join(@dest_dir, ".jetpack-generated"), "w") do |f| 
+File.open(File.join(@dest_dir, ".jetpack-generated"), "w") do |f|
   f.puts jetpack_created_files.sort.join("\n")
 end
 
