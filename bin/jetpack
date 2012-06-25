@@ -246,41 +246,44 @@ if File.exists?(@dest_dir) &&
      same_contents_in_both_dirs?(@src_dir, @dest_dir, "Gemfile.lock") &&
      same_contents_in_both_dirs?(@src_dir, @dest_dir, "config/jetpack_files")
   rsync
+  config_jetpack_dir_in_project = File.join(@dest_dir, "config/jetpack_files")
+  if File.directory?(config_jetpack_dir_in_project)
+    overlay_files config_jetpack_dir_in_project, @dest_dir
+  end
   $stderr.puts "config/jetpack.yml is the same in both directories, skipping build."
-  exit
 else
   reset_dest_dir
+  project_files = dest_dir_files
+
+  vendor_dir = File.join(@dest_dir, "vendor")
+  mkdir_p vendor_dir
+  download @settings.jruby, File.join(@dest_dir, jruby_jar_file)
+
+  bundle_install if File.exists?(File.join(@dest_dir, "Gemfile.lock"))
+  if @settings.jetty
+    jetty_dir = install_jetty(vendor_dir)
+    install_jruby_rack_jar vendor_dir #raise if jar not found
+
+    FileUtils.mkdir_p(File.join(@dest_dir, "log"))
+
+    setup_special_filters(vendor_dir)
+  end
+
+  config_jetpack_dir_in_project = File.join(@dest_dir, "config/jetpack_files")
+  if File.directory?(config_jetpack_dir_in_project)
+    overlay_files config_jetpack_dir_in_project, @dest_dir
+  end
+
+  jetpack_created_files = dest_dir_files - project_files
+  File.open(File.join(@dest_dir, ".jetpack-generated"), "w") do |f|
+    f.puts jetpack_created_files.sort.join("\n")
+  end
+
+  elapsed_seconds = (Time.now - script_start_time).to_i
+
+  puts %{Created:
+    #{@created.uniq.sort.join("\n  ")}
+  Time: #{elapsed_seconds} s
+  }
 end
 
-project_files = dest_dir_files
-
-vendor_dir = File.join(@dest_dir, "vendor")
-mkdir_p vendor_dir
-download @settings.jruby, File.join(@dest_dir, jruby_jar_file)
-
-bundle_install if File.exists?(File.join(@dest_dir, "Gemfile.lock"))
-if @settings.jetty
-  jetty_dir = install_jetty(vendor_dir)
-  install_jruby_rack_jar vendor_dir #raise if jar not found
-
-  FileUtils.mkdir_p(File.join(@dest_dir, "log"))
-
-  setup_special_filters(vendor_dir)
-end
-
-config_jetpack_dir_in_project = File.join(@dest_dir, "config/jetpack_files")
-if File.directory?(config_jetpack_dir_in_project)
-  overlay_files config_jetpack_dir_in_project, @dest_dir
-end
-
-jetpack_created_files = dest_dir_files - project_files
-File.open(File.join(@dest_dir, ".jetpack-generated"), "w") do |f|
-  f.puts jetpack_created_files.sort.join("\n")
-end
-
-elapsed_seconds = (Time.now - script_start_time).to_i
-
-puts %{Created:
-  #{@created.uniq.sort.join("\n  ")}
-Time: #{elapsed_seconds} s
-}
