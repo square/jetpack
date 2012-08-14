@@ -52,7 +52,7 @@ script_start_time = Time.now
 @jruby_jar_file = "vendor/jruby.jar"
 @jetpack_dir = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 
-@gem_home = "file:" + File.expand_path(File.join(@settings.app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/1.8"
+@gem_home = "file:" + File.expand_path(File.join(@settings.app_root, @jruby_jar_file)) + "!/META-INF/jruby.home/lib/ruby/gems/#{@settings.ruby_version || '1.8'}"
 @gem_path = @gem_home + ":vendor/bundler_gem"
 
 # Don't set min memory size when making the build artifact
