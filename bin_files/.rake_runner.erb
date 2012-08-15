@@ -8,7 +8,7 @@ require 'rubygems'
 
 <%
   bundled_rake = false
-  if File.exists?(File.expand_path('../Gemfile.lock', File.dirname(__FILE__)))
+  if File.exists?('Gemfile.lock')
     # we assume bundler exists due to the Gemfile.lock
     rake_path = `bundle show rake`.chomp
     if rake_path =~ %r[/(gems/rake-.*$)]
