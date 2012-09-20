@@ -12,4 +12,4 @@ export GEM_PATH="<%=@gem_path%>"
 
 cd $(dirname $0)/..
 
-.rake_runner "$@"
+exec .rake_runner "$@"
