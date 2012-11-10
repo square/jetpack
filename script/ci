@@ -47,11 +47,10 @@ function prepare_and_run() {
   run_tests
 }
 
-function tag_green_build() {
-  tag_name="ci-jetpack-master/latest"
-  git tag -f -m "tagging green build" "$tag_name"
-  git push -f origin "$tag_name"
+function mark_latest_green_build() {
+  git checkout -B latest-green-build HEAD
+  git push -f origin HEAD:latest-green-build
 }
 
 prepare_and_run "1.9.3-p0" &&
-tag_green_build
+mark_latest_green_build
