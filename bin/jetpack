@@ -75,6 +75,7 @@ end
 
 def install_bundler_gem
   unless File.exists?("#{@path_to_project}/vendor/bundler_gem")
+    jruby! " -S gem install #{@jetpack_dir}/gems/jruby-openssl-0.7.4.gem -i vendor/bundler_gem --no-rdoc --no-ri"
     jruby! " -S gem install #{@jetpack_dir}/gems/bundler-1.1.0.gem -i vendor/bundler_gem --no-rdoc --no-ri"
   end
 end
