@@ -6,28 +6,17 @@
 
 require 'rubygems'
 
-<%
-  bundled_rake = false
-  if File.exists?('Gemfile.lock')
-    # we assume bundler exists due to the Gemfile.lock
-    rake_path = `bundle show rake`.chomp
-    if rake_path =~ %r[/(gems/rake-.*$)]
-      # found a bundled rake
-      local_rake_path = $1
-      bundled_rake = true
-%>
-# Using bundled rake
-bundled_rake = "vendor/bundle/jruby/<%= @settings.ruby_version %>/<%= local_rake_path %>/lib"
-$LOAD_PATH.unshift(File.expand_path(bundled_rake))
+# This is calculated at runtime to avoid complications that crop up when you
+# are running jetpack from a separate Gemfile to the rest of the app.
+bundled_rake = Dir["vendor/bundle/jruby/<%= @settings.ruby_version %>/gems/rake-*/lib"][0]
+if bundled_rake
+  $LOAD_PATH.unshift(File.expand_path(bundled_rake))
 
-require 'rake'
-Rake.application.run
-  <% end %>
-<% end %>
-
-<% unless bundled_rake %>
-# Using a fallback rake provided by rubygems
-version = ">= 0"
-gem 'rake', version
-load Gem.bin_path('rake', 'rake', version)
-<% end %>
+  require 'rake'
+  Rake.application.run
+else
+  # Using a fallback rake provided by rubygems
+  version = ">= 0"
+  gem 'rake', version
+  load Gem.bin_path('rake', 'rake', version)
+end
