@@ -19,8 +19,8 @@ namespace :spec do
 
     FileUtils.mkdir_p "spec/local_mirror" unless File.directory?("spec/local_mirror")
 
-    local_mirror "http://jruby.org.s3.amazonaws.com/downloads/1.6.7/jruby-complete-1.6.7.jar"
-    local_mirror "http://repo1.maven.org/maven2/org/mortbay/jetty/jetty-hightide/8.1.3.v20120416/jetty-hightide-8.1.3.v20120416.zip"
-    local_mirror "http://repo1.maven.org/maven2/org/jruby/rack/jruby-rack/1.1.5/jruby-rack-1.1.5.jar"
+    local_mirror "http://jruby.org.s3.amazonaws.com/downloads/1.7.3/jruby-complete-1.7.3.jar"
+    local_mirror "http://dist.codehaus.org/jetty/jetty-hightide-8.1.8/jetty-hightide-8.1.8.v20121106.zip"
+    local_mirror "http://repository.codehaus.org/org/jruby/rack/jruby-rack/1.1.13.1/jruby-rack-1.1.13.1.jar"
   end
 end
