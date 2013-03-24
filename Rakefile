@@ -6,7 +6,6 @@ task :default => :spec
 
 desc "Run all specs in spec directory"
 RSpec::Core::RakeTask.new(:spec => "spec:setup") do |t|
-  t.skip_bundler = true
   t.pattern = "./spec/**/*_spec.rb"
 end
 
