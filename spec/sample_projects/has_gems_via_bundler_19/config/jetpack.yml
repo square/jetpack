@@ -1,2 +1,1 @@
-jruby: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-complete-1.6.7.jar"
-ruby_version: 1.9
+jruby: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-complete-1.7.3.jar"
