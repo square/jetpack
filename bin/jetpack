@@ -98,8 +98,7 @@ end
 def bundle_install
   install_bundler_gem
   regenerate_gemfile_lock_if_platform_java_is_not_found
-  #Do the equivalent of 'bundle' in code so we know exactly which bundler we're using.
-  jruby! " -e 'require \"rubygems\"; require \"bundler\"; require \"bundler/cli\"; cli=Bundler::CLI.new; cli.options={:deployment=>true, :without=> [\"test\", \"cucumber\"]}; cli.install'"
+  jruby! "vendor/bundler_gem/bin/bundle --deployment=true --without test development cucumber"
 end
 
 def install_jetty(vendor_dir)
