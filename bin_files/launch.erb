@@ -9,8 +9,11 @@ this_dir="$( cd -P "$( dirname "$source" )" && pwd )"
 
 cd $this_dir/../vendor/jetty
 
+# Force encoding here to work around https://jira.codehaus.org/browse/JRUBY-7059
 exec java -jar <%= @settings.java_options %> \
      -Djetty.logs=$this_dir/../log \
      -Djetty.home=$this_dir/../vendor/jetty \
+     -Dfile.encoding=UTF8 \
+     -Dclient.encoding.override=UTF8 \
      -Djava.io.tmpdir=/tmp \
      start.jar
