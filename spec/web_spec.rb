@@ -25,14 +25,14 @@ describe "jetpack - web start" do
     File.exists?("spec/sample_projects/webapp/vendor/jetty/etc/custom-project-specific-jetty.xml").should == true
     File.exists?("spec/sample_projects/webapp/vendor/jetty/etc/template-from-project-jetty.xml").should == true
     File.exists?("spec/sample_projects/webapp/vendor/jetty/etc/template-from-project-jetty.xml.erb").should == false
-    File.read("spec/sample_projects/webapp/vendor/jetty/etc/template-from-project-jetty.xml").should 
+    File.read("spec/sample_projects/webapp/vendor/jetty/etc/template-from-project-jetty.xml").should
       include("<Arg>9443</Arg>")
     File.exists?("spec/sample_projects/webapp/vendor/jetty/jetty-init").should == true
   end
 
   it "places a launch script, and includes java_options" do
     File.exists?("spec/sample_projects/webapp/bin/launch").should == true
-    File.read("spec/sample_projects/webapp/bin/launch").should include("java -jar -Xmx256M")
+    File.read("spec/sample_projects/webapp/bin/launch").should include("/usr/java/latest/java/bin/java -jar -Xmx256M")
     File.read("spec/sample_projects/webapp/bin/launch").should include("start.jar")
   end
 
