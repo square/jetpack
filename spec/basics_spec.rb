@@ -77,7 +77,7 @@ describe "jetpack - basics" do
       gem_path_elements.length >= 2
       gem_path_elements.each do |element|
         element = element.sub("GP-- ", "")
-        (element =~ /META-INF\/jruby\.home/ || element =~ /vendor\/bundler_gem/).should >= 0
+        (element =~ /META-INF\/jruby\.home/ || element =~ /vendor\/gems/).should >= 0
       end
     end
   end

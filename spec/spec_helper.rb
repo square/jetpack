@@ -22,7 +22,7 @@ end
 
 def reset
   Dir["spec/sample_projects/*/vendor/bundle"].each{|d|FileUtils.rm_rf(d)}
-  Dir["spec/sample_projects/*/vendor/bundler_gem"].each{|d|FileUtils.rm_rf(d)}
+  Dir["spec/sample_projects/*/vendor/gems"].each{|d|FileUtils.rm_rf(d)}
   Dir["spec/sample_projects/*/*.jar"].each{|f|FileUtils.rm(f)}
   Dir["spec/sample_projects/*/.bundle"].each{|d|FileUtils.rm_rf(d)}
   Dir["spec/sample_projects/*/bin"].each{|d|FileUtils.rm_rf(d)}
