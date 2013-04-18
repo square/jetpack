@@ -27,6 +27,7 @@ module Jetpack
 
       contents = defaults.merge(user_defined_options)
 
+      contents['jruby_rack'] ||= contents['jruby-rack'] # backwards compatibility
       contents['app_user'] ||= Etc.getpwuid(File.stat(contents['app_root']).uid).name
 
       @keys = contents.keys.sort
