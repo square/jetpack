@@ -65,6 +65,11 @@ describe Jetpack::Settings do
         end
       end
     end
+
+    it "support arbitrary values" do
+      config['s2s_port'] = 443
+      subject.s2s_port.should == 443
+    end
   end
 
   describe 'load_from_project' do

@@ -31,6 +31,8 @@ module Jetpack
       contents["keystore"]                   = user_defined_options["keystore"]                   || nil
       contents["keystore_password"]          = user_defined_options["keystore_password"]          || nil
 
+      contents = user_defined_options.merge(contents) # give me custom keys
+
       @keys = contents.keys.sort
 
       super(contents)
