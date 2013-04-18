@@ -24,7 +24,7 @@ module Jetpack
       contents["jetty_filters"]              = user_defined_options["jetty_filters"]              if user_defined_options.key?("jetty_filters")
       contents["jruby"]                      = user_defined_options["jruby"]                      if user_defined_options.key?("jruby")
       contents["max_concurrent_connections"] = user_defined_options["max_concurrent_connections"] || 20
-      contents["ruby_version"]               = user_defined_options["ruby_version"]               || "1.8"
+      contents["ruby_version"]               = user_defined_options["ruby_version"]               || "1.9"
       contents["app_type"]                   = user_defined_options["app_type"]                   || "rails"
       contents["environment"]                = user_defined_options["environment"]                || nil
       contents["keystore_type"]              = user_defined_options["keystore_type"]              || "PKCS12"
