@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cd $(dirname $0)/..
+
+export RUBY=bin/ruby #This is needed to prevent rake from exploding
+
 <%=@java_dash_jar%> <%=@jruby_jar_file%> <%=@jruby_opts%> "$@"

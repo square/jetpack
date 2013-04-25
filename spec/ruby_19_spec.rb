@@ -5,13 +5,13 @@ describe "jetpack - bundler and gems in 1.9 mode" do
     reset
     @project = 'has_gems_via_bundler_19'
     rm_rf("spec/sample_projects/#{@project}/vendor/bundle")
-    rm_rf("spec/sample_projects/#{@project}/vendor/bundler_gem")
+    rm_rf("spec/sample_projects/#{@project}/vendor/gems")
     x!("bin/jetpack spec/sample_projects/#{@project}")
   end
 
   after(:all) do
     rm_rf("spec/sample_projects/#{@project}/vendor/bundle")
-    rm_rf("spec/sample_projects/#{@project}/vendor/bundler_gem")
+    rm_rf("spec/sample_projects/#{@project}/vendor/gems")
   end
 
   describe "gem installation" do

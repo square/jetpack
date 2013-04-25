@@ -32,11 +32,6 @@
     <param-value><%= @gem_home %></param-value>
   </context-param>
 
-  <context-param>
-    <param-name>gem.path</param-name>
-    <param-value><%= @gem_path %></param-value>
-  </context-param>
-
 <% if @settings.jetty_filters? %>
   <filter>
     <filter-name>IgnoreUnknownHttpMethodsFilter</filter-name>

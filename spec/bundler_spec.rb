@@ -5,18 +5,18 @@ describe "jetpack - bundler and gems" do
   before(:all) do
     reset
     rm_rf("spec/sample_projects/has_gems_via_bundler/vendor/bundle")
-    rm_rf("spec/sample_projects/has_gems_via_bundler/vendor/bundler_gem")
+    rm_rf("spec/sample_projects/has_gems_via_bundler/vendor/gems")
     x!("bin/jetpack spec/sample_projects/has_gems_via_bundler")
   end
 
   after(:all) do
     rm_rf("spec/sample_projects/has_gems_via_bundler/vendor/bundle")
-    rm_rf("spec/sample_projects/has_gems_via_bundler/vendor/bundler_gem")
+    rm_rf("spec/sample_projects/has_gems_via_bundler/vendor/gems")
   end
 
   describe "presence of the library" do
-    it "installed bundler into vendor/bundler_gem." do
-      files = Dir["spec/sample_projects/has_gems_via_bundler/vendor/bundler_gem/**/*.rb"].to_a.map{|f|File.basename(f)}
+    it "installed bundler into vendor/gems." do
+      files = Dir["spec/sample_projects/has_gems_via_bundler/vendor/gems/**/*.rb"].to_a.map{|f|File.basename(f)}
       files.should include("bundler.rb")
       files.should include("dsl.rb")
     end
@@ -28,7 +28,7 @@ describe "jetpack - bundler and gems" do
       invalid_load_path_elements =
         load_path_elements.reject do |element|
           element = element.sub("-- ", "")
-          (element =~ /META-INF\/jruby\.home/ || element =~ /vendor\/bundler_gem/ || element =~ /^\.$/ || element =~ /vendor\/bundle\//)
+          (element =~ /META-INF\/jruby\.home/ || element =~ /vendor\/gems/ || element =~ /^\.$/ || element =~ /vendor\/bundle\//)
         end
       invalid_load_path_elements.should == []
     end

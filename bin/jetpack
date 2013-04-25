@@ -42,8 +42,8 @@ unless @settings.jruby?
   halt(%{Your config/jetpack.yml must at least contain a pointer to the desired jruby-complete jar.
 Ex:
 
-jruby: http://jruby.org.s3.amazonaws.com/downloads/1.6.4/jruby-complete-1.6.4.jar
-jetty: http://dist.codehaus.org/jetty/jetty-hightide-7.4.5/jetty-hightide-7.4.5.v20110725.zip
+jruby: http://jruby.org.s3.amazonaws.com/downloads/1.7.3/jruby-complete-1.7.3.jar
+jetty: http://dist.codehaus.org/jetty/jetty-hightide-8.1.8/jetty-hightide-8.1.8.v20121106.zip
   })
 end
 
@@ -52,14 +52,13 @@ script_start_time = Time.now
 @jruby_jar_file = "vendor/jruby.jar"
 @jetpack_dir = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 
-@gem_home = "file:" + @jruby_jar_file + "!/META-INF/jruby.home/lib/ruby/gems/#{@settings.ruby_version || '1.8'}"
-@gem_path = @gem_home + ":vendor/bundler_gem"
+@gem_home = "vendor/gems"
 
 # Don't set min memory size when making the build artifact
 @jar_build_options = @settings.java_options.gsub(/(\s*)-Xms\S+/,'\1')
 
-@java_dash_jar = "PATH=$PATH:$(dirname $0) GEM_HOME=\"#{@gem_home}\" GEM_PATH=\"#{@gem_path}\" exec java #{@jar_build_options} -jar"
-@jruby_opts = @settings.ruby_version.to_s == '1.9' ? '--1.9' : ''
+@java_dash_jar = "GEM_HOME=#{@gem_home} exec java #{@jar_build_options} -jar"
+@jruby_opts = "--#{@settings.ruby_version}"
 
 def jruby!(cmd)
   x! "cd #{@path_to_project} && #{@java_dash_jar} #{@jruby_jar_file} #{@jruby_opts} #{cmd}"
@@ -71,12 +70,6 @@ end
 
 def unzip(file, directory, pattern="")
   x! "unzip -qq #{file} #{pattern} -d #{directory}"
-end
-
-def install_bundler_gem
-  unless File.exists?("#{@path_to_project}/vendor/bundler_gem")
-    jruby! " -S gem install bundler -i vendor/bundler_gem --no-rdoc --no-ri"
-  end
 end
 
 def regenerate_gemfile_lock_if_platform_java_is_not_found
@@ -91,14 +84,15 @@ def regenerate_gemfile_lock_if_platform_java_is_not_found
        - because otherwise, jruby-specific gems would not be installed by bundler.
       To make this message go away, you must re-generate your Gemfile.lock using jruby.
     }
-    jruby! " -e 'require \"rubygems\"; require \"bundler\"; Bundler.definition.lock(Bundler.default_lockfile)'"
+    jruby! "-e 'require \"rubygems\"; require \"bundler\"; Bundler.definition.lock(Bundler.default_lockfile)'"
   end
 end
 
 def bundle_install
-  install_bundler_gem
+  jruby! "-S gem install bundler -i #{@gem_home} --no-rdoc --no-ri"
   regenerate_gemfile_lock_if_platform_java_is_not_found
-  jruby! "vendor/bundler_gem/bin/bundle --deployment=true --without test development cucumber"
+  jruby! "#{@gem_home}/bin/bundle --deployment --without test development"
+  jruby! "#{@gem_home}/bin/bundle binstubs rake"
 end
 
 def install_jetty(vendor_dir)
