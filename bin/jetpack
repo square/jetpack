@@ -108,11 +108,31 @@ end
 
 def install_commons_validator(lib_dir)
   commons_validator_zip = File.join(lib_dir, "commons-validator.zip")
-  download "http://mirrors.axint.net/apache//commons/validator/binaries/commons-validator-1.4.0-bin.zip", commons_validator_zip
+  download "http://mirrors.axint.net/apache/commons/validator/binaries/commons-validator-1.4.0-bin.zip", commons_validator_zip
   unzip commons_validator_zip, lib_dir
   mv File.join(lib_dir, "commons-validator-1.4.0", "commons-validator-1.4.0.jar"), lib_dir
   rm_rf(File.join(lib_dir, "commons-validator-1.4.0"))
   rm commons_validator_zip
+  lib_dir
+end
+
+def install_guava(lib_dir)
+  guava_jar = File.join(lib_dir, "guava.jar")
+  download "http://search.maven.org/remotecontent?filepath=com/google/guava/guava/14.0.1/guava-14.0.1.jar", guava_jar
+  lib_dir
+end
+
+def install_joda_time(lib_dir)
+  joda_time_jar = File.join(lib_dir, "joda-time.jar")
+  download "http://search.maven.org/remotecontent?filepath=joda-time/joda-time/2.2/joda-time-2.2.jar", joda_time_jar
+  lib_dir
+end
+
+def install_slf4j(lib_dir)
+  slf4j_simple_jar = File.join(lib_dir, "slf4j-simple.jar")
+  download "http://search.maven.org/remotecontent?filepath=org/slf4j/slf4j-simple/1.7.5/slf4j-simple-1.7.5.jar", slf4j_simple_jar
+  slf4j_api_jar = File.join(lib_dir, "slf4j-api.jar")
+  download "http://search.maven.org/remotecontent?filepath=org/slf4j/slf4j-api/1.7.5/slf4j-api-1.7.5.jar", slf4j_api_jar
   lib_dir
 end
 
@@ -177,6 +197,22 @@ if @settings.jetty?
     "org.jruby.rack.RackServletContextListener"
   end
   overlay_files File.join(@jetpack_dir, "web_inf_files"), web_inf_dir
+
+  if @settings.reload_keystore?
+    web_inf_lib_dir = File.join(web_inf_dir, "lib")
+    mkdir_p web_inf_lib_dir
+
+    install_guava web_inf_lib_dir
+    install_joda_time web_inf_lib_dir
+    install_slf4j web_inf_lib_dir
+
+    web_inf_classes_dir = File.join(web_inf_dir, "classes")
+    mkdir_p web_inf_classes_dir
+
+    puts "Compiling Jetty reloading keystore classes"
+    # Important to quote classpath when using wildcard.
+    x! %{javac -classpath "#{web_inf_lib_dir}/*" -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/ssl/*.java}
+  end
 
   if @settings.jetty_filters?
     web_inf_lib_dir = File.join(web_inf_dir, "lib")

@@ -23,6 +23,9 @@ module Jetpack
         'keystore_type'              => 'PKCS12',
         'keystore'                   => nil,
         'keystore_password'          => nil,
+        'truststore'                 => nil,
+        'truststore_password'        => nil,
+        'reload_keystore'            => false,
       }
 
       contents = defaults.merge(user_defined_options)
@@ -45,6 +48,10 @@ module Jetpack
 
     def jetty_filters?
       respond_to?(:jetty_filters)
+    end
+
+    def reload_keystore?
+      respond_to?(:reload_keystore)
     end
 
     def rails?
