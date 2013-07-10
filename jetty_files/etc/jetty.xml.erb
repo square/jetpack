@@ -26,7 +26,7 @@
       </New>
     </Set>
 
-    <% if !@settings.https_port.to_s.empty? && @settings.reload_keystore? %>
+    <% if !@settings.https_port.to_s.empty? && @settings.reload_keystore %>
     <Call name="addConnector">
       <Arg>
         <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
@@ -60,7 +60,7 @@
     </Call>
     <% end %>
 
-    <% if !@settings.https_port.to_s.empty? && !@settings.reload_keystore? %>
+    <% if !@settings.https_port.to_s.empty? && !@settings.reload_keystore %>
     <Call name="addConnector">
       <Arg>
         <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">

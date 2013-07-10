@@ -10,4 +10,4 @@ keystore_type: "JCEKS"
 keystore_password: "foobar"
 truststore: "etc/fake.jceks"
 truststore_password: "foobar"
-reload_keystore?: true
+reload_keystore: true

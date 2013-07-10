@@ -198,7 +198,7 @@ if @settings.jetty?
   end
   overlay_files File.join(@jetpack_dir, "web_inf_files"), web_inf_dir
 
-  if @settings.reload_keystore?
+  if @settings.reload_keystore
     web_inf_lib_dir = File.join(web_inf_dir, "lib")
     mkdir_p web_inf_lib_dir
 
