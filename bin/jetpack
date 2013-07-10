@@ -95,7 +95,7 @@ def bundle_install
   jruby! "#{@gem_home}/bin/bundle binstubs rake"
 end
 
-def build_java_sources()
+def build_java_sources
   java_dir = File.join(@jetpack_dir, "java")
   pom = File.join(java_dir, "pom.xml")
   x! "mvn package -f #{pom}"
