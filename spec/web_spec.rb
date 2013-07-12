@@ -19,10 +19,6 @@ describe "jetpack - web start" do
     File.exists?("spec/sample_projects/webapp/vendor/jetty/start.jar").should == true
   end
 
-  it "places the jetpack java code JAR" do
-    File.exists?("spec/sample_projects/webapp/vendor/jetty/lib/ext/jetpack.jar").should == true
-  end
-
   it "places config files" do
     File.exists?("spec/sample_projects/webapp/WEB-INF/web.xml").should == true
     File.exists?("spec/sample_projects/webapp/vendor/jetty/etc/jetty.xml").should == true

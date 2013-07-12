@@ -23,9 +23,6 @@ module Jetpack
         'keystore_type'              => 'PKCS12',
         'keystore'                   => nil,
         'keystore_password'          => nil,
-        'truststore'                 => nil,
-        'truststore_password'        => nil,
-        'reload_keystore'            => false,
       }
 
       contents = defaults.merge(user_defined_options)

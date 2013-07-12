@@ -95,13 +95,6 @@ def bundle_install
   jruby! "#{@gem_home}/bin/bundle binstubs rake"
 end
 
-def build_java_sources
-  java_dir = File.join(@jetpack_dir, "java")
-  pom = File.join(java_dir, "pom.xml")
-  x! "mvn package -f #{pom}"
-  File.join(java_dir, "target/jetpack-HEAD-SNAPSHOT-shaded.jar")
-end
-
 def install_jetty(vendor_dir)
   jetty_dir = File.join(vendor_dir, "jetty")
   Dir["#{vendor_dir}/jett*"].to_a.each{|f|rm_rf(f)}
@@ -111,6 +104,16 @@ def install_jetty(vendor_dir)
   mv Dir["#{vendor_dir}/jetty*"].to_a.first, jetty_dir
   rm_rf "#{jetty_dir}/webapps"
   jetty_dir
+end
+
+def install_commons_validator(lib_dir)
+  commons_validator_zip = File.join(lib_dir, "commons-validator.zip")
+  download "http://mirrors.axint.net/apache//commons/validator/binaries/commons-validator-1.4.0-bin.zip", commons_validator_zip
+  unzip commons_validator_zip, lib_dir
+  mv File.join(lib_dir, "commons-validator-1.4.0", "commons-validator-1.4.0.jar"), lib_dir
+  rm_rf(File.join(lib_dir, "commons-validator-1.4.0"))
+  rm commons_validator_zip
+  lib_dir
 end
 
 def install_jruby_rack_jar(vendor_dir)
@@ -163,7 +166,7 @@ if @settings.jetty?
   jetty_dir = install_jetty(vendor_dir)
   install_jruby_rack_jar vendor_dir #raise if jar not found
 
-  overlay_files File.join(@jetpack_dir, "jetty_files"), jetty_dir
+  overlay_files File.join(@jetpack_dir, "jetty_files"), File.join(@path_to_project, "vendor/jetty")
 
   web_inf_dir = File.join(@path_to_project, "WEB-INF")
   mkdir_p web_inf_dir
@@ -175,8 +178,19 @@ if @settings.jetty?
   end
   overlay_files File.join(@jetpack_dir, "web_inf_files"), web_inf_dir
 
-  shaded_jar = build_java_sources()
-  FileUtils.copy(shaded_jar, File.join(jetty_dir, "lib/ext/jetpack.jar"))
+  if @settings.jetty_filters?
+    web_inf_lib_dir = File.join(web_inf_dir, "lib")
+    mkdir_p web_inf_lib_dir
+
+    install_commons_validator web_inf_lib_dir
+
+    web_inf_classes_dir = File.join(web_inf_dir, "classes")
+    mkdir_p web_inf_classes_dir
+
+    puts "Compiling Jetty filters"
+    x! "javac -classpath #{vendor_dir}/jetty/lib/servlet-api-3.0.jar -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/IgnoreUnknownHttpMethodsFilter.java"
+    x! "javac -classpath #{vendor_dir}/jetty/lib/servlet-api-3.0.jar:#{web_inf_lib_dir}/commons-validator-1.4.0.jar -d #{web_inf_classes_dir} #{@jetpack_dir}/src/java/jetpack/filter/ValidUrlFilter.java"
+  end
 end
 
 config_jetpack_dir_in_project = File.join(@path_to_project, "config/jetpack_files")
