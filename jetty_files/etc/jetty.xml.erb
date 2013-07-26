@@ -26,28 +26,62 @@
       </New>
     </Set>
 
-    <% unless @settings.https_port.to_s.empty? %>
-    <Call name="addConnector">
-      <Arg>
-        <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
-          <Set name="port"><%=@settings.https_port%></Set>
-          <Set name="maxIdleTime">30000</Set>
-          <Set name="password"><%= @settings.keystore_password %></Set>
-          <Set name="keystore"><%= @settings.keystore %></Set>
-          <!-- Using RC4 to avoid the Rizzo/Duong attack on block ciphers. -->
-          <Set name="IncludeCipherSuites">
-            <Array type="java.lang.String">
-              <Item>TLS_ECDHE_ECDSA_WITH_RC4_128_SHA</Item>
-              <Item>TLS_ECDHE_RSA_WITH_RC4_128_SHA</Item>
-              <Item>TLS_ECDH_ECDSA_WITH_RC4_128_SHA</Item>
-              <Item>TLS_ECDH_RSA_WITH_RC4_128_SHA</Item>
-              <Item>SSL_RSA_WITH_RC4_128_SHA</Item>
-            </Array>
-          </Set>
-          <Set name="keystoreType"><%= @settings.keystore_type %></Set>
-        </New>
-      </Arg>
-    </Call>
+    <% if !@settings.https_port.to_s.empty? %>
+      <% if @settings.reload_keystore %>
+      <Call name="addConnector">
+        <Arg>
+          <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
+            <Arg>
+              <New class="org.eclipse.jetty.util.ssl.SslContextFactory">
+                <Set name="sslContext">
+                  <Call class="jetpack.ssl.ReloadingSslContextFactory" name="create">
+                    <Arg><%= @settings.keystore %></Arg>
+                    <Arg><%= @settings.keystore_password %></Arg>
+                    <Arg><%= @settings.keystore_type %></Arg>
+                    <Arg><%= @settings.truststore %></Arg>
+                    <Arg><%= @settings.truststore_password %></Arg>
+                  </Call>
+                </Set>
+              </New>
+            </Arg>
+            <Set name="port"><%= @settings.https_port %></Set>
+            !-- Using RC4 to avoid the Rizzo/Duong attack on block ciphers. -->
+            <Set name="IncludeCipherSuites">
+              <Array type="java.lang.String">
+                <Item>TLS_ECDHE_ECDSA_WITH_RC4_128_SHA</Item>
+                <Item>TLS_ECDHE_RSA_WITH_RC4_128_SHA</Item>
+                <Item>TLS_ECDH_ECDSA_WITH_RC4_128_SHA</Item>
+                <Item>TLS_ECDH_RSA_WITH_RC4_128_SHA</Item>
+                <Item>SSL_RSA_WITH_RC4_128_SHA</Item>
+              </Array>
+            </Set>
+            <Set name="maxIdleTime">30000</Set>
+          </New>
+        </Arg>
+      </Call>
+      <% else %>
+      <Call name="addConnector">
+        <Arg>
+          <New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">
+            <Set name="port"><%=@settings.https_port%></Set>
+            <Set name="maxIdleTime">30000</Set>
+            <Set name="password"><%= @settings.keystore_password %></Set>
+            <Set name="keystore"><%= @settings.keystore %></Set>
+            <Set name="keystoreType"><%= @settings.keystore_type %></Set>
+            <!-- Using RC4 to avoid the Rizzo/Duong attack on block ciphers. -->
+            <Set name="IncludeCipherSuites">
+              <Array type="java.lang.String">
+                <Item>TLS_ECDHE_ECDSA_WITH_RC4_128_SHA</Item>
+                <Item>TLS_ECDHE_RSA_WITH_RC4_128_SHA</Item>
+                <Item>TLS_ECDH_ECDSA_WITH_RC4_128_SHA</Item>
+                <Item>TLS_ECDH_RSA_WITH_RC4_128_SHA</Item>
+                <Item>SSL_RSA_WITH_RC4_128_SHA</Item>
+              </Array>
+            </Set>
+          </New>
+        </Arg>
+      </Call>
+      <% end %>
     <% end %>
 
     <% unless @settings.http_port.to_s.empty? %>

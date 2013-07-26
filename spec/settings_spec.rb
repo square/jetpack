@@ -31,7 +31,7 @@ describe Jetpack::Settings do
       end
 
       it "sets ruby_version" do
-        subject.ruby_version.should == '1.9'
+        subject.ruby_version.should == 1.9
       end
 
       it "sets app_type" do
