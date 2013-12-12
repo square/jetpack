@@ -89,7 +89,7 @@ def regenerate_gemfile_lock_if_platform_java_is_not_found
 end
 
 def bundle_install
-  jruby! "-S gem install bundler -i #{@gem_home} --no-rdoc --no-ri"
+  jruby! "-S gem install bundler -i #{@gem_home} --no-rdoc --no-ri --pre"
   regenerate_gemfile_lock_if_platform_java_is_not_found
   jruby! "#{@gem_home}/bin/bundle --deployment --clean --without test development"
   jruby! "#{@gem_home}/bin/bundle binstubs rake"
