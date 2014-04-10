@@ -64,6 +64,13 @@ describe "jetpack - bundler and gems" do
       rake_result[:stdout].should     == "Spruz::Bijection\n"
       rake_result[:exitstatus].should == 0
     end
+
+    it "does not bundle groups specified in bundle_without" do
+      rake_result = x("cd spec/sample_projects/has_gems_via_bundler && " +
+                          %{bin/ruby -e 'require \\"rubygems\\"; require \\"bundler/setup\\"; require \\"honor_codes\\"; puts HonorCodes.name'})
+      rake_result[:stderr].should     =~ /LoadError: no such file to load -- honor_codes/
+      rake_result[:exitstatus].should > 0
+    end
   end
 
   describe "bin/rake" do

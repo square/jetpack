@@ -53,6 +53,10 @@ describe Jetpack::Settings do
       it "sets keystore_password" do
         subject.keystore_password.should be_nil
       end
+
+      it "sets bundle_without" do
+        subject.bundle_without.should =~ %w(test development)
+      end
     end
 
     context "optional parameters" do

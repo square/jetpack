@@ -26,6 +26,7 @@ module Jetpack
         'truststore'                 => nil,
         'truststore_password'        => nil,
         'reload_keystore'            => false,
+        'bundle_without'             => %w(test development)
       }
 
       contents = defaults.merge(user_defined_options)

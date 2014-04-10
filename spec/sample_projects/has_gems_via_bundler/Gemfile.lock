@@ -3,6 +3,7 @@ GEM
   specs:
     rake (0.9.2.2)
     spruz (0.2.13)
+    honor_codes (0.1.1)
 
 PLATFORMS
   java
@@ -11,3 +12,4 @@ PLATFORMS
 DEPENDENCIES
   rake (~> 0.9.2)
   spruz
+  honor_codes
