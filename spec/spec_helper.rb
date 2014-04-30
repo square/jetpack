@@ -29,6 +29,9 @@ def reset
   Dir["spec/sample_projects/*/*.jar"].each{|f|FileUtils.rm(f)}
   Dir["spec/sample_projects/*/.bundle"].each{|d|FileUtils.rm_rf(d)}
   Dir["spec/sample_projects/*/bin"].each{|d|FileUtils.rm_rf(d)}
+  Dir["spec/sample_projects/*/etc"].each{|d|FileUtils.rm_rf(d)}
+  Dir["spec/sample_projects/*/jetty"].each{|d|FileUtils.rm_rf(d)}
+  Dir["spec/sample_projects/*/*jetty.xml"].each{|d|FileUtils.rm_rf(d)}
   Dir["spec/sample_projects/*/vendor/jruby.jar"].each{|f|FileUtils.rm_f(f)}
   Dir["spec/sample_projects/*/vendor/jruby-rack.jar"].each{|f|FileUtils.rm_f(f)}
   Dir["spec/sample_projects/*/vendor/jetty"].each{|d|FileUtils.rm_rf(d)}
