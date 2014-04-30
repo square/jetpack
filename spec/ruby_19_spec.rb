@@ -26,7 +26,7 @@ describe "jetpack - bundler and gems in 1.9 mode" do
 
   describe "bin/rake" do
     it "uses rake version specified in Gemfile" do
-      rake_result = x("spec/sample_projects/#{@project}/bin/rake rake_version")
+      rake_result = x("spec/sample_projects/#{@project}/bin/ruby bin/rake rake_version")
       rake_result[:stdout].lines.to_a.last.chomp.should == "0.9.2.2"
     end
   end
