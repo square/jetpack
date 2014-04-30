@@ -12,7 +12,6 @@ describe "jetpack - web start" do
   end
 
   it "will unzip jetty under vendor if jetty.xml is present" do
-    @result[:stderr].should == ""
     @result[:exitstatus].should == 0
     File.directory?("spec/sample_projects/webapp/vendor/jetty").should == true
     File.directory?("spec/sample_projects/webapp/vendor/jetty/lib").should == true
