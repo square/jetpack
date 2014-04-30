@@ -1,11 +1,12 @@
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
-    rack (1.4.1)
+    rack (1.5.2)
+    rake (10.3.1)
 
 PLATFORMS
   java
-  ruby
 
 DEPENDENCIES
   rack
+  rake
