@@ -1,4 +1,4 @@
-java: "/usr/java/latest/java/bin/java"
+java: "java"
 jruby: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-complete-1.7.12.jar"
 jetty: "file://<%= File.expand_path('spec/local_mirror') %>/jetty-hightide-8.1.15.v20140411.zip"
 jruby-rack: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-rack-1.1.14.jar"
