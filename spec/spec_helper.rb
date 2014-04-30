@@ -5,6 +5,9 @@ require "stringio"
 
 include FileUtils
 
+# Env vars like RUBYOPT get passed on to jruby.
+# Cleanse the environment of these vars so that jruby is not affected.
+ENV.delete_if { |k,v| k =~ /^(RUBY|BUNDLE|GEM)/ }
 
 def x(cmd)
   stdout = StringIO.new
