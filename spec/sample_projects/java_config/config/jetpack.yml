@@ -1,0 +1,2 @@
+java: "/dev/null/java"
+jruby: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-complete-1.7.12.jar"
