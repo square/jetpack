@@ -45,7 +45,7 @@ Some other settings you might care about:
     java_options: "-Xmx2048m"
     http_port: 4080
     https_port: 4443
-    max_concurrent_connections: 20
+    max_concurrent_connections: 50
     ruby_version: 1.8
     app_type: rack
     keystore_type: JCEKS

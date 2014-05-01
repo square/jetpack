@@ -30,7 +30,8 @@ describe "jetpack - basics" do
       # This makes writing daemon wrappers around bin/ruby much easier.
       Dir.mktmpdir do |dir|
         tmpfile = File.join(dir, 'test_pid')
-        pid = Process.spawn("#{@project}/bin/ruby -e 'puts Process.pid'", STDOUT=>tmpfile)
+        # Use exec so that we replace the "shell" process that Travis creates
+        pid = Process.spawn("exec #{@project}/bin/ruby -e 'puts Process.pid'", STDOUT=>tmpfile)
         Process.wait(pid)
         pid.should == File.read(tmpfile).chomp.to_i
       end

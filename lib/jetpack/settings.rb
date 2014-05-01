@@ -16,7 +16,7 @@ module Jetpack
         'app_root'                   => File.expand_path(project_dir),
         'java'                       => 'java',
         'java_options'               => '-Xmx2048m',
-        'max_concurrent_connections' => 20,
+        'max_concurrent_connections' => 50,
         'ruby_version'               => 1.9,
         'app_type'                   => 'rails',
         'environment'                => nil,
