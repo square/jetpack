@@ -27,7 +27,7 @@ describe Jetpack::Settings do
       end
 
       it "sets max_concurrent_connections" do
-        subject.max_concurrent_connections.should == 20
+        subject.max_concurrent_connections.should == 50
       end
 
       it "sets ruby_version" do
