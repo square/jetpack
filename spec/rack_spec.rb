@@ -12,13 +12,14 @@ describe "jetpack - web start for rack app" do
   end
 
   it "runs" do
+    ports_clear?(20443, 20080).should be_true
     pid_to_kill = run_app("spec/sample_projects/rack_19")
     begin
       #HTTP 4443 - intended to be proxied to from something listening on 443
-      x!("curl https://localhost:10443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
+      x!("curl https://localhost:20443/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
 
       #HTTP 9080 - intended for internal health checking
-      x!("curl http://localhost:10080/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
+      x!("curl http://localhost:20080/hello --insecure")[:stdout].split("<br/>").first.strip.should == "Hello World"
     ensure
       system("kill -9 #{pid_to_kill}")
     end
@@ -29,12 +30,19 @@ describe "jetpack - web start for rack app" do
     start_time = Time.now
     loop do
       begin
-        TCPSocket.open("localhost", 10443)
+        TCPSocket.open("localhost", 20443)
         return jetty_pid
       rescue Errno::ECONNREFUSED
         raise "it's taking too long to start the server, something might be wrong" if Time.now - start_time > 60
         sleep 0.1
       end
+    end
+  end
+
+  def ports_clear?(*ports)
+    ports.all? do |port|
+      `nc -z localhost #{port}`
+      $?.exitstatus > 0
     end
   end
 end

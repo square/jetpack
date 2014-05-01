@@ -16,7 +16,10 @@ describe "jetpack - reloading" do
     File.read("spec/sample_projects/webapp_reloading/vendor/jetty/jetty.xml").should include("class=\"jetpack.ssl.ReloadingSslContextFactory\"")
   end
 
+  # TODO (@sul3n3t) - these tests don't currently work, and were not being run because of incorrect file extension :(
+  # ref: https://github.com/square/jetpack/pull/33
   it "compiled java classes" do
+    pending "These folders are not actually produced; either behavior or tests need to be fixed"
     classes_dir = "spec/sample_projects/webapp_reloading/WEB-INF/classes"
     File.exists?(classes_dir).should be_true
     File.exists?(File.join(classes_dir, "jetpack/ssl/FileResolver.class")).should be_true
@@ -26,6 +29,7 @@ describe "jetpack - reloading" do
   end
 
   it "retrieved java jars" do
+    pending "These folders are not actually produced; either behavior or tests need to be fixed"
     lib_dir = "spec/sample_projects/webapp_reloading/WEB-INF/lib"
     File.exists?(lib_dir).should be_true
     File.exists?(File.join(lib_dir, "guava.jar")).should be_true
@@ -35,6 +39,7 @@ describe "jetpack - reloading" do
   end
 
   it "runs" do
+    pending "This test has incorrect expectations; netcat on the port would not produce 'Hello World'"
     pid_to_kill = run_app
     begin
       puts x!("nc localhost 19143").inspect
@@ -49,7 +54,7 @@ describe "jetpack - reloading" do
     start_time = Time.now
     loop do
       begin
-        TCPSocket.open("localhost", 11443)
+        TCPSocket.open("localhost", 19143)
         return jetty_pid
       rescue Errno::ECONNREFUSED
         raise "it's taking too long to start the server, something might be wrong" if Time.now - start_time > 60

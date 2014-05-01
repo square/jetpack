@@ -22,7 +22,7 @@ describe "jetpack - basics" do
     it "allows you to execute using the jruby jar" do
       rake_result = x("#{@project}/bin/ruby --version")
       rake_result[:stderr].should     == ""
-      rake_result[:stdout].should include("ruby")
+      rake_result[:stdout].should include("jruby")
       rake_result[:exitstatus].should == 0
     end
 

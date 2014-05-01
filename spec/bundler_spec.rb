@@ -22,7 +22,7 @@ describe "jetpack - bundler and gems" do
     end
 
     it "is not accidentally using bundler from another ruby environment." do
-      rake_result = x("spec/sample_projects/has_gems_via_bundler/bin/rake load_path_with_bundler")
+      rake_result = x("spec/sample_projects/has_gems_via_bundler/bin/ruby bin/rake load_path_with_bundler")
       load_path_elements = rake_result[:stdout].split("\n").select{|line|line =~ /^--/}
       load_path_elements.length.should >= 3
       invalid_load_path_elements =
@@ -68,7 +68,7 @@ describe "jetpack - bundler and gems" do
 
   describe "bin/rake" do
     it "uses rake version specified in Gemfile" do
-      rake_result = x("spec/sample_projects/has_gems_via_bundler/bin/rake rake_version")
+      rake_result = x("spec/sample_projects/has_gems_via_bundler/bin/ruby bin/rake rake_version")
       rake_result[:stdout].lines.to_a.last.chomp.should == "0.9.2.2"
     end
   end
