@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/square/jetpack.svg?branch=master)](https://travis-ci.org/square/jetpack)
+
 # Jetpack
 
 jet.pack: package your JRuby webapp for Jetty.
