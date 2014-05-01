@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-bundle exec rake spec:setup
-bundle exec rspec spec/suite.rb
