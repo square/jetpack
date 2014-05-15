@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
-import javax.net.ssl.X509KeyManager;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.X509ExtendedKeyManager;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /** X509KeyManager which periodically looks for a newer key and transparently reloads. */
-public class ReloadingKeyManager implements X509KeyManager {
+public class ReloadingKeyManager extends X509ExtendedKeyManager {
   public static final Duration DEFAULT_RELOAD_INTERVAL = Duration.standardHours(2);
   private static final Logger logger = LoggerFactory.getLogger(ReloadingKeyManager.class);
 
@@ -142,6 +143,16 @@ public class ReloadingKeyManager implements X509KeyManager {
     } catch (UnrecoverableKeyException e) {
       throw new RuntimeException("Invalid password for reading key " + keyAlias, e);
     }
+  }
+
+  @Override
+  public String chooseEngineClientAlias(String[] strings, Principal[] principals, SSLEngine sslEngine) {
+    return keyName;
+  }
+
+  @Override
+  public String chooseEngineServerAlias(String s, Principal[] principals, SSLEngine sslEngine) {
+    return keyName;
   }
 
   private void reloadKeyStoreOnInterval() {
