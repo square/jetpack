@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-gem "rake"
+gem 'rake'
 
 group :test do
-  gem "rspec"
-  gem "open4"
+  gem 'rspec'
+  gem 'open4'
 end

@@ -1,20 +1,20 @@
 #!/usr/bin/ruby
 
-#think: bash-like ruby
+# think: bash-like ruby
 
-require "yaml"
-require "erb"
-require "fileutils"
-require "etc"
+require 'yaml'
+require 'erb'
+require 'fileutils'
+require 'etc'
 
-local_lib_dir = File.join(File.dirname(__FILE__), "../lib")
+local_lib_dir = File.join(File.dirname(__FILE__), '../lib')
 $LOAD_PATH << local_lib_dir if File.directory?(local_lib_dir)
 
 # Env vars like RUBYOPT get passed on to jruby.
 # Cleanse the environment of these vars so that jruby is not affected.
-ENV.delete_if{|k,v|k =~ /^(RUBY|BUNDLE|GEM)/}
+ENV.delete_if { |k, _| k =~ /^(RUBY|BUNDLE|GEM)/ }
 
-require "jetpack/settings"
+require 'jetpack/settings'
 
 include FileUtils
 
@@ -28,8 +28,7 @@ def x!(cmd)
   system(cmd) || halt("'#{cmd}' failed.")
 end
 
-
-halt("usage: jetpack <project_path>") unless ARGV.length==1 && File.directory?(ARGV[0])
+halt('usage: jetpack <project_path>') unless ARGV.length == 1 && File.directory?(ARGV[0])
 
 @path_to_project = ARGV.shift
 @created = []
@@ -39,23 +38,23 @@ halt("usage: jetpack <project_path>") unless ARGV.length==1 && File.directory?(A
 puts @settings.inspect
 
 unless @settings.jruby?
-  halt(%{Your config/jetpack.yml must at least contain a pointer to the desired jruby-complete jar.
+  halt(%(Your config/jetpack.yml must at least contain a pointer to the desired jruby-complete jar.
 Ex:
 
 jruby: http://jruby.org.s3.amazonaws.com/downloads/1.7.12/jruby-complete-1.7.12.jar
 jetty: http://dist.codehaus.org/jetty/jetty-hightide-8.1.15/jetty-hightide-8.1.15.v20140411.zip
-  })
+    ))
 end
 
 script_start_time = Time.now
 
-@jruby_jar_file = "vendor/jruby.jar"
-@jetpack_dir = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+@jruby_jar_file = 'vendor/jruby.jar'
+@jetpack_dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 
-@gem_home = "vendor/gems"
+@gem_home = 'vendor/gems'
 
 # Don't set min memory size when making the build artifact
-@jar_build_options = @settings.java_options.gsub(/(\s*)-Xms\S+/,'\1')
+@jar_build_options = @settings.java_options.gsub(/(\s*)-Xms\S+/, '\1')
 
 @java_dash_jar = "GEM_HOME=#{@gem_home} exec #{@settings.java} #{@jar_build_options} -jar"
 @jruby_opts = "--#{@settings.ruby_version}"
@@ -68,22 +67,22 @@ def download(url, local_file)
   x! "curl --silent --show-error -o #{local_file} #{url}"
 end
 
-def unzip(file, directory, pattern="")
+def unzip(file, directory, pattern = '')
   x! "unzip -qq #{file} #{pattern} -d #{directory}"
 end
 
 def regenerate_gemfile_lock_if_platform_java_is_not_found
-  gemfile_lock_lines = File.read(File.join(@path_to_project, "Gemfile.lock")).split("\n")
-  platforms_start = gemfile_lock_lines.find_index{|line|line == "PLATFORMS"} + 1
-  platforms_count = gemfile_lock_lines.slice(platforms_start..-1).find_index{|line|line == ""} - 1
-  platforms = gemfile_lock_lines.slice(platforms_start..(platforms_start+platforms_count)).map{|platform_str|platform_str.strip}
-  unless platforms.include?("java")
-    $stderr.puts %{
+  gemfile_lock_lines = File.read(File.join(@path_to_project, 'Gemfile.lock')).split("\n")
+  platforms_start = gemfile_lock_lines.find_index { |line| line == 'PLATFORMS' } + 1
+  platforms_count = gemfile_lock_lines.slice(platforms_start..-1).find_index { |line| line == '' } - 1
+  platforms = gemfile_lock_lines.slice(platforms_start..(platforms_start + platforms_count)).map(&:strip)
+  unless platforms.include?('java')
+    $stderr.puts %(
       WARNING: Your Gemfile.lock does not contain PLATFORM java.
       Automtically regenerating and overwriting Gemfile.lock using jruby
        - because otherwise, jruby-specific gems would not be installed by bundler.
       To make this message go away, you must re-generate your Gemfile.lock using jruby.
-    }
+        )
     jruby! "-e 'require \"rubygems\"; require \"bundler\"; Bundler.definition.lock(Bundler.default_lockfile)'"
   end
 end
@@ -97,37 +96,37 @@ def bundle_install
 end
 
 def build_java_sources
-  java_dir = File.join(@jetpack_dir, "java")
-  pom = File.join(java_dir, "pom.xml")
+  java_dir = File.join(@jetpack_dir, 'java')
+  pom = File.join(java_dir, 'pom.xml')
   x! "mvn package -f #{pom}"
-  File.join(java_dir, "target/jetpack-HEAD-SNAPSHOT-shaded.jar")
+  File.join(java_dir, 'target/jetpack-HEAD-SNAPSHOT-shaded.jar')
 end
 
 def install_jetty(vendor_dir)
-  jetty_dir = File.join(vendor_dir, "jetty")
-  Dir["#{vendor_dir}/jett*"].to_a.each{|f|rm_rf(f)}
-  download @settings.jetty, File.join(vendor_dir, "jetty.zip")
-  unzip File.join(vendor_dir, "jetty.zip"), vendor_dir
-  rm File.join(vendor_dir, "jetty.zip")
+  jetty_dir = File.join(vendor_dir, 'jetty')
+  Dir["#{vendor_dir}/jett*"].to_a.each { |f| rm_rf(f) }
+  download @settings.jetty, File.join(vendor_dir, 'jetty.zip')
+  unzip File.join(vendor_dir, 'jetty.zip'), vendor_dir
+  rm File.join(vendor_dir, 'jetty.zip')
   mv Dir["#{vendor_dir}/jetty*"].to_a.first, jetty_dir
   rm_rf "#{jetty_dir}/webapps"
   jetty_dir
 end
 
 def install_jruby_rack_jar(vendor_dir)
-  download @settings.jruby_rack, File.join(vendor_dir, "jruby-rack.jar")
+  download @settings.jruby_rack, File.join(vendor_dir, 'jruby-rack.jar')
 end
 
 def process_template_files(erb_files)
   erb_files.each do |erb_file|
-    target_file = erb_file.sub(/\.erb$/, "")
+    target_file = erb_file.sub(/\.erb$/, '')
 
     # Need to override vendor files because jetpack itself installs jetty
     # there, which includes files we need to overwrite.
-    next if File.exists?(target_file) && target_file !~ /\/vendor\//
+    next if File.exist?(target_file) && target_file !~ %r{/vendor/}
 
     evaled_contents = ERB.new(File.read(erb_file)).result(binding)
-    File.open(target_file, "w"){|f|f<<evaled_contents}
+    File.open(target_file, 'w') { |f| f << evaled_contents }
     File.new(target_file).chmod(File.stat(erb_file).mode)
     rm erb_file
 
@@ -148,46 +147,47 @@ def overlay_files(overlay_dir, target_dir)
     FileUtils.cp_r(Dir.glob("#{overlay_dir}/**/{*,.[^.]*}"), target_dir, :preserve => true)
   end
 
-  process_template_files files_created.select{|f|f=~/\.erb$/}
+  process_template_files files_created.select { |f| f =~ /\.erb$/ }
 end
 
-bin_dir = File.join(@path_to_project, "bin")
+bin_dir = File.join(@path_to_project, 'bin')
 mkdir_p bin_dir
-overlay_files File.join(@jetpack_dir, "bin_files"), bin_dir
+overlay_files File.join(@jetpack_dir, 'bin_files'), bin_dir
 
-vendor_dir = File.join(@path_to_project, "vendor")
+vendor_dir = File.join(@path_to_project, 'vendor')
 mkdir_p vendor_dir
 download @settings.jruby, File.join(@path_to_project, @jruby_jar_file)
 
-bundle_install if File.exists?(File.join(@path_to_project, "Gemfile.lock"))
+bundle_install if File.exist?(File.join(@path_to_project, 'Gemfile.lock'))
 if @settings.jetty?
   jetty_dir = install_jetty(vendor_dir)
-  install_jruby_rack_jar vendor_dir #raise if jar not found
+  install_jruby_rack_jar vendor_dir # raise if jar not found
 
-  overlay_files File.join(@jetpack_dir, "jetty_files"), jetty_dir
+  overlay_files File.join(@jetpack_dir, 'jetty_files'), jetty_dir
 
-  web_inf_dir = File.join(@path_to_project, "WEB-INF")
+  web_inf_dir = File.join(@path_to_project, 'WEB-INF')
   mkdir_p web_inf_dir
-  FileUtils.mkdir_p(File.join(@path_to_project, "log"))
+  FileUtils.mkdir_p(File.join(@path_to_project, 'log'))
   @listener = if @settings.rails?
-    "org.jruby.rack.rails.RailsServletContextListener"
-  else
-    "org.jruby.rack.RackServletContextListener"
-  end
-  overlay_files File.join(@jetpack_dir, "web_inf_files"), web_inf_dir
+                'org.jruby.rack.rails.RailsServletContextListener'
+              else
+                'org.jruby.rack.RackServletContextListener'
+              end
+  overlay_files File.join(@jetpack_dir, 'web_inf_files'), web_inf_dir
 
-  shaded_jar = build_java_sources()
-  FileUtils.copy(shaded_jar, File.join(jetty_dir, "lib/ext/jetpack.jar"))
+  shaded_jar = build_java_sources
+  FileUtils.copy(shaded_jar, File.join(jetty_dir, 'lib/ext/jetpack.jar'))
 end
 
-config_jetpack_dir_in_project = File.join(@path_to_project, "config/jetpack_files")
+config_jetpack_dir_in_project = File.join(@path_to_project, 'config/jetpack_files')
 if File.directory?(config_jetpack_dir_in_project)
   overlay_files config_jetpack_dir_in_project, @path_to_project
 end
 
 elapsed_seconds = (Time.now - script_start_time).to_i
 
-puts %{Created:
+puts %(Created:
   #{@created.uniq.sort.join("\n  ")}
 Time: #{elapsed_seconds} s
-}
+
+)

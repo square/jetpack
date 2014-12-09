@@ -1,12 +1,12 @@
-require "ostruct"
-require "yaml"
-require "erb"
+require 'ostruct'
+require 'yaml'
+require 'erb'
 
 module Jetpack
   class Settings < OpenStruct
     def self.load_from_project(project_dir)
-      config_file = File.join(project_dir, "config/jetpack.yml")
-      raise("#{config_file} not found") unless File.exists?(config_file)
+      config_file = File.join(project_dir, 'config/jetpack.yml')
+      fail("#{config_file} not found") unless File.exist?(config_file)
       yaml = YAML.load(ERB.new(File.read(config_file)).result)
       Settings.new(project_dir, yaml)
     end
@@ -56,11 +56,11 @@ module Jetpack
     end
 
     def jetty_pid_path
-      File.join(app_root, "/vendor/jetty/run/jetty.pid")
+      File.join(app_root, '/vendor/jetty/run/jetty.pid')
     end
 
     def inspect
-      self.class.name + ":\n" + @keys.map{|k|"  #{k.ljust(20)} = #{send(k.to_sym)}"}.join("\n") + "\n"
+      self.class.name + ":\n" + @keys.map { |k| "  #{k.ljust(20)} = #{send(k.to_sym)}" }.join("\n") + "\n"
     end
   end
 end
