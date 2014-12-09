@@ -17,7 +17,7 @@ describe 'jetpack - bundler and gems in 1.9 mode' do
   describe 'gem installation' do
     it 'installed gems are available via Bundler.require' do
       rake_result = x("cd spec/sample_projects/#{@project} && " +
-                      %(bin/ruby -e 'require \"rubygems\"; require \"bundler\"; Bundler.require; puts Spruz::Bijection.name'))
+                      %(bin/ruby -e 'require \\"rubygems\\"; require \\"bundler\\"; Bundler.require; puts Spruz::Bijection.name'))
       expect(rake_result[:stderr]).to eq('')
       expect(rake_result[:stdout]).to eq("Spruz::Bijection\n")
       expect(rake_result[:exitstatus]).to eq(0)

@@ -7,7 +7,7 @@ task :default => :spec
 desc 'Run all specs in spec directory'
 RSpec::Core::RakeTask.new(:spec => 'spec:setup') do |t|
   t.pattern = './spec/**/*_spec.rb'
-  t.rspec_opts = '--format nested'
+  t.rspec_opts = '--format documentation'
 end
 
 namespace :spec do

@@ -42,7 +42,7 @@ describe 'jetpack - web start for rack app' do
   def ports_clear?(*ports)
     ports.all? do |port|
       `nc -z localhost #{port}`
-      $CHILD_STATUS.exitstatus > 0
+      $?.exitstatus > 0
     end
   end
 end

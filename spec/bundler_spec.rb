@@ -34,7 +34,7 @@ describe 'jetpack - bundler and gems' do
     end
 
     it 'can be used from a script fed to jruby.' do
-      rake_result = x(%(spec/sample_projects/has_gems_via_bundler/bin/ruby -e 'require \"rubygems\"; require \"bundler\"; puts Bundler::VERSION'))
+      rake_result = x(%(spec/sample_projects/has_gems_via_bundler/bin/ruby -e 'require \\"rubygems\\"; require \\"bundler\\"; puts Bundler::VERSION'))
       expect(rake_result[:stderr]).to eq('')
       expect(rake_result[:stdout]).not_to eq('')
       expect(rake_result[:exitstatus]).to eq(0)
@@ -51,7 +51,7 @@ describe 'jetpack - bundler and gems' do
 
     it 'installed gems are available via normal require' do
       rake_result = x('cd spec/sample_projects/has_gems_via_bundler && ' +
-                      %(bin/ruby -e 'require \"rubygems\"; require \"bundler/setup\"; require \"spruz/bijection\"; puts Spruz::Bijection.name'))
+                      %(bin/ruby -e 'require \\"rubygems\\"; require \\"bundler/setup\\"; require \\"spruz/bijection\\"; puts Spruz::Bijection.name'))
       expect(rake_result[:stderr]).to eq('')
       expect(rake_result[:stdout]).to eq("Spruz::Bijection\n")
       expect(rake_result[:exitstatus]).to eq(0)
@@ -59,7 +59,7 @@ describe 'jetpack - bundler and gems' do
 
     it 'installed gems are available via Bundler.require' do
       rake_result = x('cd spec/sample_projects/has_gems_via_bundler && ' +
-                      %(bin/ruby -e 'require \"rubygems\"; require \"bundler\"; Bundler.require; puts Spruz::Bijection.name'))
+                      %(bin/ruby -e 'require \\"rubygems\\"; require \\"bundler\\"; Bundler.require; puts Spruz::Bijection.name'))
       expect(rake_result[:stderr]).to eq('')
       expect(rake_result[:stdout]).to eq("Spruz::Bijection\n")
       expect(rake_result[:exitstatus]).to eq(0)
@@ -67,7 +67,7 @@ describe 'jetpack - bundler and gems' do
 
     it 'does not bundle groups specified in bundle_without' do
       rake_result = x('cd spec/sample_projects/has_gems_via_bundler && ' +
-                          %(bin/ruby -e 'require \"rubygems\"; require \"bundler/setup\"; require \"honor_codes\"; puts HonorCodes.name'))
+                          %(bin/ruby -e 'require \\"rubygems\\"; require \\"bundler/setup\\"; require \\"honor_codes\\"; puts HonorCodes.name'))
       expect(rake_result[:stderr]).to match(/LoadError: no such file to load -- honor_codes/)
       expect(rake_result[:exitstatus]).to be > 0
     end
@@ -117,7 +117,7 @@ DEPENDENCIES
       expect(File.read('spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock/Gemfile.lock')).to include('java')
 
       rake_result = x('cd spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock && ' +
-                      %(bin/ruby -e 'require \"rubygems\"; require \"bundler\"; Bundler.require; puts Spruz::Bijection.name'))
+                      %(bin/ruby -e 'require \\"rubygems\\"; require \\"bundler\\"; Bundler.require; puts Spruz::Bijection.name'))
       expect(rake_result[:stderr]).to eq('')
       expect(rake_result[:stdout]).to eq("Spruz::Bijection\n")
       expect(rake_result[:exitstatus]).to eq(0)
