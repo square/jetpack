@@ -12,8 +12,8 @@ describe 'jetpack - reloading' do
   end
 
   it 'uses reloading SSL' do
-    File.exist?('spec/sample_projects/webapp_reloading/vendor/jetty/jetty.xml').should be_true
-    File.read('spec/sample_projects/webapp_reloading/vendor/jetty/jetty.xml').should include("class=\"jetpack.ssl.ReloadingSslContextFactory\"")
+    expect(File.exist?('spec/sample_projects/webapp_reloading/vendor/jetty/jetty.xml')).to be_truthy
+    expect(File.read('spec/sample_projects/webapp_reloading/vendor/jetty/jetty.xml')).to include("class=\"jetpack.ssl.ReloadingSslContextFactory\"")
   end
 
   # TODO: (@sul3n3t) - these tests don't currently work, and were not being run because of incorrect file extension :(
@@ -21,21 +21,21 @@ describe 'jetpack - reloading' do
   it 'compiled java classes' do
     pending 'These folders are not actually produced; either behavior or tests need to be fixed'
     classes_dir = 'spec/sample_projects/webapp_reloading/WEB-INF/classes'
-    File.exist?(classes_dir).should be_true
-    File.exist?(File.join(classes_dir, 'jetpack/ssl/FileResolver.class')).should be_true
-    File.exist?(File.join(classes_dir, 'jetpack/ssl/ReloadingKeyManager.class')).should be_true
-    File.exist?(File.join(classes_dir, 'jetpack/ssl/ReloadingSslContextFactory.class')).should be_true
-    File.exist?(File.join(classes_dir, 'jetpack/ssl/VersionedFileResolver.class')).should be_true
+    expect(File.exist?(classes_dir)).to be_truthy
+    expect(File.exist?(File.join(classes_dir, 'jetpack/ssl/FileResolver.class'))).to be_truthy
+    expect(File.exist?(File.join(classes_dir, 'jetpack/ssl/ReloadingKeyManager.class'))).to be_truthy
+    expect(File.exist?(File.join(classes_dir, 'jetpack/ssl/ReloadingSslContextFactory.class'))).to be_truthy
+    expect(File.exist?(File.join(classes_dir, 'jetpack/ssl/VersionedFileResolver.class'))).to be_truthy
   end
 
   it 'retrieved java jars' do
     pending 'These folders are not actually produced; either behavior or tests need to be fixed'
     lib_dir = 'spec/sample_projects/webapp_reloading/WEB-INF/lib'
-    File.exist?(lib_dir).should be_true
-    File.exist?(File.join(lib_dir, 'guava.jar')).should be_true
-    File.exist?(File.join(lib_dir, 'joda-time.jar')).should be_true
-    File.exist?(File.join(lib_dir, 'slf4j-api.jar')).should be_true
-    File.exist?(File.join(lib_dir, 'slf4j-simple.jar')).should be_true
+    expect(File.exist?(lib_dir)).to be_truthy
+    expect(File.exist?(File.join(lib_dir, 'guava.jar'))).to be_truthy
+    expect(File.exist?(File.join(lib_dir, 'joda-time.jar'))).to be_truthy
+    expect(File.exist?(File.join(lib_dir, 'slf4j-api.jar'))).to be_truthy
+    expect(File.exist?(File.join(lib_dir, 'slf4j-simple.jar'))).to be_truthy
   end
 
   it 'runs' do
@@ -43,7 +43,7 @@ describe 'jetpack - reloading' do
     pid_to_kill = run_app
     begin
       puts x!('nc localhost 19143').inspect
-      x!('nc localhost 19143')[:stdout].should == 'Hello World'
+      expect(x!('nc localhost 19143')[:stdout]).to eq('Hello World')
     ensure
       system("kill -9 #{pid_to_kill}")
     end

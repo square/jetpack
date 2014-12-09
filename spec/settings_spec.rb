@@ -11,51 +11,51 @@ describe Jetpack::Settings do
 
     context 'defaults' do
       it 'sets app_root' do
-        subject.app_root.should == project_dir
+        expect(subject.app_root).to eq(project_dir)
       end
 
       it 'sets app_user' do
-        subject.app_user.should == Etc.getpwuid(File.stat(subject.app_root).uid).name
+        expect(subject.app_user).to eq(Etc.getpwuid(File.stat(subject.app_root).uid).name)
       end
 
       it 'sets java' do
-        subject.java.should == 'java'
+        expect(subject.java).to eq('java')
       end
 
       it 'sets java_options' do
-        subject.java_options.should == '-Xmx2048m'
+        expect(subject.java_options).to eq('-Xmx2048m')
       end
 
       it 'sets max_concurrent_connections' do
-        subject.max_concurrent_connections.should == 50
+        expect(subject.max_concurrent_connections).to eq(50)
       end
 
       it 'sets ruby_version' do
-        subject.ruby_version.should == 1.9
+        expect(subject.ruby_version).to eq(1.9)
       end
 
       it 'sets app_type' do
-        subject.app_type.should == 'rails'
+        expect(subject.app_type).to eq('rails')
       end
 
       it 'sets environment' do
-        subject.environment.should be_nil
+        expect(subject.environment).to be_nil
       end
 
       it 'sets keystore_type' do
-        subject.keystore_type.should == 'PKCS12'
+        expect(subject.keystore_type).to eq('PKCS12')
       end
 
       it 'sets keystore' do
-        subject.keystore.should be_nil
+        expect(subject.keystore).to be_nil
       end
 
       it 'sets keystore_password' do
-        subject.keystore_password.should be_nil
+        expect(subject.keystore_password).to be_nil
       end
 
       it 'sets bundle_without' do
-        subject.bundle_without.should =~ %w(test development)
+        expect(subject.bundle_without).to match_array(%w(test development))
       end
     end
 
@@ -65,14 +65,14 @@ describe Jetpack::Settings do
           value = rand
           config[key] = value
           settings_key = key.gsub('-', '_')
-          subject.send(settings_key).should == value
+          expect(subject.send(settings_key)).to eq(value)
         end
       end
     end
 
     it 'support arbitrary values' do
       config['s2s_port'] = 443
-      subject.s2s_port.should == 443
+      expect(subject.s2s_port).to eq(443)
     end
   end
 
@@ -80,12 +80,12 @@ describe Jetpack::Settings do
     subject { described_class.load_from_project(project_dir) }
 
     it 'returns a Settings object' do
-      subject.should be_a(described_class)
+      expect(subject).to be_a(described_class)
     end
 
     it 'reads from the project config file' do
       config_yaml = YAML.load(File.read(config_file))
-      subject.http_port.should == config_yaml['http_port']
+      expect(subject.http_port).to eq(config_yaml['http_port'])
     end
   end
 end

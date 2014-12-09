@@ -18,16 +18,16 @@ describe 'jetpack - bundler and gems in 1.9 mode' do
     it 'installed gems are available via Bundler.require' do
       rake_result = x("cd spec/sample_projects/#{@project} && " +
                       %(bin/ruby -e 'require \"rubygems\"; require \"bundler\"; Bundler.require; puts Spruz::Bijection.name'))
-      rake_result[:stderr].should     == ''
-      rake_result[:stdout].should     == "Spruz::Bijection\n"
-      rake_result[:exitstatus].should == 0
+      expect(rake_result[:stderr]).to eq('')
+      expect(rake_result[:stdout]).to eq("Spruz::Bijection\n")
+      expect(rake_result[:exitstatus]).to eq(0)
     end
   end
 
   describe 'bin/rake' do
     it 'uses rake version specified in Gemfile' do
       rake_result = x("spec/sample_projects/#{@project}/bin/ruby bin/rake rake_version")
-      rake_result[:stdout].lines.to_a.last.chomp.should == '0.9.2.2'
+      expect(rake_result[:stdout].lines.to_a.last.chomp).to eq('0.9.2.2')
     end
   end
 end

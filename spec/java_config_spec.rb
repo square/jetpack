@@ -12,6 +12,6 @@ describe 'jetpack - configurable java version' do
   end
 
   it 'uses the desired version of java' do
-    File.read("#{@project}/bin/ruby").should include('/dev/null/java')
+    expect(File.read("#{@project}/bin/ruby")).to include('/dev/null/java')
   end
 end
