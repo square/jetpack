@@ -1,30 +1,38 @@
 task :project_info do
-  require "fileutils"
+  require 'fileutils'
 
   puts "Hi, I'm the no_dependencies project"
   puts "RUBY_PLATFORM=#{RUBY_PLATFORM}"
   puts "LOAD_PATH=#{$LOAD_PATH.join("\n")}"
   puts "PWD=#{FileUtils.pwd}"
-  puts "DOLLAR_ZERO=#{$0}"
+  puts "PROGRAM_NAME=#{$PROGRAM_NAME}"
 end
 
 task :another_task do
-  puts "You ran another task"
+  puts 'You ran another task'
 end
 
-def zzz; yyy end
-def yyy; xxx end
-def xxx; raise "BOOM" end
+def zzz
+  yyy
+end
+
+def yyy
+  xxx
+end
+
+def xxx
+  fail 'BOOM'
+end
 
 task :boom do
   zzz
 end
 
 task :load_path do
-  $LOAD_PATH.each{|path|puts "LP-- #{path}"}
+  $LOAD_PATH.each { |path| puts "LP-- #{path}" }
 end
 
 task :gem_path do
-  require "rubygems"
-  Gem.path.each{|path|puts "GP-- #{path}"}
+  require 'rubygems'
+  Gem.path.each { |path| puts "GP-- #{path}" }
 end
