@@ -9,5 +9,6 @@ keystore: "etc/fake.jceks"
 keystore_type: "JCEKS"
 keystore_password: "foobar"
 truststore: "etc/fake.jceks"
+truststore_type: "JCEKS"
 truststore_password: "foobar"
 reload_keystore: true
