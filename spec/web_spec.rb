@@ -32,6 +32,12 @@ describe 'jetpack - web start' do
     expect(File.exist?('spec/sample_projects/webapp/vendor/jetty/jetty-init')).to eq(true)
   end
 
+  it 'does not place extra config files' do
+    expect(File.exist?('spec/sample_projects/webapp/custom-project-specific-jetty.xml')).to eq(false)
+    expect(File.exist?('spec/sample_projects/webapp/etc/custom-project-specific-jetty.xml')).to eq(false)
+    expect(File.exist?('spec/sample_projects/webapp/etc')).to eq(false)
+  end
+
   it 'places a launch script, and includes java_options' do
     expect(File.exist?('spec/sample_projects/webapp/bin/launch')).to eq(true)
     expect(File.read('spec/sample_projects/webapp/bin/launch')).to include('java -jar -Xmx256M')
