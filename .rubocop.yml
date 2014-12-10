@@ -1,0 +1,43 @@
+
+# Offense count: 1
+Lint/UselessAssignment:
+  Enabled: false
+
+# Offense count: 4
+Metrics/AbcSize:
+  Max: 42
+
+# Offense count: 153
+# Configuration parameters: AllowURI, URISchemes.
+Metrics/LineLength:
+  Max: 169
+
+# Offense count: 7
+# Configuration parameters: CountComments.
+Metrics/MethodLength:
+  Max: 21
+
+# Offense count: 7
+Style/Documentation:
+  Enabled: false
+
+# Offense count: 1
+# Configuration parameters: MinBodyLength.
+Style/GuardClause:
+  Enabled: false
+
+# Offense count: 13
+# Cop supports --auto-correct.
+# Configuration parameters: EnforcedStyle, SupportedStyles.
+Style/HashSyntax:
+  Enabled: false
+
+# Offense count: 5
+# Cop supports --auto-correct.
+Style/NumericLiterals:
+  MinDigits: 6
+
+# Offense count: 1
+# Cop supports --auto-correct.
+Style/SpecialGlobalVars:
+  Enabled: false
