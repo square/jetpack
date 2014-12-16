@@ -70,6 +70,12 @@ describe 'jetpack - web start' do
       expect(x!("curl http://#{Socket.gethostname}:9080/hello")[:stdout].split('<br/>').first.strip).to eq('Hello World')
 
       expect(x!('curl http://127.0.0.1:9080/hello')[:stdout].split('<br/>').first.strip).to eq('Hello World')
+
+      xss_output = x!("curl -i -X 'POST' -H 'Content-Type: application/x-www-form-urlencoded' --data-binary 'input=<script>alert(document.domain)</script>%' 'http://127.0.0.1:9080/hello'")[:stdout]
+
+      expect(xss_output).not_to include('alert')
+      expect(xss_output).not_to include('Rack::ShowStatus')
+      expect(xss_output).to include('Content-Length: 0')
     ensure
       system("kill -9 #{pid_to_kill}")
     end
