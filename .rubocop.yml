@@ -10,7 +10,7 @@ Metrics/AbcSize:
 # Offense count: 153
 # Configuration parameters: AllowURI, URISchemes.
 Metrics/LineLength:
-  Max: 169
+  Max: 200
 
 # Offense count: 7
 # Configuration parameters: CountComments.
