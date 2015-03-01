@@ -12,8 +12,8 @@ describe 'jetpack - reloading' do
   end
 
   it 'uses reloading SSL' do
-    expect(File.exist?('spec/sample_projects/webapp_reloading/vendor/jetty/etc/jetty.xml')).to be_truthy
-    expect(File.read('spec/sample_projects/webapp_reloading/vendor/jetty/etc/jetty.xml')).to include("class=\"jetpack.ssl.ReloadingSslContextFactory\"")
+    expect(File.exist?('spec/sample_projects/webapp_reloading/vendor/jetty/etc/jetty-ssl.xml')).to be_truthy
+    expect(File.read('spec/sample_projects/webapp_reloading/vendor/jetty/etc/jetty-ssl.xml')).to include("class=\"jetpack.ssl.ReloadingSslContextFactory\"")
   end
 
   # TODO: (@sul3n3t) - these tests don't currently work, and were not being run because of incorrect file extension :(

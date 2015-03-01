@@ -1,6 +1,6 @@
-jruby: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-complete-1.7.16.jar"
-jetty: "file://<%= File.expand_path('spec/local_mirror') %>/jetty-hightide-8.1.16.v20140903.zip"
-jruby-rack: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-rack-1.1.16.jar"
+jruby: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-complete-1.7.19.jar"
+jetty: "file://<%= File.expand_path('spec/local_mirror') %>/jetty-distribution-9.2.9.v20150224.zip"
+jruby-rack: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-rack-1.1.18.jar"
 http_port: 19180
 https_port: 19143
 max_threads: 50
