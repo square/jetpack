@@ -3,7 +3,7 @@ jetty: "file://<%= File.expand_path('spec/local_mirror') %>/jetty-hightide-8.1.1
 jruby-rack: "file://<%= File.expand_path('spec/local_mirror') %>/jruby-rack-1.1.16.jar"
 http_port: 11080
 https_port: 11443
-max_concurrent_connections: 50
+max_threads: 50
 java_options: -Xmx256M
 jetty_filters: true
 keystore: "etc/fake.p12"
