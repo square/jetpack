@@ -30,7 +30,7 @@ module Jetpack
         'bundle_without'             => %w(test development)
       }
 
-      if user_defined_options.has_key?('max_concurrent_connections') && !user_defined_options.has_key?('max_threads')
+      if user_defined_options.key?('max_concurrent_connections') && !user_defined_options.key?('max_threads')
         user_defined_options['max_threads'] = user_defined_options['max_concurrent_connections']
       end
 

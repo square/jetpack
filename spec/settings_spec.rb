@@ -75,10 +75,10 @@ describe Jetpack::Settings do
       expect(subject.s2s_port).to eq(443)
     end
 
-    context "with max_concurrent_connections set" do
-      let(:config) { {'max_concurrent_connections' => 20} }
+    context 'with max_concurrent_connections set' do
+      let(:config) { { 'max_concurrent_connections' => 20 } }
 
-      it "sets max threads to max_concurrent_connections" do
+      it 'sets max threads to max_concurrent_connections' do
         expect(subject.max_threads).to eq(20)
       end
     end
