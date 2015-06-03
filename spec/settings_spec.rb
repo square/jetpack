@@ -26,8 +26,8 @@ describe Jetpack::Settings do
         expect(subject.java_options).to eq('-Xmx2048m')
       end
 
-      it 'sets max_concurrent_connections' do
-        expect(subject.max_concurrent_connections).to eq(50)
+      it 'sets max_threads' do
+        expect(subject.max_threads).to eq(50)
       end
 
       it 'sets ruby_version' do
@@ -73,6 +73,14 @@ describe Jetpack::Settings do
     it 'support arbitrary values' do
       config['s2s_port'] = 443
       expect(subject.s2s_port).to eq(443)
+    end
+
+    context 'with max_concurrent_connections set' do
+      let(:config) { { 'max_concurrent_connections' => 20 } }
+
+      it 'sets max threads to max_concurrent_connections' do
+        expect(subject.max_threads).to eq(20)
+      end
     end
   end
 

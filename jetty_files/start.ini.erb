@@ -1,0 +1,82 @@
+#===========================================================
+# Jetty start.jar arguments
+#
+# The contents of this file, together with the *.ini
+# files found in start.d directory are used to build
+# the classpath and command line on a call to
+#    java -jar start.jar [arg...]
+#
+# Use the following command to see more options
+#    java -jar start.jar --help
+#
+# Each line in these files is prepended to the command line
+# as arguments and may be either:
+#  + A property like: name=value
+#  + A module to enable like: --module=jmx
+#  + An XML configuration file like: etc/jetty-feature.xml
+#  + A start.jar option like: --dry-run
+#
+# If --exec or --dry-run are used, then this file may also
+# contain lines with:
+#  + A JVM option like: -Xmx2000m
+#  + A System Property like: -Dcom.sun.management.jmxremote
+#
+# The --add-to-start=module option can be used to append
+# a configuration template for a module to start.ini
+# The --add-to-startd=module option can be used to create
+# a configuration template for a module in start.d/module.ini
+# For example configure and run with SPDY use
+#
+#   java -jar start.jar --add-to-startd=spdy
+#   $EDITOR start.d/spdy.ini
+#   java -jar start.jar
+#
+#===========================================================
+
+
+#
+# Initialize modules
+#
+--module=server
+--module=ext
+--module=servlet
+--module=servlets
+--module=security
+--module=webapp
+--module=logging
+--module=requestlog
+
+<% unless @settings.http_port.to_s.empty? %>
+--module=http
+jetty.port=<%=@settings.http_port%>
+<% end %>
+
+<% unless @settings.https_port.to_s.empty? %>
+--module=ssl
+--module=https
+jetty.secure.port=<%=@settings.https_port%>
+https.port=<%=@settings.https_port%>
+<% end %>
+
+threads.min=10
+threads.max=<%=@settings.max_threads %>
+threads.timeout=60000
+
+jetty.output.buffer.size=32768
+jetty.request.header.size=8192
+jetty.response.header.size=8192
+
+jetty.send.server.version=false
+jetty.send.date.header=true
+
+# What host to listen on (leave commented to listen on all interfaces)
+#jetty.host=myhost.com
+
+# Dump the state of the Jetty server, components, and webapps after startup
+jetty.dump.start=false
+# Dump the state of the Jetty server, before stop
+jetty.dump.stop=false
+
+requestlog.filename=/../../log/jetty_request_yyyy_mm_dd.log
+requestlog.retain=30
+requestlog.append=true

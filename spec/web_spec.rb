@@ -44,18 +44,18 @@ describe 'jetpack - web start' do
     expect(File.read('spec/sample_projects/webapp/bin/launch')).to include('start.jar')
   end
 
-  it 'respects the maximun number of concurrent connections, http and https port' do
-    jetty_xml = 'spec/sample_projects/webapp/vendor/jetty/etc/jetty.xml'
+  it 'respects the maximum number of threads, http and https port' do
+    start_ini = 'spec/sample_projects/webapp/vendor/jetty/start.ini'
     settings = YAML.load_file('spec/sample_projects/webapp/config/jetpack.yml')
-    max_threads_setting = /<Set name="maxThreads">#{settings["max_concurrent_connections"]}<\/Set>/
 
-    expect(File.exist?(jetty_xml)).to eq(true)
+    expect(File.exist?(start_ini)).to eq(true)
 
-    jetty_xml_content = File.readlines(jetty_xml)
-    expect(jetty_xml_content.grep(max_threads_setting)).not_to be_empty
+    start_ini_content = File.readlines(start_ini)
+    expect(start_ini_content.grep(/threads.max=#{settings["max_threads"]}/)).not_to be_empty
 
-    expect(jetty_xml_content.grep(/<New class="org.eclipse.jetty.server.nio.SelectChannelConnector">/)).not_to be_empty
-    expect(jetty_xml_content.grep(/<New class="org.eclipse.jetty.server.ssl.SslSelectChannelConnector">/)).not_to be_empty
+    expect(start_ini_content.grep(/jetty.port=#{settings["http_port"]}/)).not_to be_empty
+    expect(start_ini_content.grep(/jetty.secure.port=#{settings["https_port"]}/)).not_to be_empty
+    expect(start_ini_content.grep(/https.port=#{settings["https_port"]}/)).not_to be_empty
   end
 
   it 'runs' do

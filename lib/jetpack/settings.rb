@@ -16,18 +16,23 @@ module Jetpack
         'app_root'                   => File.expand_path(project_dir),
         'java'                       => 'java',
         'java_options'               => '-Xmx2048m',
-        'max_concurrent_connections' => 50,
+        'max_threads'                => 50,
         'ruby_version'               => 1.9,
         'app_type'                   => 'rails',
         'environment'                => nil,
         'keystore_type'              => 'PKCS12',
         'keystore'                   => nil,
         'keystore_password'          => nil,
+        'truststore_type'            => 'PKCS12',
         'truststore'                 => nil,
         'truststore_password'        => nil,
         'reload_keystore'            => false,
         'bundle_without'             => %w(test development)
       }
+
+      if user_defined_options.key?('max_concurrent_connections') && !user_defined_options.key?('max_threads')
+        user_defined_options['max_threads'] = user_defined_options['max_concurrent_connections']
+      end
 
       contents = defaults.merge(user_defined_options)
 

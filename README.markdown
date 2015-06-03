@@ -36,9 +36,9 @@ Deploys need to be performed using MRI. Here is a sample section of a project Ge
 
 Create `config/jetpack.yml` in your project:
 
-    jruby: "http://jruby.org.s3.amazonaws.com/downloads/1.7.16/jruby-complete-1.7.16.jar"
-    jetty: "http://dist.codehaus.org/jetty/jetty-hightide-8.1.16/jetty-hightide-8.1.16.v20140903.zip"
-    jruby-rack: "http://repository.codehaus.org/org/jruby/rack/jruby-rack/1.1.16/jruby-rack-1.1.16.jar"
+    jruby: "http://jruby.org.s3.amazonaws.com/downloads/1.7.19/jruby-complete-1.7.19.jar"
+    jetty: "http://download.eclipse.org/jetty/9.2.9.v20150224/dist/jetty-distribution-9.2.9.v20150224.zip"
+    jruby-rack: "http://central.maven.org/maven2/org/jruby/rack/jruby-rack/1.1.18/jruby-rack-1.1.18.jar"
     app_user: "myapp"
     app_root: "/usr/local/myapp/myapp"
 
@@ -47,7 +47,7 @@ Some other settings you might care about:
     java_options: "-Xmx2048m"
     http_port: 4080
     https_port: 4443
-    max_concurrent_connections: 50
+    max_threads: 50
     ruby_version: 1.8
     app_type: rack
     keystore_type: JCEKS

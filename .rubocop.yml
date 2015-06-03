@@ -5,7 +5,7 @@ Lint/UselessAssignment:
 
 # Offense count: 4
 Metrics/AbcSize:
-  Max: 42
+  Enabled: false
 
 # Offense count: 153
 # Configuration parameters: AllowURI, URISchemes.
@@ -15,7 +15,7 @@ Metrics/LineLength:
 # Offense count: 7
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
-  Max: 21
+  Enabled: false
 
 # Offense count: 7
 Style/Documentation:
