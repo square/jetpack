@@ -39,7 +39,7 @@ unless @settings.jruby?
   halt(%(Your config/jetpack.yml must at least contain a pointer to the desired jruby-complete jar.
 Ex:
 
-jruby: http://jruby.org.s3.amazonaws.com/downloads/1.7.19/jruby-complete-1.7.19.jar
+jruby: http://jruby.org.s3.amazonaws.com/downloads/1.7.25/jruby-complete-1.7.25.jar
 jetty: http://download.eclipse.org/jetty/9.2.9.v20150224/dist/jetty-distribution-9.2.9.v20150224.zip
     ))
 end

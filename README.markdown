@@ -36,7 +36,7 @@ Deploys need to be performed using MRI. Here is a sample section of a project Ge
 
 Create `config/jetpack.yml` in your project:
 
-    jruby: "http://jruby.org.s3.amazonaws.com/downloads/1.7.19/jruby-complete-1.7.19.jar"
+    jruby: "http://jruby.org.s3.amazonaws.com/downloads/1.7.25/jruby-complete-1.7.25.jar"
     jetty: "http://download.eclipse.org/jetty/9.2.9.v20150224/dist/jetty-distribution-9.2.9.v20150224.zip"
     jruby-rack: "http://central.maven.org/maven2/org/jruby/rack/jruby-rack/1.1.18/jruby-rack-1.1.18.jar"
     app_user: "myapp"
