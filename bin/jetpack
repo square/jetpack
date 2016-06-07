@@ -39,8 +39,8 @@ unless @settings.jruby?
   halt(%(Your config/jetpack.yml must at least contain a pointer to the desired jruby-complete jar.
 Ex:
 
-jruby: http://jruby.org.s3.amazonaws.com/downloads/1.7.19/jruby-complete-1.7.19.jar
-jetty: http://download.eclipse.org/jetty/9.2.9.v20150224/dist/jetty-distribution-9.2.9.v20150224.zip
+jruby: http://jruby.org.s3.amazonaws.com/downloads/1.7.25/jruby-complete-1.7.25.jar
+jetty: http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.2.9.v20150224/jetty-distribution-9.2.9.v20150224.zip
     ))
 end
 
@@ -86,7 +86,7 @@ def regenerate_gemfile_lock_if_platform_java_is_not_found
 end
 
 def bundle_install
-  jruby!("-S gem install bundler -v '~> 1.9.9' --conservative -i #{@gem_home} --no-rdoc --no-ri")
+  jruby!("-S gem install bundler -v '~> 1.12.5' --conservative -i #{@gem_home} --no-rdoc --no-ri")
   regenerate_gemfile_lock_if_platform_java_is_not_found
   bundle_without = @settings.bundle_without.join(' ')
   jruby!("#{@gem_home}/bin/bundle --deployment --clean --without #{bundle_without}")
@@ -143,10 +143,9 @@ end
 
 def overlay_files(overlay_dir, target_dir)
   files_created = note_files_created(target_dir) do
-    Dir.glob("#{overlay_dir}/**/*").select { |f| File.directory?(f) }.each do |d|
-      FileUtils.mkdir_p(d.gsub(overlay_dir, target_dir), :verbose => ENV['VERBOSE'])
-    end
-    FileUtils.cp_r("#{overlay_dir}/.", target_dir, :preserve => true, :verbose => ENV['VERBOSE'])
+    cp_options = '-rpL'
+    cp_options += ' -v' if ENV['VERBOSE']
+    x!("cp #{cp_options} #{overlay_dir}/. #{target_dir}")
   end
 
   process_template_files(files_created.select { |f| f =~ /\.erb$/ })
