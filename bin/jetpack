@@ -143,10 +143,9 @@ end
 
 def overlay_files(overlay_dir, target_dir)
   files_created = note_files_created(target_dir) do
-    Dir.glob("#{overlay_dir}/**/*").select { |f| File.directory?(f) }.each do |d|
-      FileUtils.mkdir_p(d.gsub(overlay_dir, target_dir), :verbose => ENV['VERBOSE'])
-    end
-    FileUtils.cp_r("#{overlay_dir}/.", target_dir, :preserve => true, :verbose => ENV['VERBOSE'])
+    cp_options = '-rpL'
+    cp_options += ' -v' if ENV['VERBOSE']
+    x!("cp #{cp_options} #{overlay_dir}/. #{target_dir}")
   end
 
   process_template_files(files_created.select { |f| f =~ /\.erb$/ })
