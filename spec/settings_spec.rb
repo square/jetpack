@@ -64,7 +64,7 @@ describe Jetpack::Settings do
         it "sets #{key}" do
           value = rand
           config[key] = value
-          settings_key = key.gsub('-', '_')
+          settings_key = key.tr('-', '_')
           expect(subject.send(settings_key)).to eq(value)
         end
       end

@@ -40,7 +40,7 @@ unless @settings.jruby?
 Ex:
 
 jruby: http://jruby.org.s3.amazonaws.com/downloads/1.7.25/jruby-complete-1.7.25.jar
-jetty: http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.2.9.v20150224/jetty-distribution-9.2.9.v20150224.zip
+jetty: http://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.2.18.v20160721/jetty-distribution-9.2.18.v20160721.zip
     ))
 end
 

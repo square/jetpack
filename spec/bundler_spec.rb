@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe 'jetpack - bundler and gems' do
-
   before(:all) do
     reset
     rm_rf('spec/sample_projects/has_gems_via_bundler/vendor/bundle')
@@ -28,7 +27,7 @@ describe 'jetpack - bundler and gems' do
       invalid_load_path_elements =
         load_path_elements.reject do |element|
           element = element.sub('-- ', '')
-          (element =~ /META-INF\/jruby\.home/ || element =~ /vendor\/gems/ || element =~ /^\.$/ || element =~ %r{vendor/bundle/})
+          (element =~ %r{META-INF/jruby.home} || element =~ %r{vendor/gems} || element =~ /^\.$/ || element =~ %r{vendor/bundle/})
         end
       expect(invalid_load_path_elements).to eq([])
     end
@@ -106,12 +105,12 @@ DEPENDENCIES
     it 'regenerates the Gemfile.lock and prints out a warning message' do
       expect(File.read('spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock/Gemfile.lock')).not_to include('java')
       jetpack_result = x('bin/jetpack spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock')
-      expect(jetpack_result[:stderr].gsub("\n", '').squeeze(' ')).to include(%(
+      expect(jetpack_result[:stderr].delete("\n").squeeze(' ')).to include(%(
         WARNING: Your Gemfile.lock does not contain PLATFORM java.
         Automtically regenerating and overwriting Gemfile.lock using jruby
          - because otherwise, jruby-specific gems would not be installed by bundler.
         To make this message go away, you must re-generate your Gemfile.lock using jruby.
-            ).gsub("\n", '').squeeze(' '))
+            ).delete("\n").squeeze(' '))
       expect(jetpack_result[:exitstatus]).to eq(0)
 
       expect(File.read('spec/sample_projects/has_gems_via_bundler_bad_gemfile_lock/Gemfile.lock')).to include('java')

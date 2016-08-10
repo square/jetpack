@@ -19,7 +19,7 @@ end
 
 def x!(cmd)
   result = x(cmd)
-  fail "#{cmd} failed: #{result[:stderr]}" unless result[:exitstatus] == 0
+  raise "#{cmd} failed: #{result[:stderr]}" unless (result[:exitstatus]).zero?
   result
 end
 

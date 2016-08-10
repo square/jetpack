@@ -6,7 +6,7 @@ module Jetpack
   class Settings < OpenStruct
     def self.load_from_project(project_dir)
       config_file = File.join(project_dir, 'config/jetpack.yml')
-      fail("#{config_file} not found") unless File.exist?(config_file)
+      raise("#{config_file} not found") unless File.exist?(config_file)
       yaml = YAML.load(ERB.new(File.read(config_file)).result)
       Settings.new(project_dir, yaml)
     end
