@@ -21,7 +21,7 @@ def yyy
 end
 
 def xxx
-  fail 'BOOM'
+  raise 'BOOM'
 end
 
 task :boom do
