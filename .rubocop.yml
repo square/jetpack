@@ -1,3 +1,7 @@
+AllCops:
+  Exclude:
+    - 'vendor/bundle/**/*'
+    - 'spec/sample_projects/**/vendor/*'
 
 # Offense count: 1
 Lint/UselessAssignment:
