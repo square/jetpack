@@ -143,7 +143,8 @@ end
 
 def overlay_files(overlay_dir, target_dir)
   files_created = note_files_created(target_dir) do
-    cp_options = '-rpL'
+    # copy with recursive, preserve (mode, ownership, timestamps), and follow symbolic links
+    cp_options = '-RpL'
     cp_options += ' -v' if ENV['VERBOSE']
     x!("cp #{cp_options} #{overlay_dir}/. #{target_dir}")
   end
