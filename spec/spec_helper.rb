@@ -9,6 +9,11 @@ include FileUtils
 # Cleanse the environment of these vars so that jruby is not affected.
 ENV.delete_if { |k, _| k =~ /^(RUBY|BUNDLE|GEM|_JAVA_OPTIONS)/ }
 
+# Set JAVA_HOME to Java 8. Jruby 1.7.x does not work with Java 9 and up.
+if RbConfig::CONFIG['host_os'] =~ /darwin/
+  ENV['JAVA_HOME'] = `/usr/libexec/java_home -v 1.8`.chomp
+end
+
 def x(cmd)
   stdout = StringIO.new
   stderr = StringIO.new
