@@ -3,6 +3,9 @@ cache: bundler
 language: ruby
 rvm:
   - 2.1
+jdk:
+  - oraclejdk8
 script:
+  - jdk_switcher use oraclejdk8
   - bundle exec rake spec
   - bundle exec rubocop
