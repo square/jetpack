@@ -7,7 +7,7 @@ include FileUtils
 
 # Env vars like RUBYOPT get passed on to jruby.
 # Cleanse the environment of these vars so that jruby is not affected.
-ENV.delete_if { |k, _| k =~ /^(RUBY|BUNDLE|GEM)/ }
+ENV.delete_if { |k, _| k =~ /^(RUBY|BUNDLE|GEM|_JAVA_OPTIONS)/ }
 
 def x(cmd)
   stdout = StringIO.new
