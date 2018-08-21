@@ -27,7 +27,7 @@ module Jetpack
         'truststore'                 => nil,
         'truststore_password'        => nil,
         'reload_keystore'            => false,
-        'bundle_without'             => %w(test development)
+        'bundle_without'             => %w[test development]
       }
 
       if user_defined_options.key?('max_concurrent_connections') && !user_defined_options.key?('max_threads')

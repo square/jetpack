@@ -2,10 +2,10 @@ hash_in_19_syntax = {
   a: 1
 }
 
-run proc {
+run(proc {
   [
     200,
     { 'Content-Type' => 'application/json' },
     ['Hello World']
   ]
-}
+})
