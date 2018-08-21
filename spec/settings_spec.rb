@@ -55,7 +55,7 @@ describe Jetpack::Settings do
       end
 
       it 'sets bundle_without' do
-        expect(subject.bundle_without).to match_array(%w(test development))
+        expect(subject.bundle_without).to match_array(%w[test development])
       end
     end
 

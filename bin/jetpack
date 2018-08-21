@@ -17,7 +17,7 @@ ENV.delete_if { |k, _| k =~ /^(RUBY|BUNDLE|GEM)/ }
 require 'jetpack/settings'
 
 def halt(message)
-  $stderr.puts message
+  warn message
   exit 1
 end
 
@@ -75,7 +75,7 @@ def regenerate_gemfile_lock_if_platform_java_is_not_found
   platforms_count = gemfile_lock_lines.slice(platforms_start..-1).find_index { |line| line == '' } - 1
   platforms = gemfile_lock_lines.slice(platforms_start..(platforms_start + platforms_count)).map(&:strip)
   unless platforms.include?('java')
-    $stderr.puts %(
+    warn %(
       WARNING: Your Gemfile.lock does not contain PLATFORM java.
       Automtically regenerating and overwriting Gemfile.lock using jruby
        - because otherwise, jruby-specific gems would not be installed by bundler.

@@ -21,11 +21,21 @@ Metrics/LineLength:
 Metrics/MethodLength:
   Enabled: false
 
+Metrics/BlockLength:
+  Enabled: false
+
+Security/YAMLLoad:
+  # safe_load is not available in all versions of ruby
+  Enabled: false
+
+Style/ExpandPathArguments:
+  Exclude:
+    - 'spec/sample_projects/**/*'
+  
 # Offense count: 7
 Style/Documentation:
   Enabled: false
 
-# Offense count: 1
 # Configuration parameters: MinBodyLength.
 Style/GuardClause:
   Enabled: false
@@ -34,6 +44,9 @@ Style/GuardClause:
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/HashSyntax:
+  Enabled: false
+
+Style/IfUnlessModifier:
   Enabled: false
 
 # Offense count: 5

@@ -4,6 +4,6 @@ gem 'rake'
 gem 'rubocop'
 
 group :test do
-  gem 'rspec'
   gem 'open4'
+  gem 'rspec'
 end

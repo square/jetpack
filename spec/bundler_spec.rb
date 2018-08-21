@@ -3,14 +3,14 @@ require 'spec_helper'
 describe 'jetpack - bundler and gems' do
   before(:all) do
     reset
-    rm_rf('spec/sample_projects/has_gems_via_bundler/vendor/bundle')
-    rm_rf('spec/sample_projects/has_gems_via_bundler/vendor/gems')
+    FileUtils.rm_rf('spec/sample_projects/has_gems_via_bundler/vendor/bundle')
+    FileUtils.rm_rf('spec/sample_projects/has_gems_via_bundler/vendor/gems')
     x!('bin/jetpack spec/sample_projects/has_gems_via_bundler')
   end
 
   after(:all) do
-    rm_rf('spec/sample_projects/has_gems_via_bundler/vendor/bundle')
-    rm_rf('spec/sample_projects/has_gems_via_bundler/vendor/gems')
+    FileUtils.rm_rf('spec/sample_projects/has_gems_via_bundler/vendor/bundle')
+    FileUtils.rm_rf('spec/sample_projects/has_gems_via_bundler/vendor/gems')
   end
 
   describe 'presence of the library' do

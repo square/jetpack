@@ -5,7 +5,7 @@ require 'rubocop/rake_task'
 
 RuboCop::RakeTask.new
 
-task :default => [:spec, :rubocop]
+task :default => %i[spec rubocop]
 
 desc 'Run all specs in spec directory'
 RSpec::Core::RakeTask.new(:spec => 'spec:setup') do |t|

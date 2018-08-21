@@ -37,7 +37,6 @@ describe 'jetpack - filters' do
       expect(x!("curl --head 'http://localhost:11080/<script>xss</script>.aspx'")[:stdout].split("\n").first.strip).to eq('HTTP/1.1 400 Bad Request')
 
       expect(x!("curl --head 'http://localhost:11080/?foo=<script>xss</script>.aspx'")[:stdout].split("\n").first.strip).to eq('HTTP/1.1 400 Bad Request')
-
     ensure
       system("kill -9 #{pid_to_kill}")
     end
